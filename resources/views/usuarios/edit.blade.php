@@ -9,7 +9,7 @@
 @section('content')
     <div class="card">
         <div class="card-body">
-            <form action="{{ route('usuarios.update', $usuario) }}" method="POST">
+            <form action="{{ route('usuarios.update', $usuario) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
 
@@ -39,12 +39,31 @@
                 </div>
 
                 <div class="mb-3">
+                    <label for="password_confirmation" class="form-label">Confirmar Contraseña</label>
+                    <input type="password" id="password_confirmation" name="password_confirmation" class="form-control @error('password_confirmation') is-invalid @enderror">
+                    @error('password_confirmation')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <div class="mb-3">
                     <label for="rol" class="form-label">Rol</label>
                     <select id="rol" name="rol" class="form-select @error('rol') is-invalid @enderror">
                         <option value="Administrador" {{ old('rol', $usuario->rol) === 'Administrador' ? 'selected' : '' }}>Administrador</option>
                         <option value="Docente" {{ old('rol', $usuario->rol) === 'Docente' ? 'selected' : '' }}>Docente</option>
                     </select>
                     @error('rol')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <div class="mb-3">
+                    <label for="foto_perfil" class="form-label">Foto de perfil</label>
+                    <input type="file" id="foto_perfil" name="foto_perfil" class="form-control @error('foto_perfil') is-invalid @enderror" accept="image/*">
+                    @if($usuario->foto_perfil)
+                        <small class="text-muted">Archivo actual: {{ $usuario->foto_perfil }}</small>
+                    @endif
+                    @error('foto_perfil')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>

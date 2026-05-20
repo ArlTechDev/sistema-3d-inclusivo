@@ -310,6 +310,12 @@ return [
             'url' => 'instituciones',
             'icon' => 'fas fa-fw fa-school',
         ],
+        [
+            'text' => 'Usuarios',
+            'route' => 'usuarios.index',
+            'icon' => 'fas fa-users',
+            'can' => 'administrador',
+        ],
     ],
 
     /*

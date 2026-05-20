@@ -18,6 +18,7 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->enum('rol', ['Administrador', 'Docente'])->default('Docente');
+            $table->string('foto_perfil')->nullable();
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();

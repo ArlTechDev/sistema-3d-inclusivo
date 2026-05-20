@@ -15,54 +15,90 @@ Route::middleware('auth')->group(function () {
         return redirect()->route('recursos.index');
     });
 
-    Route::get('recursos/exportar-pdf', [RecursoController::class, 'exportarPdf'])
-        ->name('recursos.exportarPdf')
-        ->middleware('role:admin,docente');
+    // Recursos: Rutas personalizadas ANTES del resource
+    Route::get('recursos/exportar/pdf', [RecursoController::class, 'exportarPdf'])
+        ->name('recursos.pdf');
 
-    Route::get('recursos/exportar-excel', [RecursoController::class, 'exportarExcel'])
-        ->name('recursos.exportarExcel')
-        ->middleware('role:admin,docente');
-
-    Route::resource('recursos', RecursoController::class)
-        ->only(['index'])
-        ->middleware('role:admin,docente')
-        ->parameters(['recursos' => 'recurso']);
-
-    Route::resource('recursos', RecursoController::class)
-        ->only(['create', 'store', 'edit', 'update', 'destroy'])
-        ->middleware('role:admin')
-        ->parameters(['recursos' => 'recurso']);
+    Route::get('recursos/exportar/excel', [RecursoController::class, 'exportarExcel'])
+        ->name('recursos.excel');
 
     Route::get('recursos/papelera', [RecursoController::class, 'papelera'])
         ->name('recursos.papelera')
-        ->middleware('role:admin');
+        ->middleware('role:Administrador');
 
     Route::post('recursos/{id}/restore', [RecursoController::class, 'restore'])
         ->name('recursos.restore')
-        ->middleware('role:admin');
+        ->middleware('role:Administrador');
 
     Route::delete('recursos/{recurso}/force', [RecursoController::class, 'forceDestroy'])
         ->name('recursos.forceDestroy')
-        ->middleware('role:admin');
+        ->middleware('role:Administrador');
 
-    Route::resource('usuarios', UserController::class)
+    // Recursos: Index accesible para todos los autenticados
+    Route::resource('recursos', RecursoController::class)
+        ->only(['index'])
+        ->parameters(['recursos' => 'recurso']);
+
+    // Recursos: Métodos que modifican BD - Solo Administrador
+    Route::resource('recursos', RecursoController::class)
+        ->only(['create', 'store', 'edit', 'update', 'destroy', 'show'])
         ->middleware('role:Administrador')
-        ->parameters(['usuarios' => 'usuario']);
+        ->parameters(['recursos' => 'recurso']);
 
-    Route::delete('usuarios/{usuario}/force', [UserController::class, 'forceDestroy'])
+    // Instituciones: Rutas personalizadas ANTES del resource
+    Route::get('instituciones/exportar/pdf', [InstitucionController::class, 'exportarPdf'])
+        ->name('instituciones.pdf');
+
+    Route::get('instituciones/exportar/excel', [InstitucionController::class, 'exportarExcel'])
+        ->name('instituciones.excel');
+
+    Route::get('instituciones/papelera', [InstitucionController::class, 'papelera'])
+        ->name('instituciones.papelera')
+        ->middleware('role:Administrador');
+
+    Route::post('instituciones/{id}/restore', [InstitucionController::class, 'restore'])
+        ->name('instituciones.restore')
+        ->middleware('role:Administrador');
+
+    Route::delete('instituciones/{id}/force', [InstitucionController::class, 'forceDestroy'])
+        ->name('instituciones.forceDestroy')
+        ->middleware('role:Administrador');
+
+    // Instituciones: Index accesible para todos los autenticados
+    Route::resource('instituciones', InstitucionController::class)
+        ->only(['index'])
+        ->parameters(['instituciones' => 'institucion']);
+
+    // Instituciones: Métodos que modifican BD - Solo Administrador
+    Route::resource('instituciones', InstitucionController::class)
+        ->only(['create', 'store', 'edit', 'update', 'destroy'])
+        ->middleware('role:Administrador')
+        ->parameters(['instituciones' => 'institucion']);
+
+    // Usuarios: Rutas personalizadas ANTES del resource
+    Route::get('usuarios/exportar/pdf', [UserController::class, 'exportarPdf'])
+        ->name('usuarios.pdf')
+        ->middleware('role:Administrador');
+
+    Route::get('usuarios/exportar/excel', [UserController::class, 'exportarExcel'])
+        ->name('usuarios.excel')
+        ->middleware('role:Administrador');
+
+    Route::get('usuarios/papelera', [UserController::class, 'papelera'])
+        ->name('usuarios.papelera')
+        ->middleware('role:Administrador');
+
+    Route::post('usuarios/{id}/restore', [UserController::class, 'restore'])
+        ->name('usuarios.restore')
+        ->middleware('role:Administrador');
+
+    Route::delete('usuarios/{id}/force', [UserController::class, 'forceDestroy'])
         ->name('usuarios.forceDestroy')
         ->middleware('role:Administrador');
 
-    Route::get('instituciones/papelera', [InstitucionController::class, 'papelera'])
-        ->name('instituciones.papelera');
-
-    Route::post('instituciones/{id}/restore', [InstitucionController::class, 'restore'])
-        ->name('instituciones.restore');
-
-    Route::delete('instituciones/{id}/force', [InstitucionController::class, 'forceDestroy'])
-        ->name('instituciones.forceDestroy');
-
-    Route::resource('instituciones', InstitucionController::class)->parameters([
-        'instituciones' => 'institucion'
-    ]);
+    // Usuarios: Todo protegido para Solo Administrador
+    Route::resource('usuarios', UserController::class)
+        ->only(['index', 'create', 'store', 'edit', 'update', 'destroy'])
+        ->middleware('role:Administrador')
+        ->parameters(['usuarios' => 'usuario']);
 });

@@ -32,6 +32,28 @@
             </div>
 
             <div class="row">
+                <div class="col-md-6 form-group">
+                    <label for="url_imagen">Imagen (JPG/PNG - Máx 2MB)</label>
+                    <div class="input-group">
+                        <div class="custom-file">
+                            <input type="file" name="url_imagen" class="custom-file-input @error('url_imagen') is-invalid @enderror" id="url_imagen" accept=".jpg,.jpeg,.png">
+                            <label class="custom-file-label" for="url_imagen">Seleccionar archivo...</label>
+                        </div>
+                    </div>
+                    @error('url_imagen') <span class="text-danger">{{ $message }}</span> @enderror
+                </div>
+
+                <div class="col-md-6 form-group">
+                    <label for="url_gcode">Archivo G-code</label>
+                    <div class="input-group">
+                        <div class="custom-file">
+                            <input type="file" name="url_gcode" class="custom-file-input @error('url_gcode') is-invalid @enderror" id="url_gcode" accept=".gcode,.txt">
+                            <label class="custom-file-label" for="url_gcode">Seleccionar archivo...</label>
+                        </div>
+                    </div>
+                    @error('url_gcode') <span class="text-danger">{{ $message }}</span> @enderror
+                </div>
+            </div>
                 <div class="col-md-3 form-group">
                     <label for="gramos_pla">Gramos de PLA</label>
                     <input type="number" step="0.01" name="gramos_pla" class="form-control @error('gramos_pla') is-invalid @enderror" value="{{ old('gramos_pla') }}">

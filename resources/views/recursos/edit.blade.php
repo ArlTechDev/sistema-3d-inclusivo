@@ -36,6 +36,44 @@
             </div>
 
             <div class="row">
+                <div class="col-md-6 form-group">
+                    <label for="url_imagen">Imagen (JPG/PNG - Máx 2MB)</label>
+                    @if($recurso->url_imagen)
+                        <div class="mb-2">
+                            <small class="text-muted">Imagen actual:</small>
+                            <img src="{{ asset('storage/' . $recurso->url_imagen) }}" width="100px" height="100px" class="img-thumbnail d-block">
+                        </div>
+                    @endif
+                    <div class="input-group">
+                        <div class="custom-file">
+                            <input type="file" name="url_imagen" class="custom-file-input @error('url_imagen') is-invalid @enderror" id="url_imagen" accept=".jpg,.jpeg,.png">
+                            <label class="custom-file-label" for="url_imagen">Seleccionar archivo...</label>
+                        </div>
+                    </div>
+                    <small class="text-muted">Dejar vacío para conservar la imagen actual.</small>
+                    @error('url_imagen') <span class="text-danger">{{ $message }}</span> @enderror
+                </div>
+
+                <div class="col-md-6 form-group">
+                    <label for="url_gcode">Archivo G-code</label>
+                    @if($recurso->url_gcode)
+                        <div class="mb-2">
+                            <small class="text-muted">Archivo actual:</small>
+                            <a href="{{ asset('storage/' . $recurso->url_gcode) }}" class="btn btn-sm btn-info" download>Descargar G-code</a>
+                        </div>
+                    @endif
+                    <div class="input-group">
+                        <div class="custom-file">
+                            <input type="file" name="url_gcode" class="custom-file-input @error('url_gcode') is-invalid @enderror" id="url_gcode" accept=".gcode,.txt">
+                            <label class="custom-file-label" for="url_gcode">Seleccionar archivo...</label>
+                        </div>
+                    </div>
+                    <small class="text-muted">Dejar vacío para conservar el archivo actual.</small>
+                    @error('url_gcode') <span class="text-danger">{{ $message }}</span> @enderror
+                </div>
+            </div>
+
+            <div class="row">
                 <div class="col-md-3 form-group">
                     <label for="gramos_pla">Gramos de PLA</label>
                     <input type="number" step="0.01" name="gramos_pla"

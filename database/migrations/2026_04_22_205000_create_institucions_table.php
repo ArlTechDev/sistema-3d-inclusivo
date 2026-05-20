@@ -16,6 +16,8 @@ return new class extends Migration {
             $table->string('direccion', 200);
             $table->string('telefono', 30);
             $table->string('director')->nullable();
+            $table->string('logo')->nullable();
+            $table->string('documento_pdf')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

@@ -17,5 +17,7 @@ class Institucion extends Model
         'direccion',
         'telefono',
         'director',
+        'logo',
+        'documento_pdf',
     ];
 }
