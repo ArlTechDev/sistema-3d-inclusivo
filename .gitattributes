@@ -20,3 +20,6 @@
 # Export ignore
 /.github export-ignore
 CHANGELOG.md export-ignore
+
+# Excluir archivos de vendor de LFS
+software/laravel_web/public/vendor/** -filter=lfs -diff=lfs -merge=lfs
