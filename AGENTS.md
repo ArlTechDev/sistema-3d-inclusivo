@@ -15,7 +15,7 @@ hardware/
 ├── exportaciones_3d/     # Exportaciones STL desde CAD
 └── fotos_avance/         # Fotos de progreso de ensamblaje
 docs/
-├── tesis_oficial/        # Documento de tesis (.docx) — aplica protocolo de bloqueo
+├── documento_pscp/       # Documento PSCP (.docx) — aplica protocolo de bloqueo
 └── anexos/               # Anexos técnicos, CONTEXTO_TECNICO.md
 ```
 
@@ -87,7 +87,7 @@ MySQL expuesto en puerto **3307** (no el 3306 por defecto).
 feat(web): agregar exportación de recursos a PDF
 feat(api): implementar traductor braille-a-gcode
 feat(hw): calibrar pasos del extrusor en Marlin
-docs: actualizar justificación técnica en tesis
+docs: actualizar justificación técnica del documento PSCP
 fix: corregir regla de validación para gramos_pla
 chore(infra): reestructurar monorepo con Git LFS
 ```
@@ -97,7 +97,7 @@ Prefijos: `feat`, `fix`, `docs`, `chore`, `refactor`, `test`. Alcances: `web`, `
 Tipos de archivo rastreados: `*.FCStd`, `*.STEP`, `*.stl`, `*.gcode`, `*.docx`, `*.pdf`, `*.png`, `*.jpg`.
 Siempre ejecutar `git lfs pull` después de `git pull`.
 
-### Protocolo de Bloqueo de Archivo de Tesis
+### Protocolo de Bloqueo de Archivo de Documento PSCP
 Solo una persona edita archivos `.docx` a la vez. Anunciar en chat grupal antes de editar, hacer commit inmediatamente después, anunciar cuando termine.
 
 ### EditorConfig
