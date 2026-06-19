@@ -42,6 +42,11 @@ software/laravel_web/.phpunit.result.cache
 *.backup
 auth.json
 
+# Archivos temporales de Microsoft Word
+~$*.docx
+~$*.doc
+~WRL*.tmp
+
 # Homestead
 Homestead.json
 Homestead.yaml
