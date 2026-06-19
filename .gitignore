@@ -34,6 +34,10 @@ software/laravel_web/public/hot
 software/laravel_web/public/build
 software/laravel_web/.phpunit.result.cache
 
+# Archivos de vendor (regenerados con composer install / php artisan adminlte:install)
+software/laravel_web/lang/vendor/
+software/laravel_web/public/vendor/
+
 # Archivos de caché
 *.cache
 .phpactor.json
