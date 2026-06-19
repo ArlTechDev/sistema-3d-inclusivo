@@ -1,0 +1,162 @@
+@startuml UML_Clasases_Dominio
+' =============================================
+' Diagrama de Clases del Dominio
+' Sistema Braille Inclusivo — PSCP
+' Basado en el código fuente (Laravel 13)
+' =============================================
+
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+skinparam backgroundColor #FEFEFE
+skinparam shadowing false
+skinparam class {
+    BackgroundColor #FEFEFE
+    BorderColor #333333
+    ArrowColor #333333
+}
+
+title Diagrama de Clases del Dominio\nSistema Web y Electromecánico de Impresión 3D
+
+' === ENUMS ===
+enum Rol <<enumeration>> {
+    Administrador
+    Solicitante
+}
+
+enum EstadoRecurso <<enumeration>> {
+    Activo
+    Inactivo
+}
+
+enum EstadoPedido <<enumeration>> {
+    Pendiente
+    En impresion
+    Completado
+    Rechazado
+}
+
+' === CLASES IMPLEMENTADAS ===
+class User <<SoftDeletes>> {
+    +id : bigint <<PK>>
+    +name : string(100)
+    +email : string <<UQ>>
+    +email_verified_at : datetime?
+    +password : string <<hashed>>
+    +rol : Rol = Solicitante
+    +foto_perfil : string?
+    +remember_token : string?
+    +created_at : timestamp?
+    +updated_at : timestamp?
+    +deleted_at : timestamp?
+    --
+    +casts() : array
+}
+
+class Institucion <<SoftDeletes>> {
+    +id : bigint <<PK>>
+    +nombre : string(100)
+    +direccion : string(200)
+    +telefono : string(30)
+    +director : string?
+    +logo : string?
+    +documento_pdf : string?
+    +created_at : timestamp?
+    +updated_at : timestamp?
+    +deleted_at : timestamp?
+}
+
+class Recurso <<SoftDeletes>> {
+    +id : bigint <<PK>>
+    +titulo : string(150)
+    +descripcion : text
+    +gramos_pla : decimal(8,2)
+    +tiempo_minutos : integer
+    +url_imagen : string?
+    +url_gcode : string?
+    +estado : EstadoRecurso
+    +created_at : timestamp?
+    +updated_at : timestamp?
+    +deleted_at : timestamp?
+}
+
+' === CLASES PLANIFICADAS (STUBS) ===
+class Categoria <<planificado>> {
+    +id : bigint <<PK>>
+    +nombre : string
+    +descripcion : text?
+    +created_at : timestamp?
+    +updated_at : timestamp?
+}
+
+class Pedido <<planificado>> {
+    +id : bigint <<PK>>
+    +user_id : bigint <<FK>>
+    +institucion_id : bigint <<FK>>
+    +estado : EstadoPedido = Pendiente
+    +fecha_solicitud : date
+    +total_gramos_pla : decimal(8,2)
+    +costo_total : decimal(8,2)
+    +gcode_path : string?
+    +motivo_rechazo : text?
+    +created_at : timestamp?
+    +updated_at : timestamp?
+}
+
+class DetallePedido <<planificado>> {
+    +id : bigint <<PK>>
+    +pedido_id : bigint <<FK>>
+    +recurso_id : bigint <<FK>>
+    +cantidad : integer
+    +gramos_pla : decimal(8,2)
+    +costo_unitario : decimal(8,2)
+    +created_at : timestamp?
+    +updated_at : timestamp?
+}
+
+class ConfiguracionSistema <<planificado>> {
+    +id : bigint <<PK>>
+    +clave : string <<UQ>>
+    +valor : string
+    +descripcion : string?
+    +created_at : timestamp?
+    +updated_at : timestamp?
+}
+
+' === RELACIONES ===
+' Relaciones implementadas (User no tiene FK directas)
+User "1" -- "*" Pedido : user_id\n<<intended>>
+Institucion "1" -- "*" Pedido : institucion_id\n<<intended>>
+Pedido "1" -- "*" DetallePedido : pedido_id\n<<intended>>
+Recurso "1" -- "*" DetallePedido : recurso_id\n<<intended>>
+Recurso "*" -- "1" Categoria : categoria_id\n<<intended>>
+
+' === ASOCIACIONES DE ENUMS ===
+User ..> Rol : usa
+Recurso ..> EstadoRecurso : usa
+Pedido ..> EstadoPedido : usa
+Pedido ..> ConfiguracionSistema : obtiene\nprecio_gramo_pla
+
+' === LEYENDA ===
+note bottom of User
+  **Implementado** (con código fuente)
+  - CRUD completo en RecursoController
+  - SoftDeletes + papelera
+  - Exportaciones PDF/Excel
+end note
+
+note bottom of Pedido
+  **Planificado** (stub vacío)
+  - Solo existe migración con id + timestamps
+  - Pendiente de implementación
+  - Alineado con Módulo 3 de la tesis
+end note
+
+legend right
+  | Color | Significado |
+  | <#LightGreen> | Implementado |
+  | <#LightYellow> | Planificado (stub) |
+  | <<SoftDeletes>> | Borrado lógico |
+  | <<intended>> | Relación futura (FK no existe aún) |
+endlegend
+
+@enduml

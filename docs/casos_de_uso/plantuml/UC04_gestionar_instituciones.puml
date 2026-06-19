@@ -1,0 +1,71 @@
+@startuml UC04_Gestionar_Instituciones
+' =============================================
+' UC-04: Gestionar Instituciones
+' Módulo 4: Catálogo Digital (soporte)
+' Actor: Administrador/Operador
+' =============================================
+
+left to right direction
+skinparam actorStyle awesome
+skinparam packageStyle rectangle
+skinparam backgroundColor #FEFEFE
+skinparam shadowing false
+
+title UC-04: Gestionar Instituciones Educativas
+
+' === ACTORES ===
+actor "Administrador\n/Operador" as A #LightGreen
+
+' === SISTEMA ===
+rectangle "Sistema Braille Inclusivo" {
+
+    usecase "Ver lista de\ninstituciones" as UC04a
+    usecase "Crear nueva\ninstitución" as UC04b
+    usecase "Editar\ninstitución" as UC04c
+    usecase "Eliminar institución\n(papelera)" as UC04d
+    usecase "Ver papelera de\ninstituciones" as UC04e
+    usecase "Restaurar\ninstitución" as UC04f
+    usecase "Eliminar\npermanentemente" as UC04g
+    usecase "Validar datos\nde institución" as UC04h
+    usecase "Almacenar\nlogo y PDF" as UC04i
+
+}
+
+' === CONEXIONES ===
+A --> UC04a
+A --> UC04b
+A --> UC04c
+A --> UC04d
+A --> UC04e
+A --> UC04f
+A --> UC04g
+
+UC04b ..> UC04h : <<include>>
+UC04b ..> UC04i : <<include>>
+UC04c ..> UC04h : <<include>>
+
+' === NOTAS ===
+note right of UC04b
+  **Camino principal:**
+  1. Admin hace clic en "Nueva Institución"
+  2. Sistema muestra formulario
+  3. Admin ingresa: nombre, dirección,
+     teléfono, director (opcional)
+  4. Admin sube logo (opcional, máx 2MB)
+  5. Admin sube documento PDF (opcional, máx 4MB)
+  6. Sistema valida y crea registro
+  7. Mensaje de éxito
+
+  **Campos obligatorios:**
+  - Nombre (3-100 chars)
+  - Dirección (5-200 chars)
+  - Teléfono (máx 30 chars, formato tel.)
+end note
+
+note bottom of UC04a
+  **Solicitante también puede ver**
+  la lista de instituciones (solo lectura)
+  mediante la ruta GET /instituciones
+end note
+
+@enduml

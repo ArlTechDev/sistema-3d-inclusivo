@@ -1,0 +1,99 @@
+@startuml UC07_Solicitar_Impresion
+' =============================================
+' UC-07: Solicitar Impresión
+' Módulo 3: Gestión de Pedidos y Costos de Producción
+' Actor: Solicitante
+' =============================================
+
+skinparam actorStyle awesome
+skinparam packageStyle rectangle
+skinparam backgroundColor #FEFEFE
+skinparam shadowing false
+
+title UC-07: Solicitar Impresión de Recurso Táctil
+
+' === ACTORES ===
+actor "Usuario\nSolicitante" as S #LightBlue
+actor "Sistema" as SYS #LightYellow
+
+' === SISTEMA ===
+rectangle "Sistema Braille Inclusivo" {
+
+    usecase "Confirmar diseño\ny solicitar" as UC07a
+    usecase "Seleccionar recurso\ndel catálogo" as UC07b
+    usecase "Registrar\nsolicitud" as UC07c
+    usecase "Calcular consumo\nPLA (gramos)" as UC07d
+    usecase "Estimar costo\nde producción" as UC07e
+    usecase "Generar G-Code\nasociado al pedido" as UC07f
+    usecase "Asignar estado\n'Pendiente'" as UC07g
+    usecase "Mostrar\nconfirmación" as UC07h
+    usecase "Ver mis\nsolicitudes" as UC07i
+    usecase "Cancelar solicitud\n(solo Pendiente)" as UC07j
+
+}
+
+' === CONEXIONES ===
+S --> UC07a
+S --> UC07b
+S --> UC07i
+S --> UC07j
+
+UC07a ..> UC07c : <<include>>
+UC07c ..> UC07d : <<include>>
+UC07c ..> UC07e : <<include>>
+UC07c ..> UC07f : <<include>>
+UC07c ..> UC07g : <<include>>
+UC07c ..> UC07h : <<include>>
+
+UC07b ..> UC07c : <<extend>>
+
+SYS --> UC07d
+SYS --> UC07e
+SYS --> UC07f
+
+' === NOTAS ===
+note right of UC07a
+  **Flujo desde UC-06 (Traducción):**
+  1. Solicitante ve previsión 2D
+  2. Solicitante confirma clicando
+     "Solicitar Impresión"
+  3. Sistema registra la solicitud
+
+  **Flujo desde UC-03 (Catálogo):**
+  1. Solicitante selecciona recurso
+  2. Solicitante confirma solicitud
+  3. Sistema registra la solicitud
+end note
+
+note right of UC07d
+  **Cálculo automático:**
+  - Backend calcula volumen del modelo
+  - Convierte volumen a gramos de PLA
+  - Usa densidad del PLA (1.24 g/cm³)
+
+  **Fórmula costo:**
+  Costo = Gramos PLA × Costo por gramo
+  (Costo/gramo parametrizable por Admin)
+end note
+
+note right of UC07c
+  **Datos del pedido:**
+  - ID del solicitante
+  - ID de la institución
+  - Recurso solicitado
+  - Fecha de solicitud
+  - Cantidad
+  - Consumo PLA estimado (gramos)
+  - Costo estimado (Bs.)
+  - Estado: Pendiente
+  - G-Code asociado
+end note
+
+note right of UC07j
+  **Cancelación:**
+  Solo permitida si el estado es "Pendiente".
+  Si el pedido ya está "En impresión" o
+  "Completado", no se puede cancelar.
+end note
+
+@enduml

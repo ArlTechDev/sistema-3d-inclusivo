@@ -1,0 +1,67 @@
+@startuml UC01_Autenticacion
+' =============================================
+' UC-01: Iniciar / Cerrar Sesión
+' Módulo 1: Gestión de Usuarios
+' =============================================
+
+left to right direction
+skinparam actorStyle awesome
+skinparam packageStyle rectangle
+skinparam backgroundColor #FEFEFE
+skinparam shadowing false
+
+title UC-01: Iniciar / Cerrar Sesión
+
+' === ACTORES ===
+actor "Usuario\n(Solicitante o\nAdministrador)" as U #LightBlue
+
+' === SISTEMA ===
+rectangle "Sistema Braille Inclusivo" {
+
+    usecase "Iniciar Sesión" as UC01a
+    usecase "Cerrar Sesión" as UC01b
+    usecase "Validar\nCredenciales" as UC01c
+    usecase "Mostrar\nError de Login" as UC01d
+    usecase "Redirigir al\nDashboard" as UC01e
+    usecase "Invalidar\nSesión" as UC01f
+
+}
+
+' === CONEXIONES ===
+U --> UC01a
+U --> UC01b
+
+UC01a ..> UC01c : <<include>>
+UC01a ..> UC01e : <<extend>>
+UC01a ..> UC01d : <<extend>>
+UC01b ..> UC01f : <<include>>
+
+' === NOTAS ===
+note right of UC01a
+  **Precondiciones:**
+  1. El usuario tiene una cuenta registrada
+  2. El sistema está accesible vía navegador
+
+  **Camino principal:**
+  1. Usuario ingresa email y contraseña
+  2. Sistema valida credenciales (Bcrypt)
+  3. Sistema regenera token de sesión
+  4. Sistema redirige a recursos.index
+end note
+
+note right of UC01d
+  **Escenario alternativo:**
+  Credenciales inválidas →
+  Mensaje: "Credenciales incorrectas"
+  Permanece en login
+end note
+
+note right of UC01b
+  **Camino principal:**
+  1. Usuario hace clic en "Cerrar Sesión"
+  2. Sistema invalida sesión
+  3. Sistema regenera token CSRF
+  4. Redirige a pantalla de login
+end note
+
+@enduml

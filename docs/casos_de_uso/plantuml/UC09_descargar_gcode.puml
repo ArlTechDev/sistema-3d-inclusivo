@@ -1,0 +1,86 @@
+@startuml UC09_Descargar_GCode
+' =============================================
+' UC-09: Descargar G-Code
+' Módulo 3/4: Gestión de Pedidos / Catálogo Digital
+' Actor: Administrador/Operador
+' FLUJO: Servidor → PC Operador → Impresora 3D (USB)
+' =============================================
+
+skinparam actorStyle awesome
+skinparam packageStyle rectangle
+skinparam backgroundColor #FEFEFE
+skinparam shadowing false
+
+title UC-09: Descargar G-Code (Exclusivo Admin)
+
+' === ACTORES ===
+actor "Administrador\n/Operador" as A #LightGreen
+
+' === SISTEMA ===
+rectangle "Sistema Braille Inclusivo" {
+
+    usecase "Seleccionar pedido\npara descargar" as UC09a
+    usecase "Verificar estado\ndel pedido" as UC09b
+    usecase "Descargar archivo\n.gcode" as UC09c
+    usecase "Mostrar error si\npedido no válido" as UC09d
+    usecase "Registrar fecha\nde descarga" as UC09e
+
+}
+
+' === ACTORES EXTERNOS ===
+rectangle "Fuera del sistema" as EXT {
+    usecase "Transferir a PC\nOperador (USB)" as UC09f
+    usecase "Cargar en\nImpresora 3D" as UC09g
+}
+
+' === CONEXIONES ===
+A --> UC09a
+UC09a ..> UC09b : <<include>>
+UC09b ..> UC09c : <<extend>>
+UC09b ..> UC09d : <<extend>>
+UC09c ..> UC09e : <<include>>
+UC09c ..> UC09f : <<extend>>
+UC09f ..> UC09g : <<extend>>
+
+' === NOTAS ===
+note right of UC09a
+  **Precondiciones:**
+  1. Admin ha iniciado sesión
+  2. Existe al menos un pedido con
+     G-Code generado
+  3. El pedido NO está en estado
+     "Rechazado"
+
+  **Camino principal:**
+  1. Admin selecciona pedido
+  2. Sistema verifica que el pedido
+     tenga G-Code asociado
+  3. Sistema descarga archivo .gcode
+  4. Admin guarda en computadora
+end note
+
+note right of UC09d
+  **Restricciones:**
+  - Solo el Administrador puede
+    descargar G-Code
+  - El Solicitante NUNCA puede
+    acceder a los archivos G-Code
+  - Pedidos rechazados no tienen
+    G-Code descargable
+end note
+
+note bottom of UC09f
+  **FUERA DEL SISTEMA:**
+  Estos pasos son manuales y NO
+  forman parte del software.
+
+  1. Admin descarga .gcode a su PC
+  2. Admin conecta impresora vía USB
+  3. Admin inicia impresión desde
+     software de control (ej: Cura)
+
+  **No existe conexión directa
+  entre servidor e impresora.**
+end note
+
+@enduml

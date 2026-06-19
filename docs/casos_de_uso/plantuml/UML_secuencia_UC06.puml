@@ -1,0 +1,186 @@
+@startuml UML_Secuencia_UC06
+' =============================================
+' Diagrama de Secuencia — UC-06 / UC-07
+' Traducir Texto a Braille, Previsualizar y Confirmar Pedido
+' Módulo 2: Núcleo funcional (CORE)
+' Módulo 3: Gestión de Pedidos
+' =============================================
+
+skinparam backgroundColor #FEFEFE
+skinparam shadowing false
+skinparam sequenceArrowThickness 1.5
+skinparam sequenceParticipantBorderColor #333333
+skinparam sequenceLifeLineBorderColor #666666
+
+title Diagrama de Secuencia — UC-06 / UC-07\nTraducción Braille, Previsión 2D y Confirmación de Pedido
+
+' === PARTICIPANTES ===
+actor "Usuario\nSolicitante" as S #LightBlue
+participant "TraductorController\n(Laravel)" as TC #LightGreen
+participant "BrailleService\n(Python Core)" as BS #LightYellow
+participant "PedidoController\n(Laravel)" as PC #LightGreen
+participant "ConfigSistema\n(Key-Value)" as CFG #LightCyan
+database "MySQL\n(Base de Datos)" as DB #LightGray
+
+' =============================================
+' FASE A: PREVISUALIZACIÓN (sin guardar en BD)
+' =============================================
+== FASE A: Previsualización 2D (sin guardar en BD) ==
+
+S -> TC : POST /traducir\n{texto: "MESA"}
+activate TC
+
+TC -> TC : validarLongitud(texto)
+note right: Máximo caracteres\nsegún tamaño de ficha
+
+TC -> BS : validarCaracteres(texto)
+activate BS
+BS -> BS : verificar Código Braille Español\n(letras A-Z, Ñ, vocales acentuadas,\n0-9, puntuación)
+BS --> TC : {valido: true, caracteres: [M,E,S,A]}
+deactivate BS
+
+TC -> BS : traducirABraille(caracteres)
+activate BS
+BS -> BS : convertir cada carácter\na celda Braille (6 puntos)
+note right
+  M → [1,1,0,0,0,1]
+  E → [1,0,0,0,0,0]
+  S → [1,0,1,0,0,0]
+  A → [1,0,0,0,0,1]
+end note
+BS --> TC : {celdas: [[1,1,0,0,0,1], ...]}
+deactivate BS
+
+TC -> BS : generarPreview2D(celdas)
+activate BS
+BS -> BS : renderizar imagen 2D\n(posición de puntos Braille)
+BS --> TC : {imagen: base64_png}
+deactivate BS
+
+TC -> TC : almacenar celdas en sesión\n(generar token temporal)
+TC --> S : Response 200\n{preview_2D: imagen_base64,\ntoken_temporal: "abc123"}
+deactivate TC
+
+note over S
+  El Solicitante visualiza la previsión 2D.
+  Si está satisfecho, confirma el diseño.
+  Los datos se almacenan temporalmente
+  en sesión del servidor (no en BD).
+end note
+
+' =============================================
+' FASE B: CONFIRMACIÓN, G-CODE Y PEDIDO
+' =============================================
+== FASE B: Confirmación, Generación G-Code y Registro de Pedido ==
+
+S -> TC : POST /confirmar\n{token: "abc123",\ninstitucion_id: 5}
+activate TC
+
+TC -> TC : recuperar celdas desde\nsesión (validar token)
+
+TC -> BS : generarGCode(celdas, parametros)
+activate BS
+BS -> BS : calcular coordenadas (X,Y,Z)
+BS -> BS : generar placa base (volumen)
+BS -> BS : posicionar puntos Braille en relieve
+BS -> BS : compilar instrucciones G0/G1/G92
+note right
+  G28 ;Home
+  G1 Z0.3 F3000
+  G1 X10.0 Y20.0 E0.5
+  G92 E0
+  ...
+end note
+BS --> TC : {gcode: "G28\\nG1 Z0.3...",\ncoords: [...],\nvolumen_cm3: 12.5}
+deactivate BS
+
+TC -> PC : crearPedido(user_id,\ninstitucion_id, gcode, volumen)
+activate PC
+
+PC -> PC : calcular consumo PLA\n(volumen → gramos)
+note right
+  gramos = volumen_cm3 × densidad_PLA
+  densidad PLA = 1.24 g/cm³
+end note
+
+PC -> CFG : obtener("precio_gramo_pla")
+activate CFG
+CFG -> DB : SELECT valor FROM\nconfiguraciones\nWHERE clave = 'precio_gramo_pla'
+activate DB
+DB --> CFG : {valor: "0.50"}
+deactivate DB
+CFG --> PC : {valor: "0.50"}\n(Bs. por gramo)
+deactivate CFG
+
+PC -> PC : calcular costo_total\n= gramos × 0.50
+
+PC -> DB : INSERT INTO pedidos\n(user_id, institucion_id, estado,\ntotal_gramos_pla, costo_total,\ngcode_path, fecha_solicitud)
+activate DB
+DB --> PC : {pedido_id: 42}
+deactivate DB
+
+PC -> DB : guardarGCode(gcode,\n"pedidos/42.gcode")
+activate DB
+DB --> PC : OK
+deactivate DB
+
+PC --> TC : {pedido_id: 42,\nestado: "Pendiente",\ngramos_pla: 15.5,\ncosto_total: 7.75}
+deactivate PC
+
+TC --> S : Response 200\n{pedido_id: 42,\nestado: "Pendiente",\ngramos_pla: 15.5,\ncosto_total: "Bs. 7.75",\npreview_2D: imagen}
+deactivate TC
+
+note over S
+  El pedido queda registrado como "Pendiente".
+  El Administrador podrá verlo en su panel,
+  actualizar estado y descargar el G-Code
+  para transferirlo vía USB a la impresora 3D.
+end note
+
+' =============================================
+' ESCENARIOS ALTERNATIVOS
+' =============================================
+== Escenarios Alternativos ==
+
+alt Caracteres no soportados
+    S -> TC : POST /traducir\n{texto: "MESA@#"}
+    activate TC
+    TC -> BS : validarCaracteres(texto)
+    activate BS
+    BS -> BS : detectar caracteres inválidos\n(@ y # no son Código Braille Español)
+    BS --> TC : {valido: false, errores: ["@", "#"]}
+    deactivate BS
+    TC --> S : Response 422\n{error: "Caracteres no soportados:\n@, #. Solo Código Braille\nEspañol (Grado 1)."}
+    deactivate TC
+end
+
+alt Texto excede longitud máxima
+    S -> TC : POST /traducir\n{texto: "TEXTO MUY LARGO..."}
+    activate TC
+    TC -> TC : validarLongitud(texto)
+    TC --> S : Response 422\n{error: "Texto excede longitud\nmáxima. Divida en fichas\nmás pequeñas."}
+    deactivate TC
+end
+
+alt Error en Python Core
+    S -> TC : POST /traducir\n{texto: "MESA"}
+    activate TC
+    TC -> BS : traducirABraille(caracteres)
+    activate BS
+    BS -> BS : **ERROR INTERNO**\n(excepción no controlada)
+    BS --> TC : Exception
+    deactivate BS
+    TC -> TC : rollback transacción
+    TC --> S : Response 500\n{error: "Error al procesar.\nIntente nuevamente."}
+    deactivate TC
+end
+
+alt Token inválido o expirado
+    S -> TC : POST /confirmar\n{token: "invalido",\ninstitucion_id: 5}
+    activate TC
+    TC -> TC : token no encontrado\nen sesión
+    TC --> S : Response 401\n{error: "Sesión expirada.\nTraduzca el texto nuevamente."}
+    deactivate TC
+end
+
+@enduml
