@@ -2,46 +2,49 @@
 title Diagrama de Gantt — Proyecto PSCP\nImpresion 3D Braille Inclusiva\nMayo a Septiembre 2026
 
 Project starts 2026-05-01
-printscale monthly
+printscale weekly zoom 2
 
--- Fase 1: Recoleccion e-waste + Diseno --
-[F1 Recoleccion e-waste] lasts 4 weeks
-[F1 Diseno arquitectura web] lasts 3 weeks
-[F1 Diseno arquitectura web] starts at [F1 Recoleccion e-waste]'s end
+-- Hardware (Cristhian A.) --
 
--- Fase 2: Ensamblaje chasis + Interfaz web --
-[F2 Ensamblaje chasis Prusa i3] lasts 6 weeks
-[F2 Interfaz web traductor Braille] lasts 5 weeks
-[F2 Ensamblaje chasis Prusa i3] starts at [F1 Recoleccion e-waste]'s end
-[F2 Interfaz web traductor Braille] starts at [F1 Diseno arquitectura web]'s end
+[F1 Recoleccion e-waste] lasts 14 days
+[F1 Recoleccion e-waste] ends 2026-05-15
 
--- Fase 3: Electronica + Firmware --
-[F3 Conexion electronica RAMPS] lasts 3 weeks
-[F3 Instalacion Marlin 1.1.x] lasts 2 weeks
-[F3 Calibracion ejes XYZ] lasts 3 weeks
-[F3 Instalacion Marlin 1.1.x] starts at [F3 Conexion electronica RAMPS]'s end
-[F3 Calibracion ejes XYZ] starts at [F3 Instalacion Marlin 1.1.x]'s end
+[F3 Ensamblaje chasis MDF] lasts 30 days
+[F3 Ensamblaje chasis MDF] ends 2026-06-15
 
--- Fase 4: Algoritmo Braille --
-[F4 Traduccion texto a Braille] lasts 5 weeks
-[F4 Generacion G-Code] lasts 4 weeks
-[F4 Generacion G-Code] starts at [F4 Traduccion texto a Braille]'s end
+[F5 Firmware Marlin + calibracion XYZ] lasts 29 days
+[F5 Firmware Marlin + calibracion XYZ] ends 2026-07-15
 
--- Fase 5: Integracion --
-[F5 Integracion web-hardware] lasts 4 weeks
-[F5 Pruebas transferencia USB] lasts 2 weeks
-[F5 Pruebas transferencia USB] starts at [F5 Integracion web-hardware]'s end
+[F7 Integracion web-hardware + PLA] lasts 20 days
+[F7 Integracion web-hardware + PLA] ends 2026-08-20
 
--- Fase 6: Validacion --
-[F6 Pruebas piloto instituciones] lasts 4 weeks
-[F6 Informe de validacion] lasts 2 weeks
-[F6 Informe de validacion] starts at [F6 Pruebas piloto instituciones]'s end
+[F8 Produccion catalogo + pruebas piloto] lasts 20 days
+[F8 Produccion catalogo + pruebas piloto] ends 2026-09-10
+
+[F9 Cierre, mejoras y defensa] lasts 20 days
+[F9 Cierre, mejoras y defensa] ends 2026-09-30
+
+-- Software Backend (Ariel E.) --
+
+[F2 Diseno BD + arquitectura web] lasts 30 days
+[F2 Diseno BD + arquitectura web] ends 2026-05-31
+
+[F6 Algoritmo Braille + G-Code] lasts 30 days
+[F6 Algoritmo Braille + G-Code] ends 2026-07-31
+
+-- Software Frontend/UI (Jose M.) --
+
+[F4 Interfaz UI/UX y prototipo web] lasts 29 days
+[F4 Interfaz UI/UX y prototipo web] ends 2026-06-30
 
 -- Dependencias entre fases --
-[F3 Conexion electronica RAMPS] starts at [F2 Ensamblaje chasis Prusa i3]'s end
-[F4 Traduccion texto a Braille] starts at [F2 Interfaz web traductor Braille]'s end
-[F5 Integracion web-hardware] starts at [F4 Generacion G-Code]'s end
-[F5 Integracion web-hardware] starts at [F3 Calibracion ejes XYZ]'s end
-[F6 Pruebas piloto instituciones] starts at [F5 Pruebas transferencia USB]'s end
+
+[F3 Ensamblaje chasis MDF] starts at [F1 Recoleccion e-waste]'s end
+[F5 Firmware Marlin + calibracion XYZ] starts at [F3 Ensamblaje chasis MDF]'s end
+[F6 Algoritmo Braille + G-Code] starts at [F4 Interfaz UI/UX y prototipo web]'s end
+[F7 Integracion web-hardware + PLA] starts at [F5 Firmware Marlin + calibracion XYZ]'s end
+[F7 Integracion web-hardware + PLA] starts at [F6 Algoritmo Braille + G-Code]'s end
+[F8 Produccion catalogo + pruebas piloto] starts at [F7 Integracion web-hardware + PLA]'s end
+[F9 Cierre, mejoras y defensa] starts at [F8 Produccion catalogo + pruebas piloto]'s end
 
 @endgantt
