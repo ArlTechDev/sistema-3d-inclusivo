@@ -19,5 +19,16 @@ class Recurso extends Model
         'url_imagen',
         'url_gcode',
         'estado',
+        'categoria_id',
     ];
+
+    public function categoria()
+    {
+        return $this->belongsTo(Categoria::class);
+    }
+
+    public function detallesPedido()
+    {
+        return $this->hasMany(DetallePedido::class);
+    }
 }

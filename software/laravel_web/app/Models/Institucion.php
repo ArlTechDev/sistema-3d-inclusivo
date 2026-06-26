@@ -11,7 +11,6 @@ class Institucion extends Model
     use HasFactory, SoftDeletes;
 
     protected $table = 'instituciones';
-
     protected $fillable = [
         'nombre',
         'direccion',
@@ -20,4 +19,9 @@ class Institucion extends Model
         'logo',
         'documento_pdf',
     ];
+
+    public function pedidos()
+    {
+        return $this->hasMany(Pedido::class);
+    }
 }

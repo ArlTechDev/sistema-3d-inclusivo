@@ -3,6 +3,8 @@
 namespace Database\Seeders;
 
 use App\Models\User;
+use App\Models\Categoria;
+use App\Models\ConfiguracionSistema;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -11,12 +13,9 @@ class DatabaseSeeder extends Seeder
 {
     use WithoutModelEvents;
 
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
-        // Usuario Administrador
+        // Usuarios
         User::updateOrCreate(
             ['email' => 'admin@admin.com'],
             [
@@ -26,13 +25,32 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        // Usuario Docente
         User::updateOrCreate(
             ['email' => 'docente@test.com'],
             [
                 'name' => 'Docente',
                 'password' => Hash::make('12345678'),
                 'rol' => 'Docente',
+            ]
+        );
+
+        // Categorías del catálogo de recursos
+        $categorias = [
+            ['nombre' => 'Matemáticas', 'descripcion' => 'Figuras geométricas, reglas de medición, operaciones matemáticas'],
+            ['nombre' => 'Geografía', 'descripcion' => 'Mapas topográficos, continentes, relieve'],
+            ['nombre' => 'Braille', 'descripcion' => 'Fichas de vocabulario, alfabeto, números en Braille'],
+            ['nombre' => 'Ciencias', 'descripcion' => 'Diagramas científicos, anatomía, naturaleza'],
+        ];
+        foreach ($categorias as $cat) {
+            Categoria::updateOrCreate(['nombre' => $cat['nombre']], $cat);
+        }
+
+        // Configuración del sistema
+        ConfiguracionSistema::updateOrCreate(
+            ['clave' => 'precio_gramo_pla'],
+            [
+                'valor' => '0.05',
+                'descripcion' => 'Costo por gramo de PLA en dólares (USD)',
             ]
         );
     }

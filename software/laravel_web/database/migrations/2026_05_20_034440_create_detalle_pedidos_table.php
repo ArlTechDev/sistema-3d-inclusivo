@@ -13,6 +13,11 @@ return new class extends Migration
     {
         Schema::create('detalle_pedidos', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('pedido_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('recurso_id')->constrained()->cascadeOnDelete();
+            $table->integer('cantidad');
+            $table->decimal('gramos_pla', 8, 2);
+            $table->decimal('costo_unitario', 8, 2);
             $table->timestamps();
         });
     }
