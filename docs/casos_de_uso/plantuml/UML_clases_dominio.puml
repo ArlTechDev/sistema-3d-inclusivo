@@ -1,41 +1,30 @@
 @startuml UML_Clasases_Dominio
-' =============================================
-' Diagrama de Clases del Dominio
-' Sistema Braille Inclusivo — PSCP
-' Basado en el código fuente (Laravel 13)
-' =============================================
+title Diagrama de Clases del Dominio\nSistema Web y Electromecánico de Impresión 3D
 
 skinparam classAttributeIconSize 0
 skinparam linetype ortho
 skinparam backgroundColor #FEFEFE
 skinparam shadowing false
-skinparam class {
-    BackgroundColor #FEFEFE
-    BorderColor #333333
-    ArrowColor #333333
-}
-
-title Diagrama de Clases del Dominio\nSistema Web y Electromecánico de Impresión 3D
 
 ' === ENUMS ===
-enum Rol <<enumeration>> {
+enum Rol {
     Administrador
     Solicitante
 }
 
-enum EstadoRecurso <<enumeration>> {
+enum EstadoRecurso {
     Activo
     Inactivo
 }
 
-enum EstadoPedido <<enumeration>> {
+enum EstadoPedido {
     Pendiente
     En impresion
     Completado
     Rechazado
 }
 
-' === CLASES IMPLEMENTADAS ===
+' === CLASES DEL DOMINIO ===
 class User <<SoftDeletes>> {
     +id : bigint <<PK>>
     +name : string(100)
@@ -79,8 +68,7 @@ class Recurso <<SoftDeletes>> {
     +deleted_at : timestamp?
 }
 
-' === CLASES PLANIFICADAS (STUBS) ===
-class Categoria <<planificado>> {
+class Categoria {
     +id : bigint <<PK>>
     +nombre : string
     +descripcion : text?
@@ -88,7 +76,7 @@ class Categoria <<planificado>> {
     +updated_at : timestamp?
 }
 
-class Pedido <<planificado>> {
+class Pedido {
     +id : bigint <<PK>>
     +user_id : bigint <<FK>>
     +institucion_id : bigint <<FK>>
@@ -102,7 +90,7 @@ class Pedido <<planificado>> {
     +updated_at : timestamp?
 }
 
-class DetallePedido <<planificado>> {
+class DetallePedido {
     +id : bigint <<PK>>
     +pedido_id : bigint <<FK>>
     +recurso_id : bigint <<FK>>
@@ -113,7 +101,7 @@ class DetallePedido <<planificado>> {
     +updated_at : timestamp?
 }
 
-class ConfiguracionSistema <<planificado>> {
+class ConfiguracionSistema {
     +id : bigint <<PK>>
     +clave : string <<UQ>>
     +valor : string
@@ -122,41 +110,17 @@ class ConfiguracionSistema <<planificado>> {
     +updated_at : timestamp?
 }
 
-' === RELACIONES ===
-' Relaciones implementadas (User no tiene FK directas)
-User "1" -- "*" Pedido : user_id\n<<intended>>
-Institucion "1" -- "*" Pedido : institucion_id\n<<intended>>
-Pedido "1" -- "*" DetallePedido : pedido_id\n<<intended>>
-Recurso "1" -- "*" DetallePedido : recurso_id\n<<intended>>
-Recurso "*" -- "1" Categoria : categoria_id\n<<intended>>
+' === RELACIONES DE ASOCIACIÓN ===
+User "1" -- "*" Pedido : user_id
+Institucion "1" -- "*" Pedido : institucion_id
+Pedido "1" -- "*" DetallePedido : pedido_id
+Recurso "1" -- "*" DetallePedido : recurso_id
+Recurso "*" -- "1" Categoria : categoria_id
 
 ' === ASOCIACIONES DE ENUMS ===
-User ..> Rol : usa
-Recurso ..> EstadoRecurso : usa
-Pedido ..> EstadoPedido : usa
-Pedido ..> ConfiguracionSistema : obtiene\nprecio_gramo_pla
-
-' === LEYENDA ===
-note bottom of User
-  **Implementado** (con código fuente)
-  - CRUD completo en RecursoController
-  - SoftDeletes + papelera
-  - Exportaciones PDF/Excel
-end note
-
-note bottom of Pedido
-  **Planificado** (stub vacío)
-  - Solo existe migración con id + timestamps
-  - Pendiente de implementación
-  - Alineado con Módulo 3 de la tesis
-end note
-
-legend right
-  | Color | Significado |
-  | <#LightGreen> | Implementado |
-  | <#LightYellow> | Planificado (stub) |
-  | <<SoftDeletes>> | Borrado lógico |
-  | <<intended>> | Relación futura (FK no existe aún) |
-endlegend
+User --> Rol
+Recurso --> EstadoRecurso
+Pedido --> EstadoPedido
+Pedido --> ConfiguracionSistema : obtiene precio_gramo_pla
 
 @enduml
