@@ -1,0 +1,57 @@
+@startuml UML_Estados_Pedido
+title Diagrama de Estados — Ciclo de Vida del Pedido\nSistema Braille Inclusivo
+
+skinparam backgroundColor #FEFEFE
+skinparam shadowing false
+skinparam stateFontSize 14
+skinparam arrowFontSize 12
+
+skinparam state {
+    BackgroundColor<<activo>> #E8F5E9
+    BackgroundColor<<final>> #FFEBEE
+    BackgroundColor<<inicial>> #E3F2FD
+    BorderColor #455A64
+}
+
+' === ESTADOS ===
+[*] --> Pendiente : <b>Crear pedido</b>\nSolicitante confirma solicitud
+
+state Pendiente <<activo>> : Estado inicial del pedido.\nEspera revisión del Administrador.
+
+state "En impresión" as EP <<activo>> : Administrador inicia\nel proceso de impresión 3D.
+
+state "Completado" as Comp <<final>> : Impresión finalizada.\nFicha táctil lista para entregar.
+
+state "Rechazado" as Rech <<final>> : Administrador rechaza\nla solicitud con motivo.
+
+' === TRANSICIONES ===
+Pendiente --> EP : **Admin actualiza estado**\n"Cambiar a En impresión"
+
+Pendiente --> Rech : **Admin rechaza**\n(registra motivo de rechazo)
+
+EP --> Comp : **Admin finaliza**\n"Marcar como Completado"
+
+Pendiente --> [*] : **Solicitante cancela**\n( SoftDelete )
+
+EP --> [*] : **Error de impresión**\n( SoftDelete )
+
+Comp --> [*]
+Rech --> [*]
+
+' === NOTAS ===
+note right of Pendiente
+  **Transiciones válidas:**
+  → En impresión (Admin)
+  → Rechazado (Admin)
+  → Cancelado (Solicitante, solo si es Pendiente)
+end note
+
+note bottom of Comp
+  **Regla de negocio:**
+  Solo se puede cancelar un pedido
+  en estado "Pendiente".
+  Una vez "En impresión" o "Completado",
+  no hay retroceso.
+end note
+
+@enduml

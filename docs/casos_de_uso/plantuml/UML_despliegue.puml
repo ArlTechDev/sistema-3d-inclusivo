@@ -1,0 +1,88 @@
+@startuml UML_Despliegue
+title Diagrama de Despliegue — Topología Física del Sistema\nSistema Web y Electromecánico de Impresión 3D
+
+skinparam backgroundColor #FEFEFE
+skinparam shadowing false
+skinparam nodeFontSize 13
+skinparam arrowFontSize 11
+skinparam defaultFontSize 11
+
+skinparam node {
+    BackgroundColor<<cloud>> #E3F2FD
+    BackgroundColor<<pc>> #FFF3E0
+    BackgroundColor<<device>> #F3E5F5
+    BorderColor #455A64
+}
+
+skinparam artifact {
+    BackgroundColor #FAFAFA
+    BorderColor #78909C
+}
+
+' =============================================
+' NODOS FÍSICOS
+' =============================================
+
+node "Servidor en la Nube" <<cloud>> {
+    artifact "Laravel 13\n(PHP 8.3+)" as laravel
+    artifact "MySQL 8.0" as mysql
+    artifact "Python 3\n(planificado)" as python
+}
+
+node "PC del Solicitante" <<pc>> {
+    artifact "Navegador Web\n(Chrome / Firefox)" as navS
+}
+
+node "PC del Operador" <<pc>> {
+    artifact "Navegador Web\n(Chrome / Firefox)" as navO
+    artifact "Pronterface\n/control USB" as pronterface
+}
+
+node "Placa Controladora\nArduino Mega 2560\n+ RAMPS 1.4" <<device>> as arduino {
+    artifact "Firmware Marlin 1.1.x" as marlin
+    artifact "Drivers A4988" as drivers
+    artifact "Motores NEMA 17 (x3)" as motores
+    artifact "Extrusor MK8" as extrusor
+}
+
+' =============================================
+' CONEXIONES
+' =============================================
+
+cloud "Internet / HTTPS" as internet
+
+navS --> internet : <b>Acceso Web</b>\n(autenticacion Bcrypt)
+navO --> internet : <b>Acceso Web</b>\n(gestion completa)
+
+internet --> laravel : HTTPS\npuerto 443
+laravel --> mysql : TCP\npuerto 3306
+laravel --> python : Llamada\ninterna
+
+pronterface --> arduino : <b>Conexion USB / Serial</b>\n(Cable USB-B)
+arduino --> motores : Senales\nStep/Dir
+arduino --> extrusor : Senal\nde extrusion
+
+' =============================================
+' NOTA TECNICA
+' =============================================
+
+note bottom of arduino
+  **Especificaciones de la Placa Controladora:**
+  - Controlador: Arduino Mega 2560
+  - Placa de expansion: RAMPS 1.4
+  - Drivers: 4x A4988 (X, Y, Z, E)
+  - Firmware: Marlin 1.1.x configurado
+  - Traccion X/Y: Correa GT2 + poleas
+  - Traccion Z: Varilla roscada M8
+  - Material: Filamento PLA 1.75mm
+  - Comunicacion: USB-B Serial (115200 baud)
+end note
+
+note right of internet
+  **Arquitectura Cliente-Servidor:**
+  - Comunicacion 100% HTTP/HTTPS
+  - Sin conexion directa servidor-impresora
+  - El operador actua como intermediario fisico
+end note
+
+@enduml

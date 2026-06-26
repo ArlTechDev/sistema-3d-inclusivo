@@ -1,0 +1,112 @@
+@startuml UML_Diagrama_ERD
+title Diagrama Entidad-Relación de Base de Datos\nSistema Braille Inclusivo
+
+skinparam linetype ortho
+skinparam backgroundColor #FEFEFE
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam classFontSize 12
+skinparam classAttributeFontSize 10
+
+' === ENTIDADES ===
+
+entity "users" as users {
+    * **id** : bigint <<PK>>
+    --
+    * name : varchar(100)
+    * email : varchar <<UQ>>
+    email_verified_at : timestamp?
+    * password : varchar (hashed)
+    * rol : enum('Administrador','Docente')
+    foto_perfil : varchar?
+    remember_token : varchar?
+    created_at : timestamp?
+    updated_at : timestamp?
+    deleted_at : timestamp?
+}
+
+entity "instituciones" as inst {
+    * **id** : bigint <<PK>>
+    --
+    * nombre : varchar(100)
+    * direccion : varchar(200)
+    * telefono : varchar(30)
+    director : varchar?
+    logo : varchar?
+    documento_pdf : varchar?
+    created_at : timestamp?
+    updated_at : timestamp?
+    deleted_at : timestamp?
+}
+
+entity "categorias" as cat {
+    * **id** : bigint <<PK>>
+    --
+    * nombre : varchar
+    descripcion : text?
+    created_at : timestamp?
+    updated_at : timestamp?
+}
+
+entity "recursos" as rec {
+    * **id** : bigint <<PK>>
+    --
+    * titulo : varchar(150)
+    * descripcion : text
+    * gramos_pla : decimal(8,2)
+    * tiempo_minutos : int
+    url_imagen : varchar?
+    url_gcode : varchar?
+    * estado : enum('Activo','Inactivo')
+    categoria_id : bigint <<FK>>?
+    created_at : timestamp?
+    updated_at : timestamp?
+    deleted_at : timestamp?
+}
+
+entity "pedidos" as ped {
+    * **id** : bigint <<PK>>
+    --
+    * user_id : bigint <<FK>>
+    institucion_id : bigint <<FK>>?
+    * estado : enum('Pendiente','En impresión','Completado','Rechazado')
+    * fecha_solicitud : date
+    * total_gramos_pla : decimal(8,2)
+    * costo_total : decimal(8,2)
+    gcode_path : varchar?
+    motivo_rechazo : text?
+    created_at : timestamp?
+    updated_at : timestamp?
+    deleted_at : timestamp?
+}
+
+entity "detalle_pedidos" as det {
+    * **id** : bigint <<PK>>
+    --
+    * pedido_id : bigint <<FK>>
+    * recurso_id : bigint <<FK>>
+    * cantidad : int
+    * gramos_pla : decimal(8,2)
+    * costo_unitario : decimal(8,2)
+    created_at : timestamp?
+    updated_at : timestamp?
+}
+
+entity "configuracion_sistemas" as cfg {
+    * **id** : bigint <<PK>>
+    --
+    * clave : varchar <<UQ>>
+    * valor : varchar
+    descripcion : varchar?
+    created_at : timestamp?
+    updated_at : timestamp?
+}
+
+' === RELACIONES (cardinalidad) ===
+users ||--o{ ped : "1:N  solicita"
+inst ||--o{ ped : "1:N  pertenece"
+ped ||--|{ det : "1:N  contiene"
+rec ||--|{ det : "1:N  incluye"
+cat ||--o{ rec : "1:N  clasifica"
+
+@enduml

@@ -1,8 +1,7 @@
 @startuml UC06_Traducir_Braille
 ' =============================================
 ' UC-06: Traducir Texto a Braille
-' Módulo 2: Traducción Automática Texto→Braille y Generación de Código G
-' NÚCLEO FUNCIONAL (CORE) DEL SISTEMA
+' Módulo 2: Traducción Automática Texto→Braille
 ' Actor: Solicitante
 ' =============================================
 
@@ -11,7 +10,7 @@ skinparam packageStyle rectangle
 skinparam backgroundColor #FEFEFE
 skinparam shadowing false
 
-title UC-06: Traducir Texto a Braille [MÓDULO CORE]
+title UC-06: Traducir Texto a Braille
 
 ' === ACTORES ===
 actor "Usuario\nSolicitante" as S #LightBlue
@@ -21,13 +20,11 @@ actor "Sistema" as SYS #LightYellow
 rectangle "Sistema Braille Inclusivo" {
 
     usecase "Ingresar texto\nen español" as UC06a
-    usecase "Validar caracteres\nUEB Grado 1" as UC06b
+    usecase "Validar caracteres\nCódigo Braille Español" as UC06b
     usecase "Traducir texto\na Braille" as UC06c
-    usecase "Generar coordenadas\nG-Code (X,Y,Z)" as UC06d
-    usecase "Compilar archivo\n.gcode" as UC06e
-    usecase "Mostrar previsión\nvisual 2D" as UC06f
-    usecase "Mostrar error\nde validación" as UC06g
-    usecase "Limitar longitud\nde texto" as UC06h
+    usecase "Mostrar previsión\nvisual 2D" as UC06d
+    usecase "Mostrar error\nde validación" as UC06e
+    usecase "Limitar longitud\nde texto" as UC06f
 
 }
 
@@ -36,14 +33,10 @@ S --> UC06a
 UC06a ..> UC06b : <<include>>
 UC06b ..> UC06c : <<include>>
 UC06c ..> UC06d : <<include>>
-UC06d ..> UC06e : <<include>>
-UC06e ..> UC06f : <<include>>
-UC06b ..> UC06g : <<extend>>
-UC06a ..> UC06h : <<include>>
+UC06b ..> UC06e : <<extend>>
+UC06a ..> UC06f : <<include>>
 
 SYS --> UC06c
-SYS --> UC06d
-SYS --> UC06e
 
 ' === NOTAS ===
 note right of UC06a
@@ -55,46 +48,39 @@ note right of UC06a
   1. Solicitante accede al módulo
      "Traductor de Fichas"
   2. Solicitante ingresa texto en español
-     (ej: "MESA")
+     (ej: "ÑANDÚ CANTÓ MUY FELIZ")
   3. Sistema valida longitud máxima
-  4. Sistema valida caracteres UEB Grado 1
+  4. Sistema valida caracteres del
+     Código Braille Español
   5. Sistema traduce cada carácter a su
      celda Braille correspondiente
-  6. Sistema genera coordenadas (X,Y,Z)
-     para el extrusor
-  7. Sistema compila archivo .gcode
-  8. Sistema muestra previsión 2D
-  9. Solicitante visualiza la ficha
+  6. Sistema muestra previsión 2D
+  7. Solicitante visualiza la ficha
 end note
 
 note right of UC06b
-  **Caracteres soportados (UEB Grado 1):**
-  - Letras: A-Z (sin ñ ni acentos)
+  **Caracteres soportados\n(Código Braille Español — ONCE):**
+  - Letras: A-Z, **Ñ**
+  - Vocales acentuadas: **Á, É, Í, Ó, Ú, Ü**
   - Números: 0-9
   - Puntuación: . , ; : ? ! ( ) " -
   - Espacio
 
   **NO soportados:**
-  - Caracteres acentuados complejos
   - Símbolos especiales (@ # $ % &)
   - Estenografía Braille (Grado 2)
 end note
 
-note right of UC06d
-  **Generación G-Code:**
-  - Coordenadas absolutas (G0/G1)
-  - Control de extrusión relativo (G92 E0)
-  - Compatible con Marlin 1.1.x
-  - Parámetros: volumen base + posición
-    de puntos Braille en relieve
-end note
-
-note bottom of UC06f
+note bottom of UC06d
   **Previsión 2D muestra:**
   - Representación visual de la ficha
   - Posición de los puntos Braille
   - Dimensiones de la placa base
   - Permite confirmar antes de solicitar
+
+  **Nota:** La generación del G-Code
+  se realiza en UC-07 al confirmar
+  el pedido.
 end note
 
 @enduml

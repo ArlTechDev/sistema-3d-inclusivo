@@ -24,32 +24,35 @@ rectangle "Sistema Braille Inclusivo" {
     usecase "Registrar\nsolicitud" as UC07c
     usecase "Calcular consumo\nPLA (gramos)" as UC07d
     usecase "Estimar costo\nde producción" as UC07e
-    usecase "Generar G-Code\nasociado al pedido" as UC07f
-    usecase "Asignar estado\n'Pendiente'" as UC07g
-    usecase "Mostrar\nconfirmación" as UC07h
-    usecase "Ver mis\nsolicitudes" as UC07i
-    usecase "Cancelar solicitud\n(solo Pendiente)" as UC07j
+    usecase "Generar coordenadas\nG-Code (X,Y,Z)" as UC07f
+    usecase "Compilar archivo\n.gcode" as UC07g
+    usecase "Asignar estado\n'Pendiente'" as UC07h
+    usecase "Mostrar\nconfirmación" as UC07i
+    usecase "Ver mis\nsolicitudes" as UC07j
+    usecase "Cancelar solicitud\n(solo Pendiente)" as UC07k
 
 }
 
 ' === CONEXIONES ===
 S --> UC07a
 S --> UC07b
-S --> UC07i
 S --> UC07j
+S --> UC07k
 
 UC07a ..> UC07c : <<include>>
 UC07c ..> UC07d : <<include>>
 UC07c ..> UC07e : <<include>>
-UC07c ..> UC07f : <<include>>
-UC07c ..> UC07g : <<include>>
+UC07d ..> UC07f : <<include>>
+UC07f ..> UC07g : <<include>>
 UC07c ..> UC07h : <<include>>
+UC07h ..> UC07i : <<include>>
 
 UC07b ..> UC07c : <<extend>>
 
 SYS --> UC07d
 SYS --> UC07e
 SYS --> UC07f
+SYS --> UC07g
 
 ' === NOTAS ===
 note right of UC07a
@@ -58,6 +61,9 @@ note right of UC07a
   2. Solicitante confirma clicando
      "Solicitar Impresión"
   3. Sistema registra la solicitud
+  4. Sistema genera el G-Code
+  5. Sistema compila el archivo .gcode
+  6. Sistema asigna estado 'Pendiente'
 
   **Flujo desde UC-03 (Catálogo):**
   1. Solicitante selecciona recurso
@@ -76,20 +82,28 @@ note right of UC07d
   (Costo/gramo parametrizable por Admin)
 end note
 
-note right of UC07c
-  **Datos del pedido:**
-  - ID del solicitante
-  - ID de la institución
-  - Recurso solicitado
-  - Fecha de solicitud
-  - Cantidad
-  - Consumo PLA estimado (gramos)
-  - Costo estimado (Bs.)
-  - Estado: Pendiente
-  - G-Code asociado
+note right of UC07f
+  **Generación G-Code:**
+  - Coordenadas absolutas (G0/G1)
+  - Control de extrusión relativo (G92 E0)
+  - Compatible con Marlin 1.1.x
+  - Parámetros: volumen base + posición
+    de puntos Braille en relieve
+
+  **Nota:** La generación del G-Code
+  ocurre SOLO al confirmar el pedido,
+  NO en UC-06 (traducción).
 end note
 
-note right of UC07j
+note right of UC07g
+  **Compilación:**
+  - Se genera archivo .gcode válido
+  - Se almacena en disco del servidor
+  - Ruta: public/recursos/gcode/
+  - Se asocia al pedido en BD
+end note
+
+note right of UC07k
   **Cancelación:**
   Solo permitida si el estado es "Pendiente".
   Si el pedido ya está "En impresión" o
