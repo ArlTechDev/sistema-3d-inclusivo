@@ -50,7 +50,7 @@
                     <label for="rol" class="form-label">Rol</label>
                     <select id="rol" name="rol" class="form-select @error('rol') is-invalid @enderror">
                         <option value="Administrador" {{ old('rol', $usuario->rol) === 'Administrador' ? 'selected' : '' }}>Administrador</option>
-                        <option value="Docente" {{ old('rol', $usuario->rol) === 'Docente' ? 'selected' : '' }}>Docente</option>
+                        <option value="Solicitante" {{ old('rol', $usuario->rol) === 'Solicitante' ? 'selected' : '' }}>Solicitante</option>
                     </select>
                     @error('rol')
                         <div class="invalid-feedback">{{ $message }}</div>

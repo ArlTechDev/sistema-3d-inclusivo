@@ -17,7 +17,7 @@ entity "users" as users {
     * email : varchar <<UQ>>
     email_verified_at : timestamp?
     * password : varchar (hashed)
-    * rol : enum('Administrador','Docente')
+    * rol : enum('Administrador','Solicitante')
     foto_perfil : varchar?
     remember_token : varchar?
     created_at : timestamp?

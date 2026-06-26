@@ -16,7 +16,7 @@ class UserController extends Controller
         'name' => 'required|string|max:100',
         'email' => 'required|email',
         'password' => 'nullable|string|min:8|confirmed',
-        'rol' => 'required|in:Administrador,Docente',
+        'rol' => 'required|in:Administrador,Solicitante',
         'foto_perfil' => 'nullable|image|max:2048',
     ];
 
