@@ -19,7 +19,7 @@ enum EstadoRecurso {
 
 enum EstadoPedido {
     Pendiente
-    En impresion
+    En impresión
     Completado
     Rechazado
 }
@@ -63,6 +63,7 @@ class Recurso <<SoftDeletes>> {
     +url_imagen : string?
     +url_gcode : string?
     +estado : EstadoRecurso
+    +categoria_id : bigint <<FK>>?
     +created_at : timestamp?
     +updated_at : timestamp?
     +deleted_at : timestamp?
@@ -76,7 +77,7 @@ class Categoria {
     +updated_at : timestamp?
 }
 
-class Pedido {
+class Pedido <<SoftDeletes>> {
     +id : bigint <<PK>>
     +user_id : bigint <<FK>>
     +institucion_id : bigint <<FK>>
@@ -88,6 +89,7 @@ class Pedido {
     +motivo_rechazo : text?
     +created_at : timestamp?
     +updated_at : timestamp?
+    +deleted_at : timestamp?
 }
 
 class DetallePedido {

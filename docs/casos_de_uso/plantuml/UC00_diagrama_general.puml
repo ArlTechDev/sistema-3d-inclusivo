@@ -77,8 +77,8 @@ A --> UC08
 A --> UC09
 A --> UC10
 
-' === RELACIONES INCLUDE/EXTEND ===
-UC06 ..> UC07 : <<include>>
+' === RELACIONES ===
+UC06 ..> UC07 : <<extend>>
 UC07 ..> UC09 : <<extend>>
 
 ' === NOTAS ===
