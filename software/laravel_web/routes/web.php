@@ -7,7 +7,9 @@ use App\Http\Controllers\InstitucionController;
 use App\Http\Controllers\UserController;
 
 Route::get('login', [AuthController::class, 'loginForm'])->name('login');
-Route::post('login', [AuthController::class, 'login'])->name('login.post');
+Route::post('login', [AuthController::class, 'login'])
+    ->name('login.post')
+    ->middleware('throttle:login');
 Route::post('logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
 
 Route::middleware('auth')->group(function () {
@@ -17,10 +19,12 @@ Route::middleware('auth')->group(function () {
 
     // Recursos: Rutas personalizadas ANTES del resource
     Route::get('recursos/exportar/pdf', [RecursoController::class, 'exportarPdf'])
-        ->name('recursos.pdf');
+        ->name('recursos.pdf')
+        ->middleware('throttle:exports');
 
     Route::get('recursos/exportar/excel', [RecursoController::class, 'exportarExcel'])
-        ->name('recursos.excel');
+        ->name('recursos.excel')
+        ->middleware('throttle:exports');
 
     Route::get('recursos/papelera', [RecursoController::class, 'papelera'])
         ->name('recursos.papelera')
@@ -47,10 +51,12 @@ Route::middleware('auth')->group(function () {
 
     // Instituciones: Rutas personalizadas ANTES del resource
     Route::get('instituciones/exportar/pdf', [InstitucionController::class, 'exportarPdf'])
-        ->name('instituciones.pdf');
+        ->name('instituciones.pdf')
+        ->middleware('throttle:exports');
 
     Route::get('instituciones/exportar/excel', [InstitucionController::class, 'exportarExcel'])
-        ->name('instituciones.excel');
+        ->name('instituciones.excel')
+        ->middleware('throttle:exports');
 
     Route::get('instituciones/papelera', [InstitucionController::class, 'papelera'])
         ->name('instituciones.papelera')
