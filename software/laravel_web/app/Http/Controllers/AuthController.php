@@ -21,7 +21,16 @@ class AuthController extends Controller
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-            return redirect()->intended(route('recursos.index'));
+
+            $intended = $request->session()->pull('url.intended', route('recursos.index'));
+            $host = parse_url($intended, PHP_URL_HOST);
+            $appHost = parse_url(config('app.url'), PHP_URL_HOST);
+
+            if ($host && $host !== $appHost) {
+                return redirect()->route('recursos.index');
+            }
+
+            return redirect($intended);
         }
 
         return back()->withErrors([
