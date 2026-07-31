@@ -15,7 +15,7 @@ class UserController extends Controller
     private array $reglas = [
         'name' => 'required|string|max:100',
         'email' => 'required|email',
-        'password' => 'nullable|string|min:8|confirmed',
+        'password' => 'nullable|string|min:8|confirmed|regex:/[A-Z]/|regex:/[0-9]/|regex:/[@$!%*#?&]/',
         'rol' => 'required|in:Administrador,Solicitante',
         'foto_perfil' => 'nullable|image|max:2048',
     ];
@@ -29,6 +29,7 @@ class UserController extends Controller
         'password.required' => 'La contraseña es obligatoria.',
         'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
         'password.confirmed' => 'Las contraseñas no coinciden.',
+        'password.regex' => 'La contraseña debe contener al menos una mayúscula, un número y un símbolo.',
         'rol.required' => 'El rol es obligatorio.',
         'rol.in' => 'El rol no es válido.',
         'foto_perfil.image' => 'La foto de perfil debe ser una imagen.',
@@ -63,7 +64,7 @@ class UserController extends Controller
     {
         $reglas = array_merge($this->reglas, [
             'email' => 'required|email|unique:users,email',
-            'password' => 'required|string|min:8|confirmed',
+            'password' => 'required|string|min:8|confirmed|regex:/[A-Z]/|regex:/[0-9]/|regex:/[@$!%*#?&]/',
         ]);
 
         $data = $request->validate($reglas, $this->mensajes);
