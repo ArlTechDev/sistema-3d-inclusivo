@@ -44,6 +44,7 @@ software/laravel_web/public/vendor/
 
 # Archivos de backup
 *.backup
+*.zip
 auth.json
 
 # Archivos temporales de Microsoft Word
