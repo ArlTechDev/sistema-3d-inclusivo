@@ -122,8 +122,9 @@
 | Campo | Valor |
 |---|---|
 | Arquitectura | Plataforma Web Responsiva (Cliente-Servidor MVC) |
-| Stack | Laravel 13, PHP 8.3+, MySQL, AdminLTE 3, Python 3 |
+| Stack | Laravel 13, PHP 8.3+, MySQL, AdminLTE 3 (traductor Braille→G-Code en PHP puro; `python_core` archivado) |
 | Conectividad | Online 100% (backend en la nube) |
+| Metodología | Scrum (sprints de 2 semanas) + Kanban/Trello, enfoque mixto sociocomunitario productivo |
 | Hardware de control | Arduino Mega 2560 + RAMPS 1.4 + Marlin 1.1.x |
 | Matriz de seguridad | Auth Bcrypt, roles Solicitante/Administrador |
 | Flujo de datos | Web → G-Code en servidor → descarga a PC → impresora vía USB |

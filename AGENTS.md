@@ -62,6 +62,12 @@ MySQL expuesto en puerto **3307** (no el 3306 por defecto).
 
 ## Notas de Arquitectura
 
+### Metodología de Desarrollo (según PSCP)
+- **Scrum**: sprints de 2 semanas, backlog priorizado por el equipo, reunión diaria breve y retrospectiva al final de cada sprint.
+- **Kanban complementario**: tablero Trello con columnas «Por Hacer», «En Progreso», «Hecho» + «Revisión» y «Bloqueado».
+- **Enfoque mixto (cuantitativo-cualitativo)** y paradigma sociocomunitario productivo: encuestas (12 docentes, 8 estudiantes), entrevistas semiestructuradas (3 especialistas IBC, 4 docentes), observación participante y análisis FODA.
+- **Pruebas**: suite PHPUnit sobre el traductor (100% de casos) + pruebas de integración; calibración metrológica del hardware (regla patrón 100 mm, calibre ±0.05 mm, repetibilidad G28).
+
 ### Laravel Web
 - **Versión real**: Laravel 13 / PHP ^8.3 (imagen Docker 8.4). Verificar con `php artisan --version` — no copiar versiones del documento sin comprobar.
 - **Roles**: Columna `users.rol` (`Administrador`, `Solicitante`). Middleware `role` en `bootstrap/app.php`.
