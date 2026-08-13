@@ -49,12 +49,12 @@ docker exec -it laravel_app php artisan migrate:fresh --seed
 | Ejecutar tests | `composer test` |
 | Formatear código PHP | `./vendor/bin/pint` |
 | Compilar frontend | `npm run build` |
-| Usuario de prueba (seed) | `php artisan db:seed` — crea `Administrador` y `Docente` |
+| Usuario de prueba (seed) | `php artisan db:seed` — crea `Administrador` y `Solicitante` |
 
 ## Roles
 
 - **Administrador**: gestión completa (recursos, instituciones, usuarios, pedidos, papelera, exportaciones PDF/Excel).
-- **Docente / Solicitante**: explora el catálogo público de recursos táctiles, solicita impresiones (con texto personalizado opcional → G-Code) y sigue el estado de sus pedidos.
+- **Solicitante** (Docentes, Directivos o Tutores de las instituciones): explora el catálogo público de recursos táctiles, solicita impresiones (con texto personalizado opcional → G-Code) y sigue el estado de sus pedidos.
 
 ## Módulos principales
 
