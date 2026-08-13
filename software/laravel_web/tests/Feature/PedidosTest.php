@@ -313,4 +313,103 @@ class PedidosTest extends TestCase
         $response->assertOk();
         $response->assertHeader('content-disposition', 'attachment; filename=prueba.gcode');
     }
+
+    public function test_solicitante_cancela_su_pedido_pendiente(): void
+    {
+        $this->crearPrecioGramo();
+        $solicitante = $this->crearSolicitante();
+        $institucion = $this->crearInstitucion();
+        $recurso = $this->crearRecurso();
+
+        $response = $this->actingAs($solicitante)->post(route('pedidos.store'), [
+            'recurso_id' => $recurso->id,
+            'institucion_id' => $institucion->id,
+            'cantidad' => 1,
+        ]);
+        $response->assertSessionHasNoErrors();
+
+        $pedido = Pedido::first();
+
+        $this->actingAs($solicitante)
+            ->delete(route('pedidos.cancelar', $pedido))
+            ->assertRedirect(route('pedidos.mis'));
+
+        $this->assertSoftDeleted('pedidos', ['id' => $pedido->id]);
+    }
+
+    public function test_solicitante_no_cancela_pedido_de_otro_usuario(): void
+    {
+        $this->crearPrecioGramo();
+        $solicitanteA = $this->crearSolicitante();
+        $solicitanteB = User::create([
+            'name' => 'Otro Docente',
+            'email' => 'otro@test.com',
+            'password' => bcrypt('password'),
+            'rol' => 'Solicitante',
+        ]);
+        $institucion = $this->crearInstitucion();
+        $recurso = $this->crearRecurso();
+
+        $this->actingAs($solicitanteA)->post(route('pedidos.store'), [
+            'recurso_id' => $recurso->id,
+            'institucion_id' => $institucion->id,
+            'cantidad' => 1,
+        ]);
+        $pedido = Pedido::first();
+
+        $this->actingAs($solicitanteB)
+            ->delete(route('pedidos.cancelar', $pedido))
+            ->assertForbidden();
+
+        $this->assertDatabaseHas('pedidos', ['id' => $pedido->id, 'deleted_at' => null]);
+    }
+
+    public function test_no_se_cancela_pedido_en_impresion(): void
+    {
+        $this->crearPrecioGramo();
+        $solicitante = $this->crearSolicitante();
+        $institucion = $this->crearInstitucion();
+        $recurso = $this->crearRecurso();
+
+        $pedido = Pedido::create([
+            'user_id' => $solicitante->id,
+            'institucion_id' => $institucion->id,
+            'estado' => 'En impresión',
+            'fecha_solicitud' => now(),
+            'total_gramos_pla' => 10,
+            'costo_total' => 0.50,
+        ]);
+
+        $this->actingAs($solicitante)
+            ->delete(route('pedidos.cancelar', $pedido))
+            ->assertRedirect(route('pedidos.mis'))
+            ->assertSessionHasErrors('cancelar');
+
+        $this->assertDatabaseHas('pedidos', ['id' => $pedido->id, 'estado' => 'En impresión', 'deleted_at' => null]);
+    }
+
+    public function test_solicitante_ve_sus_solicitudes_y_admin_es_redirigido(): void
+    {
+        $this->crearPrecioGramo();
+        $solicitante = $this->crearSolicitante();
+        $admin = $this->crearAdmin();
+        $institucion = $this->crearInstitucion();
+        $recurso = $this->crearRecurso();
+
+        $this->actingAs($solicitante)->post(route('pedidos.store'), [
+            'recurso_id' => $recurso->id,
+            'institucion_id' => $institucion->id,
+            'cantidad' => 1,
+        ]);
+
+        $this->actingAs($solicitante)
+            ->get(route('pedidos.mis'))
+            ->assertOk()
+            ->assertSee('Ficha de vocabulario')
+            ->assertSee('Pendiente');
+
+        $this->actingAs($admin)
+            ->get(route('pedidos.mis'))
+            ->assertRedirect(route('pedidos.index'));
+    }
 }

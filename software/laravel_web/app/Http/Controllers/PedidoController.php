@@ -181,4 +181,41 @@ class PedidoController extends Controller
     {
         return Excel::download(new PedidosExport, 'pedidos.xlsx');
     }
+
+    /**
+     * «Mis solicitudes» del Solicitante: sus pedidos, con los cancelados visibles (SoftDelete).
+     */
+    public function mis()
+    {
+        // El panel de gestión es del Administrador (pedidos.index).
+        if (auth()->user()->rol === 'Administrador') {
+            return redirect()->route('pedidos.index');
+        }
+
+        $pedidos = Pedido::with(['detalles.recurso'])
+            ->where('user_id', auth()->id())
+            ->withTrashed()
+            ->latest('fecha_solicitud')
+            ->get();
+
+        return view('pedidos.mis', compact('pedidos'));
+    }
+
+    /**
+     * El Solicitante cancela su propia solicitud Pendiente (UC-08, SoftDelete).
+     */
+    public function cancelar(Pedido $pedido)
+    {
+        abort_if($pedido->user_id !== auth()->id(), 403, 'No puedes cancelar una solicitud de otro usuario.');
+
+        if ($pedido->estado !== 'Pendiente' || $pedido->trashed()) {
+            return redirect()->route('pedidos.mis')->withErrors([
+                'cancelar' => 'Solo se puede cancelar una solicitud en estado Pendiente.',
+            ]);
+        }
+
+        $pedido->delete();
+
+        return redirect()->route('pedidos.mis')->with('success', 'Solicitud cancelada correctamente.');
+    }
 }

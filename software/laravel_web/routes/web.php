@@ -32,6 +32,12 @@ Route::middleware('auth')->group(function () {
     Route::get('pedidos/crear', [PedidoController::class, 'create'])
         ->name('pedidos.create');
 
+    Route::get('pedidos/mis', [PedidoController::class, 'mis'])
+        ->name('pedidos.mis');
+
+    Route::delete('pedidos/{pedido}/cancelar', [PedidoController::class, 'cancelar'])
+        ->name('pedidos.cancelar');
+
     Route::post('pedidos', [PedidoController::class, 'store'])
         ->name('pedidos.store');
 

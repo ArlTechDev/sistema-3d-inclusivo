@@ -172,6 +172,7 @@
             </a>
             <div class="usuario">
                 @auth
+                    <a href="{{ route('pedidos.mis') }}" class="boton boton-sutil">Mis solicitudes</a>
                     <span class="nombre">{{ auth()->user()->name }}</span>
                     <form method="POST" action="{{ route('logout') }}" class="d-inline">
                         @csrf
