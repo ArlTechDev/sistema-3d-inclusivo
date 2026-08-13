@@ -56,6 +56,10 @@ Route::middleware('auth')->group(function () {
         ->name('recursos.excel')
         ->middleware('role:Administrador');
 
+    Route::get('recursos/gcode/{recurso}', [RecursoController::class, 'descargarGCode'])
+        ->name('recursos.gcode')
+        ->middleware('role:Administrador');
+
     Route::get('recursos/papelera', [RecursoController::class, 'papelera'])
         ->name('recursos.papelera')
         ->middleware('role:Administrador');

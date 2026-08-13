@@ -111,6 +111,17 @@ class RecursoController extends Controller
             ->with('success', 'Recurso enviado a la papelera.');
     }
 
+    /**
+     * Descarga del archivo G-Code del recurso, exclusiva del Administrador.
+     * El archivo vive en el disco local (privado); no se expone por URL pública.
+     */
+    public function descargarGCode(Recurso $recurso)
+    {
+        abort_if(! $recurso->url_gcode || ! Storage::disk('local')->exists($recurso->url_gcode), 404, 'El archivo G-Code no está disponible.');
+
+        return Storage::disk('local')->download($recurso->url_gcode);
+    }
+
     public function papelera()
     {
         $recursos = Recurso::onlyTrashed()->get();

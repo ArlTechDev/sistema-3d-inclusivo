@@ -6,6 +6,7 @@ use App\Models\Categoria;
 use App\Models\Recurso;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class CatalogoTest extends TestCase
@@ -119,5 +120,23 @@ class CatalogoTest extends TestCase
         $response->assertOk();
         $response->assertSee('Solicitar Impresión de Recurso');
         $response->assertDontSee('adminlte');
+    }
+
+    public function test_descarga_de_gcode_del_recurso_solo_para_administrador(): void
+    {
+        Storage::fake('local');
+
+        $recurso = $this->crearRecurso('Recurso con G-Code');
+        $ruta = 'recursos/gcode/ejemplo.gcode';
+        Storage::disk('local')->put($ruta, "G21\nG28\n");
+        $recurso->update(['url_gcode' => $ruta]);
+
+        $solicitante = User::factory()->create(['rol' => 'Solicitante']);
+        $this->actingAs($solicitante)->get(route('recursos.gcode', $recurso))->assertForbidden();
+
+        $admin = $this->crearAdmin();
+        $this->actingAs($admin)->get(route('recursos.gcode', $recurso))
+            ->assertOk()
+            ->assertDownload('ejemplo.gcode');
     }
 }

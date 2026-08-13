@@ -73,4 +73,4 @@ La suite cubre: autenticación, CRUD con papelera (trash/restore/force-delete), 
 
 ## Salida del G-Code
 
-Los archivos `.gcode` se generan y almacenan en el disco público (`storage/app/public/pedidos/gcode/`). La impresión es **air-gapped**: el G-Code se transfiere manualmente a la impresora vía SD/USB — la máquina CNC no tiene conexión de red.
+Los archivos `.gcode` se generan en el **disco local privado** (`storage/app/private/pedidos/gcode/` y `recursos/gcode/`) y se descargan únicamente por el Administrador a través de rutas autenticadas (`pedidos.gcode`, `recursos.gcode`) — nunca se exponen por URL pública. La impresión es **air-gapped**: el G-Code se transfiere manualmente a la impresora vía SD/USB — la máquina CNC no tiene conexión de red.

@@ -59,7 +59,7 @@
                     @if($recurso->url_gcode)
                         <div class="mb-2">
                             <small class="text-muted">Archivo actual:</small>
-                            <a href="{{ asset('storage/' . $recurso->url_gcode) }}" class="btn btn-sm btn-info" download>Descargar G-code</a>
+                            <a href="{{ route('recursos.gcode', $recurso) }}" class="btn btn-sm btn-info">Descargar G-code</a>
                         </div>
                     @endif
                     <div class="input-group">
