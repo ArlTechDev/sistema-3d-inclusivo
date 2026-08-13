@@ -84,13 +84,14 @@ Las 17 figuras del documento corresponden por orden de inserción a las imágene
 - [ ] Llenar las 10 secciones «No definido» con los borradores (10 §5.2–§5.9), marcando `[PENDIENTE DE EJECUCIÓN FÍSICA]` donde aplique
 - [ ] Poner la bibliografía (10 §5.10)
 - [ ] Completar la Tabla 3 (alfabeto Braille) — 27 letras + dígitos + puntuación (09 C4)
-- [ ] Tabla 5: Laravel 13 / PHP 8.3, fila Python → Service PHP (09 A2)
+- [ ] Tabla 5: Laravel 13 / PHP 8.3, fila Python → Service PHP (09 A2) **y los 9 hallazgos N1–N9 de la §7**
 - [ ] Tabla 4 / Figura 16: motores NEMA 17 **x4** (09 A1)
 - [ ] Reemplazar las 7 figuras de la tabla del §4 por los PNG re-renderizados
 - [ ] Aplicar las correcciones de encuadre conceptual «recursos táctiles» (09 §11.2, 9 filas)
 - [ ] Figura 15: verificar que muestra «Solicitante cancela (SoftDelete)» y NO «Error de impresión»
 - [ ] Figura 13: verificar que las estadísticas aparecen como `[PENDIENTE]`
 - [ ] Declarar la metodología Scrum/Kanban (AGENTS.md §Metodología)
+- [ ] Eliminar los residuos «Python» del cuerpo y las Tablas 9/10/11 (N2–N9 de la §7)
 
 **En el repo (ya aplicado):**
 - [ ] `git status` limpio en `main`
@@ -105,3 +106,23 @@ Las 17 figuras del documento corresponden por orden de inserción a las imágene
 - **UC-10** queda honesto: reportes = exports PDF/Excel existentes; estadísticas de consumo/gráficos = `[PENDIENTE]` (no inventar funcionalidad inexistente en la defensa).
 - **Motores**: el despliegue decía x3 y el cuerpo del documento mezclaba 3/4; el estándar del proyecto es **x4** (X, Y, Z + extrusor MK8) — verificar que Tabla 4 y el texto del .docx digan x4.
 - La previsión 2D (RF-08) no está implementada: el diagrama de secuencia UC-06 la marca `[PENDIENTE]`; si el tribunal la exige, es la siguiente feature candidata.
+
+## 7. Segunda pasada de consistencia (2026-08) — hallazgos N1–N9
+
+Barrido sistemático de las 13 tablas y el cuerpo completo del `.docx` tras la primera pasada (09/10/11). Nueve hallazgos **no documentados previamente**; todos son residuales de la decisión **PHP puro** o de la versión real del frontend. Textos de reemplazo listos para pegar.
+
+| # | Ubicación (.docx) | Texto actual | Texto correcto |
+|---|---|---|---|
+| N1 | Tabla 5, fila AdminLTE | `AdminLTE + Bootstrap 5` | `AdminLTE 3 + Bootstrap 4` (verificado: adminlte 3.2.0 usa bootstrap ^4.6.1; el anexo 02 ya dice Bootstrap 4) |
+| N2 | Párrafo «Software (Open Source):…» | `Laravel/PHP, MySQL, Python, Marlin 1.1.x, Docker, Git/GitHub, VS Code` | quitar `Python, ` (el traductor es Service PHP) |
+| N3 | Tabla 9 (plan de acción), Fase 6, col. Recursos | `Python/PHP, matrices Braille UEB` | `PHP (Service BrailleTranslator), matrices Braille` |
+| N4 | Tabla 10 (cronograma), F6, col. Entregable | `Script Python + pruebas unitarias 100%` | `Service PHP (BrailleTranslator) + pruebas unitarias 100%` |
+| N5 | Tabla 11 (presupuesto), fila Software Open Source | `Marlin, Laravel, MySQL, Python, Docker, AdminLTE` | quitar `Python, ` |
+| N6 | Párrafo «Nota sobre los recursos a costo cero: … Todo el software empleado (…` | `(Marlin, Laravel, MySQL, Python, Docker, …)` | quitar `Python, ` |
+| N7 | Tabla 5, fila VS Code, col. Rol | `Editor principal de código para backend, frontend y Python` | `Editor principal de código para backend y frontend` |
+| N8 | Párrafo del repositorio GitHub | `el repositorio de código fuente del sistema web (Laravel/PHP, Python, JavaScript)` | `(Laravel/PHP, JavaScript)` |
+| N9 | Párrafo del Diagrama de Despliegue | `Laravel 13, MySQL 8.0 y el módulo Python (planificado)` | `Laravel 13, MySQL 8.0 y el Service BrailleTranslator (PHP)` |
+
+**Ya documentado en pasadas previas (no repetir):** fila «Python 3.x» de la Tabla 5 (09 A2 / 11 §6) y «Motores NEMA 17 (×3)» de la Tabla 4 (09 A1 → ×4).
+
+**Verificaciones de esta pasada que salieron correctas:** Tabla 11 cierra en ~1.400 Bs (y ×4 en motores), Tabla 13 (UC-00…UC-10) coincide con el sistema, RNF-01…10 alineados, Tabla 10 F5 steps/mm X=80 correcto, sin menciones de registro público, cronograma mayo–septiembre 2026 coherente con el Gantt.
