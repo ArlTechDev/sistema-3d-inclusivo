@@ -216,6 +216,7 @@ def main():
             # primero es DEDICATORIA, segundo AGRADECIMIENTOS
             nuevo = dedicatoria if i < 2 else agradecimientos
             if reemplazar_en_parrafo(p, p.text.strip(), nuevo):
+                p.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
                 ok += 1
                 print(f"  ✓ {'DEDICATORIA' if i < 2 else 'AGRADECIMIENTOS'} completado")
     print("  (si faltaron, se marcan en el reporte)")
@@ -334,6 +335,7 @@ def main():
                     break
             if clave:
                 if reemplazar_en_parrafo(p, "No definido.", BORRADORES[clave]):
+                    p.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
                     ok += 1
                     insertados += 1
                     print(f"  ✓ [{i}] {seccion[:45]} → borrador aplicado")
