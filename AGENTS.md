@@ -52,6 +52,14 @@ docker exec -it laravel_app php artisan migrate:fresh --seed
 ```
 MySQL expuesto en puerto **3307** (no el 3306 por defecto).
 
+## Migración a otra PC (offline)
+```bash
+bash scripts/docker/exportar_proyecto.sh   # origen (Arch/Linux) → scripts/docker/salida/
+# destino Windows: .\scripts\docker\importar_windows.ps1 -Directorio <ruta>
+# destino Linux:   bash scripts/docker/importar_linux.sh
+```
+Guía completa: `docs/anexos/12_guia_migracion_docker.md`. El compose fija `image: laravel_web-app:latest` y `name: laravel_web_db_data` para que la migración no dependa del nombre de la carpeta destino.
+
 ## Roles del Equipo
 
 | Rol | Alcance | Directorio Principal |

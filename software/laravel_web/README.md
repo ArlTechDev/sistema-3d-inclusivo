@@ -41,6 +41,16 @@ docker exec -it laravel_app php artisan migrate:fresh --seed
 # MySQL disponible en localhost:3307
 ```
 
+### Migrar a otra PC (offline, sin internet)
+
+```bash
+bash scripts/docker/exportar_proyecto.sh        # origen: empaqueta imágenes + BD + proyecto
+# destino Windows → .\scripts\docker\importar_windows.ps1 -Directorio <ruta>
+# destino Linux   → bash scripts/docker/importar_linux.sh
+```
+
+Guía completa con troubleshooting: [`docs/anexos/12_guia_migracion_docker.md`](../../docs/anexos/12_guia_migracion_docker.md).
+
 ## Comandos útiles
 
 | Tarea | Comando |

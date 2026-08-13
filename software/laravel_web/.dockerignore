@@ -1,0 +1,35 @@
+# Dependencias (viajan en el bind mount ./:/var/www, no en la imagen)
+vendor/
+node_modules/
+
+# Entorno y secretos
+.env
+.env.*
+!.env.example
+
+# Git y control de versiones
+.git/
+.gitattributes
+
+# Cache y logs de Laravel
+storage/logs/*
+storage/framework/cache/*
+storage/framework/sessions/*
+storage/framework/views/*
+storage/app/private/*
+storage/app/public/*
+!storage/app/public/.gitignore
+
+# Artefactos de migración Docker (scripts/docker)
+*.tar
+*.tar.gz
+*.sql
+
+# Base de datos local (sqlite de capturas)
+database/*.sqlite
+database/*.sqlite-journal
+
+# Editor/IDE
+.idea/
+.vscode/
+*.swp

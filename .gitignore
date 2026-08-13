@@ -55,3 +55,6 @@ auth.json
 Homestead.json
 Homestead.yaml
 software/laravel_web/.env.capturas
+
+# Artefactos de migración Docker (generados por scripts/docker/exportar_proyecto.sh)
+scripts/docker/salida/
