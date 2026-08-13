@@ -378,6 +378,43 @@ def main():
         faltas.append("Cabecera FUENTES DE INFORMACIÓN Y BIBLIOGRAFÍA")
         print("  ✗ NO ENCONTRADO: cabecera de bibliografía")
 
+    print("\n== 9. Tabla 3: alfabeto completo (C4) ==")
+    # epígrafe real (número vacío) + índice TOC se auto-regenera con F9
+    reemplazar("Tabla .Correspondencias del alfabeto en Braille Grado 1 (español).",
+               "Tabla 3. Correspondencias del alfabeto en Braille Grado 1 (español).",
+               "C4: epígrafe de Tabla 3 (número vacío)")
+    for tbl in doc.tables:
+        if any("Letras" in c.text for r in tbl.rows for c in r.cells):
+            # header col5 → u–z y ñ
+            h = tbl.rows[0].cells[4].paragraphs[0]
+            if "u–y" in h.text:
+                h.runs[0].text = h.text.replace("u–y", "u–z y ñ")
+                for r in h.runs[1:]:
+                    r.text = ""
+                ok += 1
+                print("  ✓ Tabla 3: header col5 → «Letras u–z y ñ»")
+            # filas: z, ñ, dígitos (con ⠼) y puntuación (valores del mapa real del traductor)
+            FILAS_T3 = [
+                ["z = ⠵", "ñ = ⠻", "", "", ""],
+                ["1 = ⠼⠁", "2 = ⠼⠃", "3 = ⠼⠉", "4 = ⠼⠙", "5 = ⠼⠑"],
+                ["6 = ⠼⠋", "7 = ⠼⠛", "8 = ⠼⠓", "9 = ⠼⠊", "0 = ⠼⠚"],
+                [". = ⠲", ", = ⠂", "; = ⠆", ": = ⠒", "? = ⠦"],
+                ["! = ⠖", "- = ⠤", "' = ⠄", "¿ = ⠦", '" = ⠶'],
+            ]
+            for fila in FILAS_T3:
+                row = tbl.add_row()
+                for ci, txt in enumerate(fila):
+                    if txt:
+                        run = row.cells[ci].paragraphs[0].add_run(txt)
+                        run.font.name = "Arial"
+                        run.font.size = Pt(11)
+            ok += 1
+            print("  ✓ Tabla 3: 5 filas añadidas (27 letras + dígitos + puntuación)")
+            break
+    else:
+        faltas.append("Tabla 3 (alfabeto Braille)")
+        print("  ✗ NO ENCONTRADO: Tabla 3")
+
     # ----------------------------------------------------------------------
     doc.save(SRC)
     print("\n" + "=" * 60)
