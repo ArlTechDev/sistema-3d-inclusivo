@@ -56,7 +56,7 @@ note right of UC05b
   3. Admin ingresa: nombre, email,
      contraseña, confirmación
   4. Admin selecciona rol:
-     - Solicitante (Docente)
+     - Solicitante (Docente / Directivo / Tutor)
      - Administrador
   5. Admin sube foto (opcional, máx 2MB)
   6. Sistema valida email único

@@ -1,5 +1,7 @@
 # 11 — Revisión del Código vs. Documento y Recomendaciones
 
+> **Actualización (2026-08)**: la fase de código quedó completa (traductor PHP, pedidos, cancelación, layouts, exports admin-only, G-Codes privados, 47 tests). La revisión de consistencia de la documentación (figuras/UML re-renderizados) está en `14_revision_consistencia_final.md`.
+
 ## Sistema Braille Inclusivo — PSCP
 ## Documentos comparados: `DocumentoFinalPSCP3DJulio24.docx` ↔ `software/laravel_web/` + `software/python_core/`
 ## Fecha de revisión: julio 2026 · Método: lectura de código, migraciones, rutas, tests y diagramas PlantUML

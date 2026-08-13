@@ -85,7 +85,7 @@ UC07 ..> UC09 : <<extend>>
 note bottom of UC06
   MÓDULO 2: Núcleo funcional
   Texto → Braille Grado 1 → G-Code
-  (Python Core en backend)
+  (Service PHP: App\Services\BrailleTranslator)
 end note
 
 note bottom of UC09

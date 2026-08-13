@@ -1,6 +1,7 @@
 @startuml UC10_Reportes_Estadisticas
 ' =============================================
 ' UC-10: Generar Reportes y Estadísticas
+' Estado 2026-08: exports (a-h) e historial (k) implementados; estadísticas (i, j) [PENDIENTE]
 ' Módulo 3: Gestión de Pedidos y Costos de Producción
 ' Actor: Administrador/Operador
 ' =============================================
@@ -27,8 +28,8 @@ rectangle "Sistema Braille Inclusivo" {
     usecase "Exportar usuarios\na Excel" as UC10f
     usecase "Exportar pedidos\na PDF" as UC10g
     usecase "Exportar pedidos\na Excel" as UC10h
-    usecase "Ver estadísticas\nde consumo PLA" as UC10i
-    usecase "Ver gráfico de\npedidos por estado" as UC10j
+    usecase "Ver estadísticas\nde consumo PLA\n[PENDIENTE]" as UC10i
+    usecase "Ver gráfico de\npedidos por estado\n[PENDIENTE]" as UC10j
     usecase "Ver historial\nde pedidos" as UC10k
 
 }

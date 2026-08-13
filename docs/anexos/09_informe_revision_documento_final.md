@@ -1,5 +1,7 @@
 # 09 — Informe de Revisión del Documento Final PSCP
 
+> **Actualización (2026-08)**: los hallazgos de figuras/diagramas (motores x4, Python→PHP, UC-10, estados, ERD) se revisaron y corrigieron en las fuentes PlantUML/PNG — ver `14_revision_consistencia_final.md`.
+
 ## Sistema Braille Inclusivo — PSCP
 ## Instituto Técnico «Federico Álvarez Plata» — Sistemas Informáticos
 ## Documento revisado: `DocumentoFinalPSCP3DJulio24.docx`

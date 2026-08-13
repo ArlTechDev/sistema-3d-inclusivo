@@ -33,8 +33,6 @@ EP --> Comp : **Admin finaliza**\n"Marcar como Completado"
 
 Pendiente --> [*] : **Solicitante cancela**\n( SoftDelete )
 
-EP --> [*] : **Error de impresión**\n( SoftDelete )
-
 Comp --> [*]
 Rech --> [*]
 

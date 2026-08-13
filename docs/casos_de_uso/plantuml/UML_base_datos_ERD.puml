@@ -55,6 +55,7 @@ entity "recursos" as rec {
     * descripcion : text
     * gramos_pla : decimal(8,2)
     * tiempo_minutos : int
+    fecha_creacion : date?
     url_imagen : varchar?
     url_gcode : varchar?
     * estado : enum('Activo','Inactivo')

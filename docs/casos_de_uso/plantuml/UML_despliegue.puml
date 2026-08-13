@@ -26,7 +26,7 @@ skinparam artifact {
 node "Servidor en la Nube" <<cloud>> {
     artifact "Laravel 13\n(PHP 8.3+)" as laravel
     artifact "MySQL 8.0" as mysql
-    artifact "Python 3\n(planificado)" as python
+    artifact "App\\Services\\BrailleTranslator\n(Service PHP)" as traductor
 }
 
 node "PC del Solicitante" <<pc>> {
@@ -41,7 +41,7 @@ node "PC del Operador" <<pc>> {
 node "Placa Controladora\nArduino Mega 2560\n+ RAMPS 1.4" <<device>> as arduino {
     artifact "Firmware Marlin 1.1.x" as marlin
     artifact "Drivers A4988" as drivers
-    artifact "Motores NEMA 17 (x3)" as motores
+    artifact "Motores NEMA 17 (x4)" as motores
     artifact "Extrusor MK8" as extrusor
 }
 
