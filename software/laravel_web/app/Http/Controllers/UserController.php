@@ -3,41 +3,20 @@
 namespace App\Http\Controllers;
 
 use App\Exports\UsuariosExport;
+use App\Http\Requests\StoreUsuarioRequest;
+use App\Http\Requests\UpdateUsuarioRequest;
 use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
 
 class UserController extends Controller
 {
-    private array $reglas = [
-        'name' => 'required|string|max:100',
-        'email' => 'required|email',
-        'password' => 'nullable|string|min:8|confirmed',
-        'rol' => 'required|in:Administrador,Solicitante',
-        'foto_perfil' => 'nullable|image|max:2048',
-    ];
-
-    private array $mensajes = [
-        'name.required' => 'El nombre es obligatorio.',
-        'name.string' => 'El nombre debe ser texto.',
-        'name.max' => 'El nombre no puede exceder 100 caracteres.',
-        'email.required' => 'El email es obligatorio.',
-        'email.email' => 'El email debe ser válido.',
-        'password.required' => 'La contraseña es obligatoria.',
-        'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
-        'password.confirmed' => 'Las contraseñas no coinciden.',
-        'rol.required' => 'El rol es obligatorio.',
-        'rol.in' => 'El rol no es válido.',
-        'foto_perfil.image' => 'La foto de perfil debe ser una imagen.',
-        'foto_perfil.max' => 'La foto de perfil no puede superar 2 MB.',
-    ];
-
     public function index()
     {
         $usuarios = User::paginate(10);
+
         return view('usuarios.index', compact('usuarios'));
     }
 
@@ -59,14 +38,9 @@ class UserController extends Controller
         return view('usuarios.create');
     }
 
-    public function store(Request $request)
+    public function store(StoreUsuarioRequest $request)
     {
-        $reglas = array_merge($this->reglas, [
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|string|min:8|confirmed',
-        ]);
-
-        $data = $request->validate($reglas, $this->mensajes);
+        $data = $request->validated();
 
         $data['password'] = Hash::make($data['password']);
 
@@ -86,13 +60,9 @@ class UserController extends Controller
         return view('usuarios.edit', compact('usuario'));
     }
 
-    public function update(Request $request, User $usuario)
+    public function update(UpdateUsuarioRequest $request, User $usuario)
     {
-        $reglas = array_merge($this->reglas, [
-            'email' => 'required|email|unique:users,email,' . $usuario->id,
-        ]);
-
-        $data = $request->validate($reglas, $this->mensajes);
+        $data = $request->validated();
 
         if ($data['password']) {
             $data['password'] = Hash::make($data['password']);
@@ -124,6 +94,7 @@ class UserController extends Controller
     public function papelera()
     {
         $usuarios = User::onlyTrashed()->paginate(10);
+
         return view('usuarios.papelera', compact('usuarios'));
     }
 

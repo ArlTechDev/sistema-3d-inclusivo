@@ -11,6 +11,7 @@ class Recurso extends Model
     use HasFactory, SoftDeletes;
 
     protected $table = 'recursos';
+
     protected $fillable = [
         'titulo',
         'descripcion',

@@ -11,6 +11,7 @@ class Institucion extends Model
     use HasFactory, SoftDeletes;
 
     protected $table = 'instituciones';
+
     protected $fillable = [
         'nombre',
         'direccion',
