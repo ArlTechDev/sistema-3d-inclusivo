@@ -107,7 +107,7 @@ class PedidoController extends Controller
         if ($textoPersonalizado !== '') {
             $gcode = app(BrailleTranslator::class)->generarGCode($textoPersonalizado, 5.0, 5.0, 0.2);
             $nombre = 'pedidos/gcode/pedido_'.$pedido->id.'_'.uniqid().'.gcode';
-            Storage::disk('public')->put($nombre, $gcode);
+            Storage::disk('local')->put($nombre, $gcode);
             $pedido->update(['gcode_path' => $nombre]);
         }
 
@@ -164,9 +164,9 @@ class PedidoController extends Controller
             $ruta = $detalle?->recurso?->url_gcode;
         }
 
-        abort_if(! $ruta || ! Storage::disk('public')->exists($ruta), 404, 'El archivo G-Code no está disponible.');
+        abort_if(! $ruta || ! Storage::disk('local')->exists($ruta), 404, 'El archivo G-Code no está disponible.');
 
-        return Storage::disk('public')->download($ruta);
+        return Storage::disk('local')->download($ruta);
     }
 
     public function exportarPdf()

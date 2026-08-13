@@ -103,7 +103,7 @@ class PedidosTest extends TestCase
 
     public function test_texto_personalizado_genera_archivo_gcode(): void
     {
-        Storage::fake('public');
+        Storage::fake('local');
         $this->crearPrecioGramo();
         $solicitante = $this->crearSolicitante();
         $institucion = $this->crearInstitucion();
@@ -120,8 +120,8 @@ class PedidosTest extends TestCase
         $pedido = Pedido::first();
 
         $this->assertNotNull($pedido->gcode_path);
-        Storage::disk('public')->assertExists($pedido->gcode_path);
-        $this->assertStringContainsString('G28', Storage::disk('public')->get($pedido->gcode_path));
+        Storage::disk('local')->assertExists($pedido->gcode_path);
+        $this->assertStringContainsString('G28', Storage::disk('local')->get($pedido->gcode_path));
     }
 
     public function test_texto_personalizado_con_caracteres_invalidos_no_genera_pedido(): void
@@ -283,14 +283,14 @@ class PedidosTest extends TestCase
 
     public function test_admin_puede_descargar_gcode_del_pedido(): void
     {
-        Storage::fake('public');
+        Storage::fake('local');
         $admin = $this->crearAdmin();
         $solicitante = $this->crearSolicitante();
         $institucion = $this->crearInstitucion();
         $recurso = $this->crearRecurso();
 
         $rutaGcode = 'recursos/gcode/prueba.gcode';
-        Storage::disk('public')->put($rutaGcode, "G21\nG28\nM84\n");
+        Storage::disk('local')->put($rutaGcode, "G21\nG28\nM84\n");
         $recurso->update(['url_gcode' => $rutaGcode]);
 
         $pedido = Pedido::create([

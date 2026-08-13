@@ -61,7 +61,7 @@ class RecursoController extends Controller
 
         if ($request->hasFile('url_gcode')) {
             $data['url_gcode'] = $request->file('url_gcode')
-                ->store('recursos/gcode', 'public');
+                ->store('recursos/gcode', 'local');
         }
 
         Recurso::create($data);
@@ -90,11 +90,11 @@ class RecursoController extends Controller
 
         if ($request->hasFile('url_gcode')) {
             if ($recurso->url_gcode) {
-                Storage::disk('public')->delete($recurso->url_gcode);
+                Storage::disk('local')->delete($recurso->url_gcode);
             }
 
             $data['url_gcode'] = $request->file('url_gcode')
-                ->store('recursos/gcode', 'public');
+                ->store('recursos/gcode', 'local');
         }
 
         $recurso->update($data);
@@ -136,7 +136,7 @@ class RecursoController extends Controller
         }
 
         if ($recurso->url_gcode) {
-            Storage::disk('public')->delete($recurso->url_gcode);
+            Storage::disk('local')->delete($recurso->url_gcode);
         }
 
         $recurso->forceDelete();

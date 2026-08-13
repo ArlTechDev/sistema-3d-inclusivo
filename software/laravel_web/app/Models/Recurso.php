@@ -19,6 +19,7 @@ class Recurso extends Model
         'descripcion',
         'gramos_pla',
         'tiempo_minutos',
+        'fecha_creacion',
         'url_imagen',
         'url_gcode',
         'estado',
