@@ -124,6 +124,7 @@ Indentación de 4 espacios, finales de línea LF (2 espacios para YAML). Forzado
 
 ## Testing
 - **Laravel**: PHPUnit con SQLite `:memory:`, cola sincronizada. Ejecutar `composer test` desde `software/laravel_web/`.
+- **Smoke test HTTP**: `bash scripts/pruebas/smoke_test.sh [-u URL]` con la app corriendo (20 checks de rutas/roles). Guía completa de pruebas manuales: `docs/anexos/13_guia_pruebas_version_final.md`.
 - **BrailleTranslator**: tests unitarios en `tests/Unit/BrailleTranslatorTest.php` (cobertura 100% alfabeto Grado 1).
 - **Hardware**: Validación en 3 fases — cubo de calibración XYZ (20mm) → regla geométrica → hoja de texto Braille.
 
