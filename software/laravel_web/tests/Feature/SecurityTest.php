@@ -129,4 +129,18 @@ class SecurityTest extends TestCase
         $this->get('/recursos/exportar/excel')->assertOk();
         $this->get('/instituciones/exportar/excel')->assertOk();
     }
+
+    public function test_paginas_de_gestion_son_solo_para_administradores(): void
+    {
+        $solicitante = User::factory()->create(['rol' => 'Solicitante']);
+        $this->actingAs($solicitante);
+
+        // Páginas de gestión (tablas/CRUD) prohibidas para el Solicitante.
+        foreach (['/pedidos', '/usuarios', '/instituciones', '/recursos/papelera', '/instituciones/papelera', '/usuarios/papelera'] as $ruta) {
+            $this->get($ruta)->assertForbidden();
+        }
+
+        // El catálogo sí es de su rol.
+        $this->get('/recursos')->assertOk();
+    }
 }

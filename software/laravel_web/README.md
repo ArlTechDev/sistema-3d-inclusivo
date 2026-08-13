@@ -64,13 +64,13 @@ Guía completa con troubleshooting: [`docs/anexos/12_guia_migracion_docker.md`](
 ## Roles
 
 - **Administrador**: gestión completa (recursos, instituciones, usuarios, pedidos, papelera, exportaciones PDF/Excel).
-- **Solicitante** (Docentes, Directivos o Tutores de las instituciones): explora el catálogo público de recursos táctiles, solicita impresiones (con texto personalizado opcional → G-Code) y sigue el estado de sus pedidos.
+- **Solicitante** (Docentes, Directivos o Tutores de las instituciones): explora el catálogo de recursos táctiles (tras iniciar sesión), solicita impresiones (con texto personalizado opcional → G-Code) y sigue el estado de sus pedidos.
 
 ## Módulos principales
 
 - **Traductor Braille → G-Code** (`app/Services/BrailleTranslator.php`): Código Braille Español Grado 1 (27 letras, dígitos, puntuación) + generación de G-Code con dimensiones BANA. Sin estenografía (Grado 2).
 - **Módulo de pedidos** (`app/Http/Controllers/PedidoController.php`): solicitud, cálculo de costos por gramos de PLA, estados (Pendiente → En impresión → Completado / Rechazado) y descarga del `.gcode` generado.
-- **Catálogo público** (`/catalogo`): recursos táctiles visibles sin sesión, con búsqueda por nombre/descripción.
+- **Catálogo de recursos táctiles**: tras iniciar sesión, el Solicitante ve el catálogo (`/recursos`, cards con imagen/gramos/tiempo) y el Administrador la tabla de gestión; filtro por categoría.
 - **Seguridad OWASP**: sanitización de entradas (`app/Support/Sanitizer.php`), headers de seguridad, rate limiting (login y global) y Form Requests.
 
 ## Testing
@@ -79,7 +79,7 @@ Guía completa con troubleshooting: [`docs/anexos/12_guia_migracion_docker.md`](
 composer test   # PHPUnit con SQLite :memory:, cola sincronizada
 ```
 
-La suite cubre: autenticación, CRUD con papelera (trash/restore/force-delete), traductor (27 letras + casos límite), flujo de pedidos (costos, estados, rechazo), catálogo público y seguridad (5 tests).
+La suite cubre: autenticación, CRUD con papelera (trash/restore/force-delete), traductor (27 letras + casos límite), flujo de pedidos (costos, estados, rechazo), catálogo, autorización de páginas de gestión y seguridad.
 
 ## Salida del G-Code
 

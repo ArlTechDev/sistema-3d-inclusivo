@@ -104,9 +104,10 @@ Route::middleware('auth')->group(function () {
         ->name('instituciones.forceDestroy')
         ->middleware('role:Administrador');
 
-    // Instituciones: Index accesible para todos los autenticados
+    // Instituciones: Index solo Administrador (tabla de gestión, UC-05)
     Route::resource('instituciones', InstitucionController::class)
         ->only(['index'])
+        ->middleware('role:Administrador')
         ->parameters(['instituciones' => 'institucion']);
 
     // Instituciones: Métodos que modifican BD - Solo Administrador
