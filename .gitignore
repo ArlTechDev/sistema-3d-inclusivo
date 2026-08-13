@@ -54,3 +54,4 @@ auth.json
 # Homestead
 Homestead.json
 Homestead.yaml
+software/laravel_web/.env.capturas
