@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Institucion extends Model
@@ -21,7 +22,8 @@ class Institucion extends Model
         'documento_pdf',
     ];
 
-    public function pedidos()
+    /** @return HasMany<Pedido, $this> */
+    public function pedidos(): HasMany
     {
         return $this->hasMany(Pedido::class);
     }

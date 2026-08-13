@@ -20,8 +20,6 @@ class BrailleTranslator
      * Mapa carácter → puntos (1-6) del Código Braille Español (ONCE).
      * Incluye las 27 letras (a-z + ñ), vocales acentuadas (á é í ó ú), ü,
      * dígitos (mapeados a letras a-j con signo numeral) y puntuación básica.
-     *
-     * @var array<string, array<int>>
      */
     public const MAPA = [
         // Letras a-z (26)

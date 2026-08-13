@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Pedido extends Model
@@ -21,17 +23,20 @@ class Pedido extends Model
         'motivo_rechazo',
     ];
 
-    public function user()
+    /** @return BelongsTo<User, $this> */
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function institucion()
+    /** @return BelongsTo<Institucion, $this> */
+    public function institucion(): BelongsTo
     {
         return $this->belongsTo(Institucion::class);
     }
 
-    public function detalles()
+    /** @return HasMany<DetallePedido, $this> */
+    public function detalles(): HasMany
     {
         return $this->hasMany(DetallePedido::class);
     }

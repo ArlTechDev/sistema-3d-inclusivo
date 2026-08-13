@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class DetallePedido extends Model
 {
@@ -14,12 +15,14 @@ class DetallePedido extends Model
         'costo_unitario',
     ];
 
-    public function pedido()
+    /** @return BelongsTo<Pedido, $this> */
+    public function pedido(): BelongsTo
     {
         return $this->belongsTo(Pedido::class);
     }
 
-    public function recurso()
+    /** @return BelongsTo<Recurso, $this> */
+    public function recurso(): BelongsTo
     {
         return $this->belongsTo(Recurso::class);
     }

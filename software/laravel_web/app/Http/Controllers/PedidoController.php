@@ -160,7 +160,8 @@ class PedidoController extends Controller
         $ruta = $pedido->gcode_path;
 
         if (! $ruta) {
-            $ruta = $pedido->detalles->first()?->recurso?->url_gcode;
+            $detalle = $pedido->detalles->first();
+            $ruta = $detalle?->recurso?->url_gcode;
         }
 
         abort_if(! $ruta || ! Storage::disk('public')->exists($ruta), 404, 'El archivo G-Code no está disponible.');

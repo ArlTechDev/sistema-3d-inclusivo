@@ -28,6 +28,7 @@ docs/
 | Instalación inicial | `composer setup` |
 | Servidor de desarrollo | `composer dev` |
 | Ejecutar tests | `composer test` |
+| Análisis estático (PHPStan, nivel 5) | `composer analyse` |
 | Formatear código PHP | `./vendor/bin/pint` |
 | Compilar frontend | `npm run build` |
 | Migrar (Docker) | `docker exec -it laravel_app php artisan migrate` |
