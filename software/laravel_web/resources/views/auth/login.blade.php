@@ -67,3 +67,9 @@
         </div>
     </form>
 @stop
+
+@section('auth_footer')
+    <p class="my-0 text-center">
+        ¿Olvidaste tu contraseña? Contacta al administrador del sistema.
+    </p>
+@stop

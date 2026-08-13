@@ -121,6 +121,7 @@ Imprimir y tildar:
 
 ## 6. Notas y discrepancias conocidas
 
+- **No hay registro público ni recuperación de contraseña por email** (sin SMTP): los usuarios los crea el Administrador (UC-02) y el cambio de contraseña se hace desde la edición de usuario. La página de login muestra «¿Olvidaste tu contraseña? Contacta al administrador del sistema» (2026-08: se eliminaron los enlaces muertos «I forgot my password» / «Register a new membership» y el logo apunta a `/recursos`, no a `/home`).
 - **El catálogo requiere sesión** (`/recursos` está dentro del grupo `auth`): el Solicitante lo ve como cards tras iniciar sesión. Esto **coincide con el documento** (UC-03: «El Solicitante ha iniciado sesión»). La frase del README «visible sin sesión» es imprecisa y se corrige.
 - **Autorización de `/instituciones` corregida** (2026-08): el índice de instituciones (tabla de gestión, UC-05) quedó restringido a Administrador — antes cualquier usuario autenticado podía verlo por URL directa. Cubierto por el test `test_paginas_de_gestion_son_solo_para_administradores` y por el smoke test.
 - **No hay previsualización 2D en la UI** (RF-08 del documento promete una «previsión visual 2D»): la verificación del traductor se hace sobre el G-Code generado y los tests unitarios. Si la defensa lo exige, se puede añadir después como mejora.
