@@ -1,4 +1,4 @@
-@extends('adminlte::page')
+@extends('layouts.admin')
 
 @section('title', 'Catálogo de Recursos')
 
@@ -61,6 +61,11 @@
                             </span>
                         </td>
                         <td>
+                            <a href="{{ route('pedidos.create', ['recurso' => $recurso->id]) }}"
+                               class="btn btn-sm btn-warning">
+                                <i class="fas fa-print"></i> Solicitar Impresión
+                            </a>
+
                             @if(auth()->user()->rol === 'Administrador')
                                 <a href="{{ route('recursos.edit', $recurso->id) }}" class="btn btn-sm btn-info">
                                     <i class="fas fa-edit"></i> Editar

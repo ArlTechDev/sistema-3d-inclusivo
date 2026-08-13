@@ -3,47 +3,33 @@
 namespace App\Http\Controllers;
 
 use App\Exports\RecursosExport;
+use App\Http\Requests\StoreRecursoRequest;
+use App\Http\Requests\UpdateRecursoRequest;
+use App\Models\Categoria;
 use App\Models\Recurso;
 use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
 
 class RecursoController extends Controller
 {
-    private array $reglas = [
-        'titulo'          => 'required|string|min:5|max:150',
-        'descripcion'     => 'required|string|min:10',
-        'gramos_pla'      => 'required|numeric|min:0.1',
-        'tiempo_minutos'  => 'required|integer|min:1',
-        'fecha_creacion'  => 'required|date',
-        'estado'          => 'required|in:Activo,Inactivo',
-        'url_imagen'      => 'nullable|image|max:2048',
-        'url_gcode'       => 'nullable|file|mimes:gcode,txt',
-    ];
-
-    private array $mensajes = [
-        'titulo.required'         => 'El título es obligatorio.',
-        'titulo.min'              => 'El título debe tener al menos 5 caracteres.',
-        'titulo.max'              => 'El título no puede superar 150 caracteres.',
-        'descripcion.required'    => 'La descripción es obligatoria.',
-        'descripcion.min'         => 'La descripción debe tener al menos 10 caracteres.',
-        'gramos_pla.required'     => 'Los gramos de PLA son obligatorios.',
-        'gramos_pla.numeric'      => 'Los gramos de PLA deben ser un valor numérico.',
-        'gramos_pla.min'          => 'Los gramos de PLA deben ser mayor a 0.',
-        'tiempo_minutos.required' => 'El tiempo en minutos es obligatorio.',
-        'tiempo_minutos.integer'  => 'El tiempo debe ser un número entero.',
-        'tiempo_minutos.min'      => 'El tiempo debe ser mayor a 0.',
-        'fecha_creacion.required' => 'La fecha es obligatoria.',
-        'fecha_creacion.date'     => 'Debe ingresar una fecha válida.',
-        'estado.required'         => 'El estado es obligatorio.',
-        'estado.in'               => 'El estado seleccionado no es válido.',
-    ];
-
     public function index()
     {
-        $recursos = Recurso::all();
-        return view('recursos.index', compact('recursos'));
+        $categorias = Categoria::withCount('recursos')->get();
+
+        // El Solicitante ve el catálogo público (cards); el Administrador, la tabla de gestión.
+        if (auth()->user()->rol === 'Administrador') {
+            $recursos = Recurso::all();
+
+            return view('recursos.index', compact('recursos', 'categorias'));
+        }
+
+        $recursos = Recurso::with('categoria')
+            ->where('estado', 'Activo')
+            ->when(request('categoria'), fn ($q, $id) => $q->where('categoria_id', $id))
+            ->get();
+
+        return view('recursos.catalogo', compact('recursos', 'categorias'));
     }
 
     public function exportarPdf()
@@ -64,10 +50,8 @@ class RecursoController extends Controller
         return view('recursos.create');
     }
 
-    public function store(Request $request)
+    public function store(StoreRecursoRequest $request)
     {
-        $request->validate($this->reglas, $this->mensajes);
-
         $data = $request->except(['url_imagen', 'url_gcode']);
 
         if ($request->hasFile('url_imagen')) {
@@ -91,10 +75,8 @@ class RecursoController extends Controller
         return view('recursos.edit', compact('recurso'));
     }
 
-    public function update(Request $request, Recurso $recurso)
+    public function update(UpdateRecursoRequest $request, Recurso $recurso)
     {
-        $request->validate($this->reglas, $this->mensajes);
-
         $data = $request->except(['url_imagen', 'url_gcode']);
 
         if ($request->hasFile('url_imagen')) {
@@ -132,6 +114,7 @@ class RecursoController extends Controller
     public function papelera()
     {
         $recursos = Recurso::onlyTrashed()->get();
+
         return view('recursos.papelera', compact('recursos'));
     }
 
