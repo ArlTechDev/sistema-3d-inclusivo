@@ -1,19 +1,51 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\RecursoController;
 use App\Http\Controllers\InstitucionController;
+use App\Http\Controllers\PedidoController;
+use App\Http\Controllers\RecursoController;
 use App\Http\Controllers\UserController;
+use Illuminate\Support\Facades\Route;
 
-Route::get('login', [AuthController::class, 'loginForm'])->name('login');
-Route::post('login', [AuthController::class, 'login'])->name('login.post');
+Route::get('login', [AuthController::class, 'loginForm'])->name('login')->middleware('throttle:global');
+Route::post('login', [AuthController::class, 'login'])->name('login.post')->middleware('throttle:login');
 Route::post('logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
 
 Route::middleware('auth')->group(function () {
     Route::get('/', function () {
         return redirect()->route('recursos.index');
     });
+
+    // Pedidos: rutas personalizadas ANTES de cualquier resource
+    Route::get('pedidos', [PedidoController::class, 'index'])
+        ->name('pedidos.index')
+        ->middleware('role:Administrador');
+
+    Route::get('pedidos/exportar/pdf', [PedidoController::class, 'exportarPdf'])
+        ->name('pedidos.pdf')
+        ->middleware('role:Administrador');
+
+    Route::get('pedidos/exportar/excel', [PedidoController::class, 'exportarExcel'])
+        ->name('pedidos.excel')
+        ->middleware('role:Administrador');
+
+    Route::get('pedidos/crear', [PedidoController::class, 'create'])
+        ->name('pedidos.create');
+
+    Route::post('pedidos', [PedidoController::class, 'store'])
+        ->name('pedidos.store');
+
+    Route::patch('pedidos/{pedido}/estado', [PedidoController::class, 'update'])
+        ->name('pedidos.update')
+        ->middleware('role:Administrador');
+
+    Route::patch('pedidos/{pedido}/rechazar', [PedidoController::class, 'rechazar'])
+        ->name('pedidos.rechazar')
+        ->middleware('role:Administrador');
+
+    Route::get('pedidos/{pedido}/gcode', [PedidoController::class, 'descargarGCode'])
+        ->name('pedidos.gcode')
+        ->middleware('role:Administrador');
 
     // Recursos: Rutas personalizadas ANTES del resource
     Route::get('recursos/exportar/pdf', [RecursoController::class, 'exportarPdf'])

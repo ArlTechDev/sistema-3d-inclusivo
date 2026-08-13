@@ -35,4 +35,11 @@ class Pedido extends Model
     {
         return $this->hasMany(DetallePedido::class);
     }
+
+    protected function casts(): array
+    {
+        return [
+            'fecha_solicitud' => 'datetime',
+        ];
+    }
 }
