@@ -112,4 +112,21 @@ class SecurityTest extends TestCase
         $response = $this->get('/login');
         $response->assertStatus(429);
     }
+
+    public function test_exports_son_solo_para_administradores(): void
+    {
+        $solicitante = User::factory()->create(['rol' => 'Solicitante']);
+        $this->actingAs($solicitante);
+
+        // Los exports no deben estar disponibles para un rol distinto de Administrador.
+        foreach (['/recursos/exportar/pdf', '/recursos/exportar/excel', '/instituciones/exportar/pdf', '/instituciones/exportar/excel', '/pedidos/exportar/pdf', '/pedidos/exportar/excel'] as $ruta) {
+            $this->get($ruta)->assertForbidden();
+        }
+
+        $admin = User::factory()->administrador()->create();
+        $this->actingAs($admin);
+
+        $this->get('/recursos/exportar/excel')->assertOk();
+        $this->get('/instituciones/exportar/excel')->assertOk();
+    }
 }

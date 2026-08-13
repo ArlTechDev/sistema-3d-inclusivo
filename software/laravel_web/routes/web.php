@@ -49,10 +49,12 @@ Route::middleware('auth')->group(function () {
 
     // Recursos: Rutas personalizadas ANTES del resource
     Route::get('recursos/exportar/pdf', [RecursoController::class, 'exportarPdf'])
-        ->name('recursos.pdf');
+        ->name('recursos.pdf')
+        ->middleware('role:Administrador');
 
     Route::get('recursos/exportar/excel', [RecursoController::class, 'exportarExcel'])
-        ->name('recursos.excel');
+        ->name('recursos.excel')
+        ->middleware('role:Administrador');
 
     Route::get('recursos/papelera', [RecursoController::class, 'papelera'])
         ->name('recursos.papelera')
@@ -79,10 +81,12 @@ Route::middleware('auth')->group(function () {
 
     // Instituciones: Rutas personalizadas ANTES del resource
     Route::get('instituciones/exportar/pdf', [InstitucionController::class, 'exportarPdf'])
-        ->name('instituciones.pdf');
+        ->name('instituciones.pdf')
+        ->middleware('role:Administrador');
 
     Route::get('instituciones/exportar/excel', [InstitucionController::class, 'exportarExcel'])
-        ->name('instituciones.excel');
+        ->name('instituciones.excel')
+        ->middleware('role:Administrador');
 
     Route::get('instituciones/papelera', [InstitucionController::class, 'papelera'])
         ->name('instituciones.papelera')
