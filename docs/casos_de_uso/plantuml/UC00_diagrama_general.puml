@@ -1,75 +1,33 @@
 @startuml UC00_Diagrama_General
-' =============================================
-' UC-00: Diagrama General del Sistema
-' Sistema Braille Inclusivo — PSCP
-' =============================================
+title UC-00: Diagrama General de Casos de Uso
+
+skinparam monochrome true
+skinparam shadowing false
+skinparam backgroundColor white
 
 left to right direction
-skinparam actorStyle awesome
-skinparam packageStyle rectangle
-skinparam backgroundColor #FEFEFE
-skinparam shadowing false
-skinparam defaultFontName "Segoe UI"
 
-title Diagrama General de Casos de Uso\nSistema Web y Electromecánico de Impresión 3D
+actor "Solicitante" as S
+actor "Administrador" as A
 
-' === ACTORES ===
-actor "Usuario\nSolicitante" as S #LightBlue
-actor "Administrador\n/Operador" as A #LightGreen
-
-' === SISTEMA ===
-rectangle "Sistema Braille Inclusivo" as SYS {
-
-    ' -- Autenticación --
-    package "Autenticación" {
-        usecase "Iniciar\nSesión" as UC01a
-        usecase "Cerrar\nSesión" as UC01b
-    }
-
-    ' -- Catálogo --
-    package "Catálogo de Recursos" {
-        usecase "Ver Catálogo\n(Solicitante)" as UC03
-        usecase "Gestionar\nRecursos (CRUD)" as UC02
-    }
-
-    ' -- Instituciones --
-    package "Instituciones" {
-        usecase "Gestionar\nInstituciones" as UC04
-    }
-
-    ' -- Usuarios --
-    package "Usuarios" {
-        usecase "Gestionar\nUsuarios" as UC05
-    }
-
-    ' -- Traducción (CORE) --
-    package "Traducción Braille [CORE]" <<Cloud>> {
-        usecase "Traducir Texto\na Braille" as UC06
-    }
-
-    ' -- Solicitudes --
-    package "Gestión de Pedidos" {
-        usecase "Solicitar\nImpresión" as UC07
-        usecase "Gestionar\nSolicitudes" as UC08
-        usecase "Descargar\nG-Code" as UC09
-    }
-
-    ' -- Reportes --
-    package "Reportes" {
-        usecase "Generar Reportes\ny Estadísticas" as UC10
-    }
+rectangle "Sistema Braille Inclusivo" {
+    usecase "Iniciar / Cerrar Sesión" as UC01a
+    usecase "Gestionar Recursos" as UC02
+    usecase "Ver Catálogo" as UC03
+    usecase "Gestionar Instituciones" as UC04
+    usecase "Gestionar Usuarios" as UC05
+    usecase "Traducir Texto a Braille" as UC06
+    usecase "Solicitar Impresión" as UC07
+    usecase "Gestionar Solicitudes" as UC08
+    usecase "Descargar G-Code" as UC09
+    usecase "Reportes y Estadísticas" as UC10
 }
 
-' === CONEXIONES SOLICITANTE ===
 S --> UC01a
-S --> UC01b
 S --> UC03
 S --> UC06
 S --> UC07
-
-' === CONEXIONES ADMINISTRADOR ===
 A --> UC01a
-A --> UC01b
 A --> UC02
 A --> UC04
 A --> UC05
@@ -77,20 +35,7 @@ A --> UC08
 A --> UC09
 A --> UC10
 
-' === RELACIONES ===
-UC06 ..> UC07 : <<extend>>
-UC07 ..> UC09 : <<extend>>
-
-' === NOTAS ===
-note bottom of UC06
-  MÓDULO 2: Núcleo funcional
-  Texto → Braille Grado 1 → G-Code
-  (Service PHP: App\Services\BrailleTranslator)
-end note
-
-note bottom of UC09
-  Transferencia:
-  Servidor → PC Operador → Impresora 3D (USB)
-end note
+UC07 ..> UC06 : <<extend>>
+UC09 ..> UC07 : <<extend>>
 
 @enduml

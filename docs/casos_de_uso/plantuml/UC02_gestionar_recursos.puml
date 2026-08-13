@@ -1,38 +1,27 @@
 @startuml UC02_Gestionar_Recursos
-' =============================================
-' UC-02: Gestionar Catálogo de Recursos
-' Módulo 4: Catálogo Digital de Producción Educativa Táctil
-' Actor: Administrador/Operador
-' =============================================
+title UC-02: Gestionar Recursos
+
+skinparam monochrome true
+skinparam shadowing false
+skinparam backgroundColor white
 
 left to right direction
-skinparam actorStyle awesome
-skinparam packageStyle rectangle
-skinparam backgroundColor #FEFEFE
-skinparam shadowing false
 
-title UC-02: Gestionar Catálogo de Recursos Educativos
+actor "Administrador" as A
 
-' === ACTORES ===
-actor "Administrador\n/Operador" as A #LightGreen
-
-' === SISTEMA ===
 rectangle "Sistema Braille Inclusivo" {
-
-    usecase "Ver lista de\nrecursos" as UC02a
-    usecase "Crear nuevo\nrecurso" as UC02b
-    usecase "Editar recurso\nexistente" as UC02c
-    usecase "Eliminar recurso\n(papelera)" as UC02d
-    usecase "Ver papelera\nde recursos" as UC02e
-    usecase "Restaurar\nrecurso" as UC02f
-    usecase "Eliminar\npermanentemente" as UC02g
-    usecase "Validar\ndatos del recurso" as UC02h
-    usecase "Almacenar\narchivos" as UC02i
-    usecase "Eliminar archivos\ndel disco" as UC02j
-
+    usecase "Ver lista de recursos" as UC02a
+    usecase "Crear nuevo recurso" as UC02b
+    usecase "Editar recurso existente" as UC02c
+    usecase "Eliminar recurso (papelera)" as UC02d
+    usecase "Ver papelera de recursos" as UC02e
+    usecase "Restaurar recurso" as UC02f
+    usecase "Eliminar permanentemente" as UC02g
+    usecase "Validar datos del recurso" as UC02h
+    usecase "Almacenar archivos" as UC02i
+    usecase "Eliminar archivos del disco" as UC02j
 }
 
-' === CONEXIONES ===
 A --> UC02a
 A --> UC02b
 A --> UC02c
@@ -46,42 +35,5 @@ UC02b ..> UC02i : <<include>>
 UC02c ..> UC02h : <<include>>
 UC02c ..> UC02i : <<include>>
 UC02g ..> UC02j : <<include>>
-
-' === NOTAS ===
-note right of UC02b
-  **Camino principal:**
-  1. Admin hace clic en "Nuevo Recurso"
-  2. Sistema muestra formulario
-  3. Admin ingresa: título, descripción,
-     gramos PLA, tiempo minutos, estado
-  4. Admin sube imagen (opcional, máx 2MB)
-  5. Admin sube G-Code (opcional)
-  6. Sistema valida datos
-  7. Sistema almacena archivos en disco
-  8. Sistema crea registro en BD
-  9. Mensaje de éxito
-
-  **Campos obligatorios:**
-  - Título (5-150 chars)
-  - Descripción (mín 10 chars)
-  - Gramos PLA (mín 0.1)
-  - Tiempo minutos (mín 1)
-  - Estado (Activo/Inactivo)
-end note
-
-note right of UC02d
-  **SoftDelete:**
-  El recurso se marca como eliminado
-  pero permanece en la base de datos.
-  Los archivos NO se eliminan aún.
-end note
-
-note right of UC02g
-  **Eliminación permanente:**
-  1. Elimina registro de BD
-  2. Elimina imagen del disco
-  3. Elimina G-Code del disco
-  Acción irreversible.
-end note
 
 @enduml

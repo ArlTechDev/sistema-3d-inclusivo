@@ -1,65 +1,29 @@
 @startuml UC03_Ver_Catalogo
-' =============================================
-' UC-03: Ver Catálogo de Recursos
-' Módulo 4: Catálogo Digital de Producción Educativa Táctil
-' Actor: Solicitante
-' =============================================
+title UC-03: Ver Catálogo de Recursos
+
+skinparam monochrome true
+skinparam shadowing false
+skinparam backgroundColor white
 
 left to right direction
-skinparam actorStyle awesome
-skinparam packageStyle rectangle
-skinparam backgroundColor #FEFEFE
-skinparam shadowing false
 
-title UC-03: Ver Catálogo de Recursos (Solicitante)
+actor "Solicitante" as S
 
-' === ACTORES ===
-actor "Usuario\nSolicitante" as S #LightBlue
-
-' === SISTEMA ===
 rectangle "Sistema Braille Inclusivo" {
-
-    usecase "Ver catálogo\nde recursos" as UC03a
-    usecase "Filtrar por\ncategoría" as UC03b
-    usecase "Buscar por\nnombre" as UC03c
-    usecase "Ver detalle\ndel recurso" as UC03d
-    usecase "Ver imagen de\nreferencia" as UC03e
-    usecase "Ver tiempo y\npeso estimados" as UC03f
-
+    usecase "Ver catálogo de recursos" as UC03a
+    usecase "Filtrar por categoría" as UC03b
+    usecase "Buscar por nombre" as UC03c
+    usecase "Ver detalle del recurso" as UC03d
+    usecase "Ver imagen de referencia" as UC03e
+    usecase "Ver tiempo y peso estimados" as UC03f
 }
 
-' === CONEXIONES ===
 S --> UC03a
-UC03a ..> UC03b : <<extend>>
-UC03a ..> UC03c : <<extend>>
-UC03a ..> UC03d : <<extend>>
+
+UC03b ..> UC03a : <<extend>>
+UC03c ..> UC03a : <<extend>>
+UC03d ..> UC03a : <<extend>>
 UC03d ..> UC03e : <<include>>
 UC03d ..> UC03f : <<include>>
-
-' === NOTAS ===
-note right of UC03a
-  **Precondiciones:**
-  1. Usuario ha iniciado sesión
-  2. Existen recursos con estado "Activo"
-
-  **Camino principal:**
-  1. Solicitante accede al catálogo
-  2. Sistema muestra lista de recursos activos
-  3. Cada ficha muestra: imagen, título,
-     tiempo estimado, peso en gramos
-  4. Solicitante puede filtrar o buscar
-end note
-
-note right of UC03d
-  **Ficha de producto muestra:**
-  - Imagen de referencia
-  - Título y descripción
-  - Tiempo estimado de impresión
-  - Peso del material en gramos
-  - Costo de manufactura estimado
-
-  **NOTA:** El Solicitante NO puede
-  descargar el archivo G-Code.
-end note
 
 @enduml

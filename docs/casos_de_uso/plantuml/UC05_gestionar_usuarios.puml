@@ -1,39 +1,28 @@
 @startuml UC05_Gestionar_Usuarios
-' =============================================
-' UC-05: Gestionar Usuarios
-' Módulo 1: Gestión de Usuarios
-' Actor: Administrador/Operador
-' =============================================
+title UC-05: Gestionar Usuarios
+
+skinparam monochrome true
+skinparam shadowing false
+skinparam backgroundColor white
 
 left to right direction
-skinparam actorStyle awesome
-skinparam packageStyle rectangle
-skinparam backgroundColor #FEFEFE
-skinparam shadowing false
 
-title UC-05: Gestionar Usuarios del Sistema
+actor "Administrador" as A
 
-' === ACTORES ===
-actor "Administrador\n/Operador" as A #LightGreen
-
-' === SISTEMA ===
 rectangle "Sistema Braille Inclusivo" {
-
-    usecase "Ver lista de\nusuarios" as UC05a
-    usecase "Crear nuevo\nusuario" as UC05b
-    usecase "Editar\nusuario" as UC05c
-    usecase "Eliminar usuario\n(papelera)" as UC05d
-    usecase "Ver papelera de\nusuarios" as UC05e
-    usecase "Restaurar\nusuario" as UC05f
-    usecase "Eliminar\npermanentemente" as UC05g
-    usecase "Validar datos\nde usuario" as UC05h
-    usecase "Asignar rol\n(Solicitante/Admin)" as UC05i
-    usecase "Encriptar\ncontraseña" as UC05j
-    usecase "Almacenar foto\nde perfil" as UC05k
-
+    usecase "Ver lista de usuarios" as UC05a
+    usecase "Crear nuevo usuario" as UC05b
+    usecase "Editar usuario" as UC05c
+    usecase "Eliminar usuario (papelera)" as UC05d
+    usecase "Ver papelera de usuarios" as UC05e
+    usecase "Restaurar usuario" as UC05f
+    usecase "Eliminar permanentemente" as UC05g
+    usecase "Validar datos de usuario" as UC05h
+    usecase "Asignar rol (Solicitante/Admin)" as UC05i
+    usecase "Encriptar contraseña" as UC05j
+    usecase "Almacenar foto de perfil" as UC05k
 }
 
-' === CONEXIONES ===
 A --> UC05a
 A --> UC05b
 A --> UC05c
@@ -45,40 +34,7 @@ A --> UC05g
 UC05b ..> UC05h : <<include>>
 UC05b ..> UC05i : <<include>>
 UC05b ..> UC05j : <<include>>
-UC05b ..> UC05k : <<extend>>
 UC05c ..> UC05h : <<include>>
-
-' === NOTAS ===
-note right of UC05b
-  **Camino principal:**
-  1. Admin hace clic en "Nuevo Usuario"
-  2. Sistema muestra formulario
-  3. Admin ingresa: nombre, email,
-     contraseña, confirmación
-  4. Admin selecciona rol:
-     - Solicitante (Docente / Directivo / Tutor)
-     - Administrador
-  5. Admin sube foto (opcional, máx 2MB)
-  6. Sistema valida email único
-  7. Sistema encripta contraseña (Bcrypt)
-  8. Sistema crea registro
-  9. Mensaje de éxito
-end note
-
-note right of UC05c
-  **Edición especial:**
-  - Email debe ser único (excepto propio)
-  - Contraseña: solo se actualiza si se
-    proporciona nueva contraseña
-  - Foto: se reemplaza si se sube nueva
-end note
-
-note right of UC05i
-  **Roles disponibles:**
-  - Solicitante: acceso limitado
-  - Administrador: control total
-
-  Default: Solicitante
-end note
+UC05k ..> UC05b : <<extend>>
 
 @enduml

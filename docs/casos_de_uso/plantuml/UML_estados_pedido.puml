@@ -1,4 +1,5 @@
 @startuml UML_Estados_Pedido
+skinparam monochrome true
 title Diagrama de Estados — Ciclo de Vida del Pedido\nSistema Braille Inclusivo
 
 skinparam backgroundColor #FEFEFE

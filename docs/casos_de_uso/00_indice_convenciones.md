@@ -87,3 +87,36 @@
 - Cada UC tiene su archivo `.puml` en `docs/casos_de_uso/plantuml/`.
 - Las imágenes exportadas se guardan en `docs/casos_de_uso/imagenes/`.
 - Los diagramas se generan con PlantUML: `java -jar plantuml.jar *.puml`
+
+---
+
+## Convenciones UML 2.5 (diagramas académicos, B/N)
+
+> Aplicadas el 2026-08 tras la observación «esto no es UML» (ver `diagnostico_uml.md`).
+
+| Elemento | Notación exigida |
+|---|---|
+| Actor | Monigote clásico (*stick figure*), sin `actorStyle awesome`, sin colores |
+| Caso de uso | Óvalo con nombre en frase verbal |
+| Frontera del sistema | Rectángulo simple «Sistema Braille Inclusivo» |
+| Asociación actor → CU | Línea sólida |
+| `<<include>>` | Línea discontinua **desde el CU base hacia el CU incluido** |
+| `<<extend>>` | Línea discontinua **desde el CU que extiende hacia el CU base** (punta en la base) |
+| Generalización | Línea sólida con triángulo vacío hacia el elemento general |
+| Sistema como actor | Prohibido |
+| Escenarios/notas | Fuera del diagrama → van en la especificación escrita de este índice |
+| Estilo | B/N (`skinparam monochrome true`), sin sombras, sin paquetes decorativos |
+
+Reglas verificadas en todos los `.puml`:
+- Dirección de `<<extend>>` corregida (antes invertida en 7 archivos).
+- `actor "Sistema"` eliminado de UC-06/07/08.
+- Notas con «Precondiciones/Camino principal/Flujo» extraídas de 8 diagramas.
+- ERD y Gantt se etiquetan como Diagrama Entidad-Relación y Diagrama de Gantt (no-UML).
+- Imágenes: PNG + SVG regenerados con `plantuml -tpng/-tsvg`.
+
+### Generación de imágenes
+
+```bash
+cd docs/casos_de_uso/plantuml
+plantuml -tpng -o <destino> *.puml   # o -tsvg
+```

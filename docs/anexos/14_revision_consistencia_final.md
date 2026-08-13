@@ -100,6 +100,7 @@ Las 17 figuras del documento corresponden por orden de inserción a las imágene
 
 ## 6. Notas
 
+- **Estilo UML 2.5 académico (2026-08)**: tras la observación «esto no es UML», los 17 diagramas se reescribieron en estilo académico B/N — `<<extend>>` corregido (extensión → base), `actor "Sistema"` eliminado (UC-06/07/08), escenarios extraídos de 8 diagramas, `<<Cloud>>` retirado de UC-00. Diagnóstico y convenciones en `docs/casos_de_uso/diagnostico_uml.md` y `00_indice_convenciones.md`. Las imágenes (PNG+SVG) se regeneraron manteniendo los mismos nombres de archivo, por lo que **este mapa sigue siendo válido**.
 - La **cancelación de solicitudes** (Solicitante, solo estado Pendiente, SoftDelete) se implementó el 2026-08 y quedó cubierta por tests; el diagrama de estados ya la refleja.
 - **UC-10** queda honesto: reportes = exports PDF/Excel existentes; estadísticas de consumo/gráficos = `[PENDIENTE]` (no inventar funcionalidad inexistente en la defensa).
 - **Motores**: el despliegue decía x3 y el cuerpo del documento mezclaba 3/4; el estándar del proyecto es **x4** (X, Y, Z + extrusor MK8) — verificar que Tabla 4 y el texto del .docx digan x4.

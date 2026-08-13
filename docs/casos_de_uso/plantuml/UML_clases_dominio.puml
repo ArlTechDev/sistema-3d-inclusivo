@@ -1,4 +1,5 @@
 @startuml UML_Diagrama_de_Clases
+skinparam monochrome true
 title Diagrama de Clases del Dominio\nSistema Web y Electromecánico de Impresión 3D
 
 skinparam classAttributeIconSize 0

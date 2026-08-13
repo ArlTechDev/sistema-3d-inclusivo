@@ -1,4 +1,5 @@
 @startuml UML_secuencia_UC06
+skinparam monochrome true
 ' Diagrama de Secuencia — UC-06 / UC-07 (flujo implementado, 2026-08)
 ' Traducción a Braille (Grado 1), generación de G-Code y solicitud de impresión.
 ' La previsión 2D (RF-08) está marcada como PENDIENTE: no se renderiza en la UI.

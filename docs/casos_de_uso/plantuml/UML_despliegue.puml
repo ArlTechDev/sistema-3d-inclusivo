@@ -1,4 +1,5 @@
 @startuml UML_Despliegue
+skinparam monochrome true
 title Diagrama de Despliegue — Topología Física del Sistema\nSistema Web y Electromecánico de Impresión 3D
 
 skinparam backgroundColor #FEFEFE

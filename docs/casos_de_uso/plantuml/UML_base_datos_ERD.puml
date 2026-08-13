@@ -1,4 +1,5 @@
 @startuml UML_Diagrama_ERD
+skinparam monochrome true
 title Diagrama Entidad-Relación de Base de Datos\nSistema Braille Inclusivo
 
 skinparam linetype ortho
