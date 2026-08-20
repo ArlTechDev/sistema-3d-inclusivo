@@ -69,7 +69,10 @@
 @stop
 
 @section('auth_footer')
-    <p class="my-0 text-center">
+    <p class="mb-1 text-center">
+        ¿No tienes una cuenta? <a href="{{ route('register') }}" class="text-primary font-weight-bold">Regístrate aquí</a>
+    </p>
+    <p class="my-0 text-center text-muted text-sm">
         ¿Olvidaste tu contraseña? Contacta al administrador del sistema.
     </p>
 @stop

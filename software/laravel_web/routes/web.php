@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('login', [AuthController::class, 'loginForm'])->name('login')->middleware('throttle:global');
 Route::post('login', [AuthController::class, 'login'])->name('login.post')->middleware('throttle:login');
+Route::get('registro', [AuthController::class, 'registerForm'])->name('register')->middleware('throttle:global');
+Route::post('registro', [AuthController::class, 'register'])->name('register.post')->middleware('throttle:registro');
 Route::post('logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
 
 Route::middleware('auth')->group(function () {
