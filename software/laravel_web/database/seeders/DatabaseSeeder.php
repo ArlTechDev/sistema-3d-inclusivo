@@ -53,5 +53,22 @@ class DatabaseSeeder extends Seeder
                 'descripcion' => 'Costo por gramo de PLA en dólares (USD)',
             ]
         );
+
+        // Recursos didácticos de muestra
+        $catBraille = Categoria::where('nombre', 'Braille')->first();
+        if ($catBraille) {
+            \App\Models\Recurso::updateOrCreate(
+                ['titulo' => 'Ficha Didáctica Táctil 3D (Demostración)'],
+                [
+                    'descripcion' => 'Cuerpo didáctico tridimensional con relieves Braille táctiles para estimulación háptica.',
+                    'categoria_id' => $catBraille->id,
+                    'gramos_pla' => 12.50,
+                    'tiempo_minutos' => 35,
+                    'fecha_creacion' => now()->toDateString(),
+                    'estado' => \App\Models\Recurso::ESTADO_ACTIVO,
+                    'archivo_glb' => 'recursos/3d/ficha_tactil_demo.glb',
+                ]
+            );
+        }
     }
 }
