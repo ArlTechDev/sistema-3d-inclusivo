@@ -25,7 +25,7 @@ class RecursoController extends Controller
         }
 
         $recursos = Recurso::with('categoria')
-            ->where('estado', 'Activo')
+            ->where('estado', Recurso::ESTADO_ACTIVO)
             ->when(request('categoria'), fn ($q, $id) => $q->where('categoria_id', $id))
             ->get();
 
@@ -140,7 +140,7 @@ class RecursoController extends Controller
 
     public function forceDestroy($id)
     {
-        $recurso = Recurso::withTrashed()->findOrFail($id);
+        $recurso = Recurso::onlyTrashed()->findOrFail($id);
 
         if ($recurso->url_imagen) {
             Storage::disk('public')->delete($recurso->url_imagen);
