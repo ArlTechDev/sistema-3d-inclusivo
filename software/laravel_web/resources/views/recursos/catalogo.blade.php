@@ -15,7 +15,6 @@
             margin-bottom: 28px;
         }
         .hero::after {
-            /* Firma: patrón sutil de celdas Braille (6 puntos) en el fondo */
             content: '';
             position: absolute;
             right: -30px;
@@ -91,8 +90,8 @@
         /* Rejilla de tarjetas */
         .rejilla {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 22px;
         }
         .tarjeta {
             background: var(--blanco);
@@ -102,34 +101,54 @@
             padding: 18px;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 12px;
             transition: transform .15s ease, box-shadow .15s ease;
+            position: relative;
         }
-        .tarjeta:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(30,42,50,.12); }
+        .tarjeta:hover { transform: translateY(-3px); box-shadow: 0 12px 28px rgba(30,42,50,.12); }
         @media (prefers-reduced-motion: reduce) {
             .tarjeta { transition: none; transform: none !important; }
         }
-        .tarjeta .imagen {
-            height: 120px;
+        .tarjeta .imagen-contenedor {
+            height: 160px;
             border-radius: 8px;
             background: linear-gradient(135deg, #E3EBE8, #D3DFDA);
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
+            position: relative;
         }
-        .tarjeta .imagen img { width: 100%; height: 100%; object-fit: cover; }
-        .tarjeta .imagen .sin-imagen {
+        .tarjeta .imagen-contenedor img { width: 100%; height: 100%; object-fit: cover; }
+        .tarjeta .badge-3d {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(20, 108, 90, 0.92);
+            color: #fff;
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 4px 8px;
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            backdrop-filter: blur(4px);
+        }
+        .tarjeta .sin-imagen {
             color: var(--verde);
             font-family: var(--font-mono);
-            font-size: .72rem;
+            font-size: .8rem;
             letter-spacing: .1em;
             text-transform: uppercase;
+            text-align: center;
         }
         .tarjeta h2 {
             margin: 2px 0 0;
             font-family: var(--font-display);
-            font-size: 1.12rem;
+            font-size: 1.18rem;
             line-height: 1.25;
         }
         .tarjeta .descripcion {
@@ -152,7 +171,105 @@
             border-radius: 6px;
             padding: 3px 8px;
         }
-        .tarjeta .boton { justify-content: center; margin-top: 4px; }
+        .tarjeta .acciones-tarjeta {
+            display: flex;
+            gap: 8px;
+            margin-top: 4px;
+        }
+        .tarjeta .acciones-tarjeta .boton {
+            flex: 1;
+            justify-content: center;
+            text-align: center;
+            padding: 9px 12px;
+            font-size: 0.88rem;
+        }
+        .tarjeta .boton-3d {
+            background: var(--papel);
+            color: var(--verde);
+            border: 1px solid var(--verde);
+        }
+        .tarjeta .boton-3d:hover {
+            background: var(--verde);
+            color: #fff;
+            text-decoration: none;
+        }
+
+        /* Modal 3D */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(6px);
+            z-index: 9999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+        .modal-overlay.activo { display: flex; }
+        .modal-card {
+            background: #fff;
+            width: 100%;
+            max-width: 680px;
+            border-radius: var(--radio);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            animation: modalIn .2s ease-out;
+        }
+        @keyframes modalIn {
+            from { transform: scale(0.95); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        .modal-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--linea);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--papel);
+        }
+        .modal-header h3 { margin: 0; font-size: 1.15rem; font-family: var(--font-display); }
+        .modal-close {
+            background: transparent;
+            border: none;
+            font-size: 1.4rem;
+            cursor: pointer;
+            color: var(--tinta-suave);
+            padding: 0 4px;
+        }
+        .modal-body {
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .modal-viewer-container {
+            width: 100%;
+            height: 420px;
+            background: radial-gradient(circle, #f8fafc 0%, #e2e8f0 100%);
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+        }
+        .modal-viewer-container model-viewer {
+            width: 100%;
+            height: 100%;
+        }
+        .modal-footer {
+            padding: 14px 20px;
+            border-top: 1px solid var(--linea);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--papel);
+        }
+        .modal-tip {
+            font-size: 0.8rem;
+            color: var(--tinta-suave);
+            font-family: var(--font-mono);
+        }
 
         .vacio {
             text-align: center;
@@ -186,23 +303,24 @@
         <div class="rejilla">
             @foreach($recursos as $recurso)
                 <article class="tarjeta">
-                    <div class="imagen">
+                    <div class="imagen-contenedor">
                         @if($recurso->archivo_glb)
-                            <model-viewer src="{{ asset('storage/'.$recurso->archivo_glb) }}"
-                                          alt="Modelo 3D de {{ $recurso->titulo }}"
-                                          camera-controls
-                                          auto-rotate
-                                          shadow-intensity="1"
-                                          style="width: 100%; height: 100%; border-radius: 8px;">
-                            </model-viewer>
-                        @elseif($recurso->url_imagen)
+                            <span class="badge-3d">🧊 3D Interactivo</span>
+                        @endif
+
+                        @if($recurso->url_imagen)
                             <img src="{{ asset('storage/'.$recurso->url_imagen) }}" alt="Imagen de {{ $recurso->titulo }}" loading="lazy">
                         @else
-                            <span class="sin-imagen">Recurso táctil</span>
+                            <div class="sin-imagen">
+                                <span style="font-size: 2rem; display: block; margin-bottom: 4px;">⠃⠗</span>
+                                Recurso táctil
+                            </div>
                         @endif
                     </div>
+
                     <h2>{{ $recurso->titulo }}</h2>
                     <p class="descripcion">{{ $recurso->descripcion }}</p>
+
                     <div class="metadatos">
                         <span>{{ $recurso->gramos_pla }} g PLA</span>
                         <span>≈ {{ $recurso->tiempo_minutos }} min</span>
@@ -210,9 +328,18 @@
                             <span>{{ $recurso->categoria->nombre }}</span>
                         @endif
                     </div>
-                    <a href="{{ route('pedidos.create', ['recurso' => $recurso->id]) }}" class="boton">
-                        Solicitar Impresión
-                    </a>
+
+                    <div class="acciones-tarjeta">
+                        @if($recurso->archivo_glb)
+                            <button type="button" class="boton boton-3d" 
+                                    onclick="abrirModal3D('{{ asset('storage/'.$recurso->archivo_glb) }}', '{{ addslashes($recurso->titulo) }}', '{{ route('pedidos.create', ['recurso' => $recurso->id]) }}')">
+                                👁️ Vista 3D
+                            </button>
+                        @endif
+                        <a href="{{ route('pedidos.create', ['recurso' => $recurso->id]) }}" class="boton">
+                            Solicitar Impresión
+                        </a>
+                    </div>
                 </article>
             @endforeach
         </div>
@@ -222,4 +349,56 @@
             <p>Vuelve pronto: el catálogo crece con los modelos didácticos validados.</p>
         </div>
     @endif
+
+    <!-- Modal Visor 3D Amplio -->
+    <div id="modal3d" class="modal-overlay" onclick="cerrarModal3DFuera(event)">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3 id="modal3d-titulo">Explorador Tridimensional</h3>
+                <button type="button" class="modal-close" onclick="cerrarModal3D()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-viewer-container">
+                    <model-viewer id="modal-viewer-el" 
+                                  src="" 
+                                  alt="Modelo 3D" 
+                                  camera-controls 
+                                  auto-rotate 
+                                  shadow-intensity="1.2"
+                                  touch-action="pan-y">
+                    </model-viewer>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <span class="modal-tip">💡 Arrastra para rotar 360° · Usa la rueda para zoom</span>
+                <a id="modal3d-btn-solicitar" href="#" class="boton">
+                    Solicitar este Recurso
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function abrirModal3D(glbUrl, titulo, urlSolicitar) {
+            document.getElementById('modal3d-titulo').innerText = titulo;
+            document.getElementById('modal-viewer-el').setAttribute('src', glbUrl);
+            document.getElementById('modal3d-btn-solicitar').setAttribute('href', urlSolicitar);
+            document.getElementById('modal3d').classList.add('activo');
+        }
+
+        function cerrarModal3D() {
+            document.getElementById('modal3d').classList.remove('activo');
+            document.getElementById('modal-viewer-el').setAttribute('src', '');
+        }
+
+        function cerrarModal3DFuera(e) {
+            if (e.target.id === 'modal3d') {
+                cerrarModal3D();
+            }
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') cerrarModal3D();
+        });
+    </script>
 @endsection
