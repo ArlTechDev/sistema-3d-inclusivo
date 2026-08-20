@@ -34,7 +34,7 @@ class PedidosExport implements FromCollection, WithHeadings, WithMapping
         return [
             $pedido->id,
             $pedido->user->name ?? '-',
-            $pedido->institucion->nombre ?? '-',
+            $pedido->institucion->nombre ?? 'Particular',
             $pedido->fecha_solicitud?->format('d/m/Y') ?? '-',
             $pedido->estado,
             $pedido->total_gramos_pla,

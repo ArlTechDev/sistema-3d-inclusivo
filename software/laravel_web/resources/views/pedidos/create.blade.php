@@ -244,13 +244,14 @@
                 </div>
 
                 <div class="campo">
-                    <label for="institucion_id">Institución de destino <span class="text-danger">*</span></label>
-                    <select name="institucion_id" id="institucion_id" required>
-                        <option value="">— Seleccione su institución —</option>
+                    <label for="institucion_id">Institución de destino (Opcional)</label>
+                    <select name="institucion_id" id="institucion_id">
+                        <option value="">— Ninguna / Solicitud Particular (Opcional) —</option>
                         @foreach($instituciones as $institucion)
-                            <option value="{{ $institucion->id }}">{{ $institucion->nombre }}</option>
+                            <option value="{{ $institucion->id }}" @selected(old('institucion_id') == $institucion->id)>{{ $institucion->nombre }}</option>
                         @endforeach
                     </select>
+                    <span class="ayuda">Si perteneces a una unidad educativa o centro del IBC, selecciónala aquí.</span>
                 </div>
 
                 <div class="campo">

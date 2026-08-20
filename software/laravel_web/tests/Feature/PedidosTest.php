@@ -101,6 +101,28 @@ class PedidosTest extends TestCase
         ]);
     }
 
+    public function test_solicitante_puede_registrar_pedido_sin_institucion(): void
+    {
+        $this->crearPrecioGramo(0.05);
+        $solicitante = $this->crearSolicitante();
+        $recurso = $this->crearRecurso();
+
+        $response = $this->actingAs($solicitante)->post(route('pedidos.store'), [
+            'recurso_id' => $recurso->id,
+            'institucion_id' => null,
+            'cantidad' => 2,
+        ]);
+
+        $response->assertRedirect(route('recursos.index'));
+        $this->assertDatabaseHas('pedidos', [
+            'user_id' => $solicitante->id,
+            'institucion_id' => null,
+            'estado' => Pedido::ESTADO_PENDIENTE,
+            'total_gramos_pla' => 20.00,
+            'costo_total' => 1.00,
+        ]);
+    }
+
     public function test_texto_personalizado_genera_archivo_gcode(): void
     {
         Storage::fake('local');
@@ -168,6 +190,7 @@ class PedidosTest extends TestCase
 
         $response = $this->actingAs($solicitante)->post(route('pedidos.store'), [
             'recurso_id' => 999,
+            'institucion_id' => 999,
             'cantidad' => 0,
         ]);
 

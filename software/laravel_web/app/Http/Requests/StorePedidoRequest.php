@@ -17,7 +17,7 @@ class StorePedidoRequest extends FormRequest
     {
         return [
             'recurso_id' => 'required|integer|exists:recursos,id',
-            'institucion_id' => 'required|integer|exists:instituciones,id',
+            'institucion_id' => 'nullable|integer|exists:instituciones,id',
             'cantidad' => 'required|integer|min:1|max:100',
             'texto_personalizado' => 'nullable|string|min:1|max:200',
         ];
@@ -28,7 +28,6 @@ class StorePedidoRequest extends FormRequest
         return [
             'recurso_id.required' => 'Debe seleccionar un recurso del catálogo.',
             'recurso_id.exists' => 'El recurso seleccionado no existe.',
-            'institucion_id.required' => 'Debe seleccionar la institución de origen.',
             'institucion_id.exists' => 'La institución seleccionada no existe.',
             'cantidad.required' => 'La cantidad es obligatoria.',
             'cantidad.integer' => 'La cantidad debe ser un número entero.',
