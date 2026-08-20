@@ -42,7 +42,13 @@
             <div class="col-md-3">
                 <select name="estado" class="form-control form-control-sm">
                     <option value="">— Todos los estados —</option>
-                    @foreach(['Pendiente', 'En impresión', 'Completado', 'Rechazado'] as $estado)
+                    @foreach([
+                        \App\Models\Pedido::ESTADO_PENDIENTE,
+                        \App\Models\Pedido::ESTADO_APROBADO,
+                        \App\Models\Pedido::ESTADO_EN_IMPRESION,
+                        \App\Models\Pedido::ESTADO_COMPLETADO,
+                        \App\Models\Pedido::ESTADO_RECHAZADO,
+                    ] as $estado)
                         <option value="{{ $estado }}" @selected(request('estado') === $estado)>{{ $estado }}</option>
                     @endforeach
                 </select>
@@ -91,10 +97,11 @@
                         <td>
                             @php
                                 $clase = match ($pedido->estado) {
-                                    'Pendiente' => 'warning',
-                                    'En impresión' => 'info',
-                                    'Completado' => 'success',
-                                    'Rechazado' => 'danger',
+                                    \App\Models\Pedido::ESTADO_PENDIENTE => 'warning',
+                                    \App\Models\Pedido::ESTADO_APROBADO => 'primary',
+                                    \App\Models\Pedido::ESTADO_EN_IMPRESION => 'info',
+                                    \App\Models\Pedido::ESTADO_COMPLETADO => 'success',
+                                    \App\Models\Pedido::ESTADO_RECHAZADO => 'danger',
                                     default => 'secondary',
                                 };
                             @endphp
@@ -104,15 +111,15 @@
                             @endif
                         </td>
                         <td>
-                            @if($pedido->estado !== 'Completado' && $pedido->estado !== 'Rechazado')
+                            @if($pedido->estado !== \App\Models\Pedido::ESTADO_COMPLETADO && $pedido->estado !== \App\Models\Pedido::ESTADO_RECHAZADO)
                                 <form method="POST" action="{{ route('pedidos.update', $pedido) }}" class="d-inline">
                                     @csrf
                                     @method('PATCH')
                                     <select name="estado" class="form-select form-select-sm d-inline-block w-auto"
                                             onchange="this.form.submit()">
                                         <option value="">Cambiar estado…</option>
-                                        @foreach(\App\Http\Controllers\PedidoController::TRANSICIONES[$pedido->estado] ?? [] as $estado)
-                                            @if($estado !== 'Rechazado')
+                                        @foreach(\App\Models\Pedido::TRANSICIONES[$pedido->estado] ?? [] as $estado)
+                                            @if($estado !== \App\Models\Pedido::ESTADO_RECHAZADO)
                                                 <option value="{{ $estado }}">{{ $estado }}</option>
                                             @endif
                                         @endforeach

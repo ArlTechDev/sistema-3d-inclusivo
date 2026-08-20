@@ -12,6 +12,32 @@ class Pedido extends Model
 {
     use HasFactory, SoftDeletes;
 
+    public const ESTADO_PENDIENTE = 'Pendiente';
+
+    public const ESTADO_APROBADO = 'Aprobado';
+
+    public const ESTADO_EN_IMPRESION = 'En impresión';
+
+    public const ESTADO_COMPLETADO = 'Completado';
+
+    public const ESTADO_RECHAZADO = 'Rechazado';
+
+    /**
+     * Transiciones de estado permitidas (UC-08).
+     *
+     * @var array<string, array<int, string>>
+     */
+    public const TRANSICIONES = [
+        self::ESTADO_PENDIENTE => [self::ESTADO_APROBADO, self::ESTADO_RECHAZADO],
+        self::ESTADO_APROBADO => [self::ESTADO_EN_IMPRESION, self::ESTADO_RECHAZADO],
+        self::ESTADO_EN_IMPRESION => [self::ESTADO_COMPLETADO, self::ESTADO_RECHAZADO],
+    ];
+
+    public function puedeTransicionarA(string $nuevoEstado): bool
+    {
+        return in_array($nuevoEstado, self::TRANSICIONES[$this->estado] ?? [], true);
+    }
+
     protected $fillable = [
         'user_id',
         'institucion_id',

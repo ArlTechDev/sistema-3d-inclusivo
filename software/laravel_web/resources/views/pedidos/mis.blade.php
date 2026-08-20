@@ -44,6 +44,7 @@
             font-weight: 600;
         }
         .etiqueta-pendiente   { background: #fef3c7; color: #92400e; }
+        .etiqueta-aprobado    { background: #e0f2fe; color: #0369a1; }
         .etiqueta-impresion   { background: #dbeafe; color: #1e40af; }
         .etiqueta-completado  { background: #d1fae5; color: #065f46; }
         .etiqueta-rechazado   { background: #fee2e2; color: #991b1b; }
@@ -105,17 +106,17 @@
                                 @if ($pedido->trashed())
                                     <span class="etiqueta etiqueta-cancelada">Cancelada</span>
                                 @else
-                                    @php $estado = $pedido->estado; @endphp
-                                    <span class="etiqueta etiqueta-{{ $estado === 'En impresión' ? 'impresion' : strtolower($estado) }}">
-                                        {{ $estado }}
-                                    </span>
-                                    @if ($pedido->motivo_rechazo)
-                                        <div class="motivo">Motivo: {{ $pedido->motivo_rechazo }}</div>
-                                    @endif
-                                @endif
-                            </td>
-                            <td class="acciones">
-                                @if (! $pedido->trashed() && $pedido->estado === 'Pendiente')
+                                     @php $estado = $pedido->estado; @endphp
+                                     <span class="etiqueta etiqueta-{{ $estado === \App\Models\Pedido::ESTADO_EN_IMPRESION ? 'impresion' : ($estado === \App\Models\Pedido::ESTADO_APROBADO ? 'aprobado' : strtolower($estado)) }}">
+                                         {{ $estado }}
+                                     </span>
+                                     @if ($pedido->motivo_rechazo)
+                                         <div class="motivo">Motivo: {{ $pedido->motivo_rechazo }}</div>
+                                     @endif
+                                 @endif
+                             </td>
+                             <td class="acciones">
+                                 @if (! $pedido->trashed() && $pedido->estado === \App\Models\Pedido::ESTADO_PENDIENTE)
                                     <form method="POST" action="{{ route('pedidos.cancelar', $pedido) }}"
                                           onsubmit="return confirm('¿Cancelar esta solicitud?');">
                                         @csrf
