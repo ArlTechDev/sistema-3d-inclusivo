@@ -309,6 +309,12 @@ return [
     'menu' => [
         ['header' => 'MÓDULOS DEL PROYECTO'],
         [
+            'text' => 'Solicitudes de Impresión',
+            'route' => 'pedidos.index',
+            'icon' => 'fas fa-tasks',
+            'can' => 'administrador',
+        ],
+        [
             'text' => 'Catálogo de Recursos',
             'url' => 'recursos',
             'icon' => 'fas fa-fw fa-cube',
