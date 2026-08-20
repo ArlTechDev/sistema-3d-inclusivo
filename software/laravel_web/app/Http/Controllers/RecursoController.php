@@ -6,6 +6,7 @@ use App\Exports\RecursosExport;
 use App\Http\Requests\StoreRecursoRequest;
 use App\Http\Requests\UpdateRecursoRequest;
 use App\Models\Categoria;
+use App\Models\ConfiguracionSistema;
 use App\Models\Recurso;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Storage;
@@ -29,7 +30,11 @@ class RecursoController extends Controller
             ->when(request('categoria'), fn ($q, $id) => $q->where('categoria_id', $id))
             ->get();
 
-        return view('recursos.catalogo', compact('recursos', 'categorias'));
+        $precioGramo = (float) (ConfiguracionSistema::where('clave', 'precio_gramo_pla')->value('valor') ?? 0.15);
+        $moneda = (string) (ConfiguracionSistema::where('clave', 'moneda_simbolo')->value('valor') ?? 'Bs');
+        $gramosPorCelda = (float) (ConfiguracionSistema::where('clave', 'gramos_por_celda_braille')->value('valor') ?? 0.02);
+
+        return view('recursos.catalogo', compact('recursos', 'categorias', 'precioGramo', 'moneda', 'gramosPorCelda'));
     }
 
     public function exportarPdf()

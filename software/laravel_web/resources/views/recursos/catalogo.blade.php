@@ -288,6 +288,8 @@
         <div class="stats">
             <div><b>{{ $recursos->count() }}</b><span>recursos disponibles</span></div>
             <div><b>{{ $categorias->count() }}</b><span>categorías</span></div>
+            <div><b>{{ $moneda ?? 'Bs' }} {{ number_format($precioGramo ?? 0.15, 2) }}</b><span>tarifa por gramo PLA</span></div>
+            <div><b>+{{ $gramosPorCelda ?? 0.02 }} g</b><span>relieve Braille/celda</span></div>
         </div>
     </section>
 
@@ -324,7 +326,8 @@
                     <p class="descripcion">{{ $recurso->descripcion }}</p>
 
                     <div class="metadatos">
-                        <span>{{ $recurso->gramos_pla }} g PLA</span>
+                        <span><b>{{ $recurso->gramos_pla }} g</b> PLA</span>
+                        <span><b>≈ {{ $moneda ?? 'Bs' }} {{ number_format($recurso->gramos_pla * ($precioGramo ?? 0.15), 2) }}</b></span>
                         <span>≈ {{ $recurso->tiempo_minutos }} min</span>
                         @if($recurso->categoria)
                             <span>{{ $recurso->categoria->nombre }}</span>
