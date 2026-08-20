@@ -7,7 +7,6 @@ use App\Http\Requests\StoreUsuarioRequest;
 use App\Http\Requests\UpdateUsuarioRequest;
 use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -42,8 +41,6 @@ class UserController extends Controller
     {
         $data = $request->validated();
 
-        $data['password'] = Hash::make($data['password']);
-
         if ($request->hasFile('foto_perfil')) {
             $data['foto_perfil'] = Storage::disk('public')
                 ->putFile('usuarios/fotos', $request->file('foto_perfil'));
@@ -64,9 +61,7 @@ class UserController extends Controller
     {
         $data = $request->validated();
 
-        if ($data['password']) {
-            $data['password'] = Hash::make($data['password']);
-        } else {
+        if (empty($data['password'])) {
             unset($data['password']);
         }
 
