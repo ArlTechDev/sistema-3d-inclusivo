@@ -6,28 +6,22 @@ use App\Exports\PedidosExport;
 use App\Http\Requests\RechazarPedidoRequest;
 use App\Http\Requests\StorePedidoRequest;
 use App\Http\Requests\UpdatePedidoRequest;
-use App\Models\ConfiguracionSistema;
 use App\Models\Institucion;
 use App\Models\Pedido;
 use App\Models\Recurso;
-use App\Services\BrailleTranslator;
+use App\Models\User;
+use App\Services\PedidoService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Validation\ValidationException;
 use Maatwebsite\Excel\Facades\Excel;
 
 class PedidoController extends Controller
 {
     /**
-     * Transiciones de estado permitidas (UC-08). El rechazo se gestiona aparte (rechazar).
-     *
-     * @var array<string, array<int, string>>
+     * Alias de compatibilidad hacia las transiciones definidas en el modelo Pedido.
      */
-    public const TRANSICIONES = [
-        'Pendiente' => ['En impresión', 'Rechazado'],
-        'En impresión' => ['Completado', 'Rechazado'],
-    ];
+    public const TRANSICIONES = Pedido::TRANSICIONES;
 
     /**
      * Panel del Administrador: listado de solicitudes filtrable por estado,
@@ -52,64 +46,16 @@ class PedidoController extends Controller
      */
     public function create(Request $request)
     {
-        $recursos = Recurso::where('estado', 'Activo')->get();
+        $recursos = Recurso::where('estado', Recurso::ESTADO_ACTIVO)->get();
         $instituciones = Institucion::all();
         $recursoSeleccionado = $request->integer('recurso');
 
         return view('pedidos.create', compact('recursos', 'instituciones', 'recursoSeleccionado'));
     }
 
-    /**
-     * Registra la solicitud, calcula gramos/costo con configuracion_sistemas.precio_gramo_pla
-     * y genera el G-Code si el solicitante ingresó texto personalizado (UC-07).
-     */
-    public function store(StorePedidoRequest $request)
+    public function store(StorePedidoRequest $request, PedidoService $pedidoService)
     {
-        $datos = $request->validated();
-
-        $recurso = Recurso::where('estado', 'Activo')->findOrFail($datos['recurso_id']);
-        $precioGramo = (float) (ConfiguracionSistema::where('clave', 'precio_gramo_pla')->value('valor') ?? 0.05);
-
-        // Texto personalizado (Opción A): se valida ANTES de crear el pedido (UC-06 → UC-07).
-        // Se usa el input crudo (no el sanitizado con entidades HTML) porque el traductor
-        // soporta comillas (') y ("); el texto solo viaja dentro del archivo .gcode descargado.
-        $textoPersonalizado = trim((string) $request->input('texto_personalizado'));
-
-        if ($textoPersonalizado !== '') {
-            $invalidos = app(BrailleTranslator::class)->validarCaracteres($textoPersonalizado);
-            if ($invalidos !== []) {
-                throw ValidationException::withMessages([
-                    'texto_personalizado' => 'El texto contiene caracteres no soportados: '.implode(', ', $invalidos).'.',
-                ]);
-            }
-        }
-
-        $gramos = round($recurso->gramos_pla * $datos['cantidad'], 2);
-        $costoUnitario = round($recurso->gramos_pla * $precioGramo, 2);
-        $costo = round($gramos * $precioGramo, 2);
-
-        $pedido = Pedido::create([
-            'user_id' => auth()->id(),
-            'institucion_id' => $datos['institucion_id'],
-            'estado' => 'Pendiente',
-            'fecha_solicitud' => now(),
-            'total_gramos_pla' => $gramos,
-            'costo_total' => $costo,
-        ]);
-
-        $pedido->detalles()->create([
-            'recurso_id' => $recurso->id,
-            'cantidad' => $datos['cantidad'],
-            'gramos_pla' => $gramos,
-            'costo_unitario' => $costoUnitario,
-        ]);
-
-        if ($textoPersonalizado !== '') {
-            $gcode = app(BrailleTranslator::class)->generarGCode($textoPersonalizado, 5.0, 5.0, 0.2);
-            $nombre = 'pedidos/gcode/pedido_'.$pedido->id.'_'.uniqid().'.gcode';
-            Storage::disk('local')->put($nombre, $gcode);
-            $pedido->update(['gcode_path' => $nombre]);
-        }
+        $pedidoService->crearPedido($request->validated(), (int) auth()->id());
 
         return redirect()->route('recursos.index')->with('success', 'Solicitud de impresión registrada correctamente.');
     }
@@ -121,7 +67,7 @@ class PedidoController extends Controller
     {
         $nuevoEstado = $request->validated()['estado'];
 
-        if (! in_array($nuevoEstado, self::TRANSICIONES[$pedido->estado] ?? [], true)) {
+        if (! $pedido->puedeTransicionarA($nuevoEstado)) {
             return redirect()->route('pedidos.index')->withErrors([
                 'estado' => 'No se puede pasar un pedido '.$pedido->estado.' a «'.$nuevoEstado.'».',
             ]);
@@ -132,19 +78,16 @@ class PedidoController extends Controller
         return redirect()->route('pedidos.index')->with('success', 'Estado del pedido actualizado.');
     }
 
-    /**
-     * El Administrador rechaza el pedido registrando un motivo obligatorio.
-     */
     public function rechazar(RechazarPedidoRequest $request, Pedido $pedido)
     {
-        if (! in_array('Rechazado', self::TRANSICIONES[$pedido->estado] ?? [], true)) {
+        if (! $pedido->puedeTransicionarA(Pedido::ESTADO_RECHAZADO)) {
             return redirect()->route('pedidos.index')->withErrors([
                 'estado' => 'Un pedido '.$pedido->estado.' no puede rechazarse.',
             ]);
         }
 
         $pedido->update([
-            'estado' => 'Rechazado',
+            'estado' => Pedido::ESTADO_RECHAZADO,
             'motivo_rechazo' => $request->validated()['motivo_rechazo'],
         ]);
 
@@ -188,7 +131,7 @@ class PedidoController extends Controller
     public function mis()
     {
         // El panel de gestión es del Administrador (pedidos.index).
-        if (auth()->user()->rol === 'Administrador') {
+        if (auth()->user()->rol === User::ROL_ADMINISTRADOR) {
             return redirect()->route('pedidos.index');
         }
 
@@ -208,7 +151,7 @@ class PedidoController extends Controller
     {
         abort_if($pedido->user_id !== auth()->id(), 403, 'No puedes cancelar una solicitud de otro usuario.');
 
-        if ($pedido->estado !== 'Pendiente' || $pedido->trashed()) {
+        if ($pedido->estado !== Pedido::ESTADO_PENDIENTE || $pedido->trashed()) {
             return redirect()->route('pedidos.mis')->withErrors([
                 'cancelar' => 'Solo se puede cancelar una solicitud en estado Pendiente.',
             ]);

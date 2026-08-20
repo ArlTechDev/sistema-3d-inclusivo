@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Pedido;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdatePedidoRequest extends FormRequest
@@ -14,7 +15,12 @@ class UpdatePedidoRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'estado' => 'required|in:Pendiente,En impresión,Completado',
+            'estado' => 'required|in:'.implode(',', [
+                Pedido::ESTADO_PENDIENTE,
+                Pedido::ESTADO_APROBADO,
+                Pedido::ESTADO_EN_IMPRESION,
+                Pedido::ESTADO_COMPLETADO,
+            ]),
         ];
     }
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Services\BrailleTranslator;
 use App\Support\Sanitizer;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -35,6 +36,22 @@ class StorePedidoRequest extends FormRequest
             'cantidad.max' => 'La cantidad máxima es 100.',
             'texto_personalizado.max' => 'El texto personalizado no puede superar 200 caracteres.',
         ];
+    }
+
+    public function withValidator($validator): void
+    {
+        $validator->after(function ($validator) {
+            $textoPersonalizado = trim((string) $this->input('texto_personalizado'));
+            if ($textoPersonalizado !== '') {
+                $invalidos = app(BrailleTranslator::class)->validarCaracteres($textoPersonalizado);
+                if ($invalidos !== []) {
+                    $validator->errors()->add(
+                        'texto_personalizado',
+                        'El texto contiene caracteres no soportados: '.implode(', ', $invalidos).'.'
+                    );
+                }
+            }
+        });
     }
 
     protected function prepareForValidation(): void
