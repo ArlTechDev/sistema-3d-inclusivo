@@ -52,7 +52,7 @@ class RecursoController extends Controller
 
     public function store(StoreRecursoRequest $request)
     {
-        $data = $request->except(['url_imagen', 'url_gcode']);
+        $data = $request->except(['url_imagen', 'url_gcode', 'archivo_stl', 'archivo_glb']);
 
         if ($request->hasFile('url_imagen')) {
             $data['url_imagen'] = $request->file('url_imagen')
@@ -62,6 +62,16 @@ class RecursoController extends Controller
         if ($request->hasFile('url_gcode')) {
             $data['url_gcode'] = $request->file('url_gcode')
                 ->store('recursos/gcode', 'local');
+        }
+
+        if ($request->hasFile('archivo_stl')) {
+            $data['archivo_stl'] = $request->file('archivo_stl')
+                ->store('recursos/3d', 'public');
+        }
+
+        if ($request->hasFile('archivo_glb')) {
+            $data['archivo_glb'] = $request->file('archivo_glb')
+                ->store('recursos/3d', 'public');
         }
 
         Recurso::create($data);
@@ -77,7 +87,7 @@ class RecursoController extends Controller
 
     public function update(UpdateRecursoRequest $request, Recurso $recurso)
     {
-        $data = $request->except(['url_imagen', 'url_gcode']);
+        $data = $request->except(['url_imagen', 'url_gcode', 'archivo_stl', 'archivo_glb']);
 
         if ($request->hasFile('url_imagen')) {
             if ($recurso->url_imagen) {
@@ -95,6 +105,24 @@ class RecursoController extends Controller
 
             $data['url_gcode'] = $request->file('url_gcode')
                 ->store('recursos/gcode', 'local');
+        }
+
+        if ($request->hasFile('archivo_stl')) {
+            if ($recurso->archivo_stl) {
+                Storage::disk('public')->delete($recurso->archivo_stl);
+            }
+
+            $data['archivo_stl'] = $request->file('archivo_stl')
+                ->store('recursos/3d', 'public');
+        }
+
+        if ($request->hasFile('archivo_glb')) {
+            if ($recurso->archivo_glb) {
+                Storage::disk('public')->delete($recurso->archivo_glb);
+            }
+
+            $data['archivo_glb'] = $request->file('archivo_glb')
+                ->store('recursos/3d', 'public');
         }
 
         $recurso->update($data);
@@ -148,6 +176,14 @@ class RecursoController extends Controller
 
         if ($recurso->url_gcode) {
             Storage::disk('local')->delete($recurso->url_gcode);
+        }
+
+        if ($recurso->archivo_stl) {
+            Storage::disk('public')->delete($recurso->archivo_stl);
+        }
+
+        if ($recurso->archivo_glb) {
+            Storage::disk('public')->delete($recurso->archivo_glb);
         }
 
         $recurso->forceDelete();

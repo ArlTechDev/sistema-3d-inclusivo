@@ -74,6 +74,42 @@
             </div>
 
             <div class="row">
+                <div class="col-md-6 form-group">
+                    <label for="archivo_glb">Modelo 3D GLB (.glb)</label>
+                    @if($recurso->archivo_glb)
+                        <div class="mb-2">
+                            <small class="text-success"><i class="fas fa-cube"></i> Modelo GLB asignado</small>
+                        </div>
+                    @endif
+                    <div class="input-group">
+                        <div class="custom-file">
+                            <input type="file" name="archivo_glb" class="custom-file-input @error('archivo_glb') is-invalid @enderror" id="archivo_glb" accept=".glb">
+                            <label class="custom-file-label" for="archivo_glb">Seleccionar modelo GLB...</label>
+                        </div>
+                    </div>
+                    <small class="text-muted">Dejar vacío para conservar el modelo 3D actual.</small>
+                    @error('archivo_glb') <span class="text-danger">{{ $message }}</span> @enderror
+                </div>
+
+                <div class="col-md-6 form-group">
+                    <label for="archivo_stl">Modelo 3D STL (.stl)</label>
+                    @if($recurso->archivo_stl)
+                        <div class="mb-2">
+                            <small class="text-info"><i class="fas fa-cube"></i> Archivo STL asignado</small>
+                        </div>
+                    @endif
+                    <div class="input-group">
+                        <div class="custom-file">
+                            <input type="file" name="archivo_stl" class="custom-file-input @error('archivo_stl') is-invalid @enderror" id="archivo_stl" accept=".stl">
+                            <label class="custom-file-label" for="archivo_stl">Seleccionar archivo STL...</label>
+                        </div>
+                    </div>
+                    <small class="text-muted">Dejar vacío para conservar el archivo STL actual.</small>
+                    @error('archivo_stl') <span class="text-danger">{{ $message }}</span> @enderror
+                </div>
+            </div>
+
+            <div class="row">
                 <div class="col-md-3 form-group">
                     <label for="gramos_pla">Gramos de PLA</label>
                     <input type="number" step="0.01" name="gramos_pla"

@@ -187,7 +187,15 @@
             @foreach($recursos as $recurso)
                 <article class="tarjeta">
                     <div class="imagen">
-                        @if($recurso->url_imagen)
+                        @if($recurso->archivo_glb)
+                            <model-viewer src="{{ asset('storage/'.$recurso->archivo_glb) }}"
+                                          alt="Modelo 3D de {{ $recurso->titulo }}"
+                                          camera-controls
+                                          auto-rotate
+                                          shadow-intensity="1"
+                                          style="width: 100%; height: 100%; border-radius: 8px;">
+                            </model-viewer>
+                        @elseif($recurso->url_imagen)
                             <img src="{{ asset('storage/'.$recurso->url_imagen) }}" alt="Imagen de {{ $recurso->titulo }}" loading="lazy">
                         @else
                             <span class="sin-imagen">Recurso táctil</span>

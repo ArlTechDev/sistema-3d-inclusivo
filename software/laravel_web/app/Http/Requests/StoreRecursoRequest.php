@@ -23,6 +23,8 @@ class StoreRecursoRequest extends FormRequest
             'estado' => 'required|in:Activo,Inactivo',
             'url_imagen' => 'nullable|image|max:2048',
             'url_gcode' => 'nullable|file|mimes:gcode,txt',
+            'archivo_stl' => 'nullable|file|max:20480',
+            'archivo_glb' => 'nullable|file|max:20480',
         ];
     }
 

@@ -54,6 +54,32 @@
                     @error('url_gcode') <span class="text-danger">{{ $message }}</span> @enderror
                 </div>
             </div>
+
+            <div class="row">
+                <div class="col-md-6 form-group">
+                    <label for="archivo_glb">Modelo 3D GLB (Visor Web 3D - .glb)</label>
+                    <div class="input-group">
+                        <div class="custom-file">
+                            <input type="file" name="archivo_glb" class="custom-file-input @error('archivo_glb') is-invalid @enderror" id="archivo_glb" accept=".glb">
+                            <label class="custom-file-label" for="archivo_glb">Seleccionar modelo GLB...</label>
+                        </div>
+                    </div>
+                    @error('archivo_glb') <span class="text-danger">{{ $message }}</span> @enderror
+                </div>
+
+                <div class="col-md-6 form-group">
+                    <label for="archivo_stl">Modelo 3D STL (.stl)</label>
+                    <div class="input-group">
+                        <div class="custom-file">
+                            <input type="file" name="archivo_stl" class="custom-file-input @error('archivo_stl') is-invalid @enderror" id="archivo_stl" accept=".stl">
+                            <label class="custom-file-label" for="archivo_stl">Seleccionar archivo STL...</label>
+                        </div>
+                    </div>
+                    @error('archivo_stl') <span class="text-danger">{{ $message }}</span> @enderror
+                </div>
+            </div>
+
+            <div class="row">
                 <div class="col-md-3 form-group">
                     <label for="gramos_pla">Gramos de PLA</label>
                     <input type="number" step="0.01" name="gramos_pla" class="form-control @error('gramos_pla') is-invalid @enderror" value="{{ old('gramos_pla') }}">
