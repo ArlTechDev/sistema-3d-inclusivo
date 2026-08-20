@@ -19,8 +19,9 @@ class StoreRecursoRequest extends FormRequest
             'descripcion' => 'required|string|min:10',
             'gramos_pla' => 'required|numeric|min:0.1',
             'tiempo_minutos' => 'required|integer|min:1',
-            'fecha_creacion' => 'required|date',
+            'fecha_creacion' => 'nullable|date',
             'estado' => 'required|in:Activo,Inactivo',
+            'categoria_id' => 'nullable|integer|exists:categorias,id',
             'url_imagen' => 'nullable|image|max:2048',
             'url_gcode' => 'nullable|file|mimes:gcode,txt',
             'archivo_stl' => 'nullable|file|max:20480',
@@ -42,15 +43,21 @@ class StoreRecursoRequest extends FormRequest
             'tiempo_minutos.required' => 'El tiempo en minutos es obligatorio.',
             'tiempo_minutos.integer' => 'El tiempo debe ser un número entero.',
             'tiempo_minutos.min' => 'El tiempo debe ser mayor a 0.',
-            'fecha_creacion.required' => 'La fecha es obligatoria.',
             'fecha_creacion.date' => 'Debe ingresar una fecha válida.',
             'estado.required' => 'El estado es obligatorio.',
             'estado.in' => 'El estado seleccionado no es válido.',
+            'categoria_id.exists' => 'La categoría seleccionada no existe.',
         ];
     }
 
     protected function prepareForValidation(): void
     {
-        $this->merge(Sanitizer::cleanArray($this->all(), ['titulo', 'descripcion']));
+        $data = Sanitizer::cleanArray($this->all(), ['titulo', 'descripcion']);
+
+        if (empty($data['fecha_creacion'])) {
+            $data['fecha_creacion'] = now()->toDateString();
+        }
+
+        $this->merge($data);
     }
 }

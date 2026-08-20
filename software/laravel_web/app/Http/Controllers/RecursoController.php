@@ -47,7 +47,9 @@ class RecursoController extends Controller
 
     public function create()
     {
-        return view('recursos.create');
+        $categorias = Categoria::all();
+
+        return view('recursos.create', compact('categorias'));
     }
 
     public function store(StoreRecursoRequest $request)
@@ -82,7 +84,9 @@ class RecursoController extends Controller
 
     public function edit(Recurso $recurso)
     {
-        return view('recursos.edit', compact('recurso'));
+        $categorias = Categoria::all();
+
+        return view('recursos.edit', compact('recurso', 'categorias'));
     }
 
     public function update(UpdateRecursoRequest $request, Recurso $recurso)
