@@ -88,7 +88,7 @@ class PedidosTest extends TestCase
         $this->assertDatabaseHas('pedidos', [
             'user_id' => $solicitante->id,
             'institucion_id' => $institucion->id,
-            'estado' => 'Pendiente',
+            'estado' => Pedido::ESTADO_PENDIENTE,
             'total_gramos_pla' => 30.00,   // 10 g × 3
             'costo_total' => 1.50,         // 30 g × 0.05
         ]);
@@ -192,7 +192,7 @@ class PedidosTest extends TestCase
         $pedido = Pedido::create([
             'user_id' => $solicitante->id,
             'institucion_id' => $institucion->id,
-            'estado' => 'Pendiente',
+            'estado' => Pedido::ESTADO_PENDIENTE,
             'fecha_solicitud' => now(),
             'total_gramos_pla' => 10,
             'costo_total' => 0.50,
@@ -211,21 +211,26 @@ class PedidosTest extends TestCase
         $pedido = Pedido::create([
             'user_id' => $solicitante->id,
             'institucion_id' => $institucion->id,
-            'estado' => 'Pendiente',
+            'estado' => Pedido::ESTADO_PENDIENTE,
             'fecha_solicitud' => now(),
             'total_gramos_pla' => 10,
             'costo_total' => 0.50,
         ]);
 
-        $this->actingAs($admin)->patch(route('pedidos.update', $pedido), ['estado' => 'En impresión'])
+        $this->actingAs($admin)->patch(route('pedidos.update', $pedido), ['estado' => Pedido::ESTADO_APROBADO])
             ->assertRedirect(route('pedidos.index'));
 
-        $this->assertDatabaseHas('pedidos', ['id' => $pedido->id, 'estado' => 'En impresión']);
+        $this->assertDatabaseHas('pedidos', ['id' => $pedido->id, 'estado' => Pedido::ESTADO_APROBADO]);
 
-        $this->actingAs($admin)->patch(route('pedidos.update', $pedido), ['estado' => 'Completado'])
+        $this->actingAs($admin)->patch(route('pedidos.update', $pedido), ['estado' => Pedido::ESTADO_EN_IMPRESION])
             ->assertRedirect(route('pedidos.index'));
 
-        $this->assertDatabaseHas('pedidos', ['id' => $pedido->id, 'estado' => 'Completado']);
+        $this->assertDatabaseHas('pedidos', ['id' => $pedido->id, 'estado' => Pedido::ESTADO_EN_IMPRESION]);
+
+        $this->actingAs($admin)->patch(route('pedidos.update', $pedido), ['estado' => Pedido::ESTADO_COMPLETADO])
+            ->assertRedirect(route('pedidos.index'));
+
+        $this->assertDatabaseHas('pedidos', ['id' => $pedido->id, 'estado' => Pedido::ESTADO_COMPLETADO]);
     }
 
     public function test_transicion_de_estado_invalida_es_bloqueada(): void
@@ -237,18 +242,40 @@ class PedidosTest extends TestCase
         $pedido = Pedido::create([
             'user_id' => $solicitante->id,
             'institucion_id' => $institucion->id,
-            'estado' => 'En impresión',
+            'estado' => Pedido::ESTADO_EN_IMPRESION,
             'fecha_solicitud' => now(),
             'total_gramos_pla' => 10,
             'costo_total' => 0.50,
         ]);
 
-        // Volver a Pendiente no está permitido (solo Pendiente → En impresión → Completado)
-        $this->actingAs($admin)->patch(route('pedidos.update', $pedido), ['estado' => 'Pendiente'])
+        // Volver a Pendiente no está permitido
+        $this->actingAs($admin)->patch(route('pedidos.update', $pedido), ['estado' => Pedido::ESTADO_PENDIENTE])
             ->assertRedirect(route('pedidos.index'))
             ->assertSessionHasErrors('estado');
 
-        $this->assertDatabaseHas('pedidos', ['id' => $pedido->id, 'estado' => 'En impresión']);
+        $this->assertDatabaseHas('pedidos', ['id' => $pedido->id, 'estado' => Pedido::ESTADO_EN_IMPRESION]);
+    }
+
+    public function test_estado_aprobado_no_puede_volver_a_pendiente(): void
+    {
+        $admin = $this->crearAdmin();
+        $solicitante = $this->crearSolicitante();
+        $institucion = $this->crearInstitucion();
+
+        $pedido = Pedido::create([
+            'user_id' => $solicitante->id,
+            'institucion_id' => $institucion->id,
+            'estado' => Pedido::ESTADO_APROBADO,
+            'fecha_solicitud' => now(),
+            'total_gramos_pla' => 10,
+            'costo_total' => 0.50,
+        ]);
+
+        $this->actingAs($admin)->patch(route('pedidos.update', $pedido), ['estado' => Pedido::ESTADO_PENDIENTE])
+            ->assertRedirect(route('pedidos.index'))
+            ->assertSessionHasErrors('estado');
+
+        $this->assertDatabaseHas('pedidos', ['id' => $pedido->id, 'estado' => Pedido::ESTADO_APROBADO]);
     }
 
     public function test_rechazo_requiere_motivo_obligatorio(): void
@@ -260,7 +287,7 @@ class PedidosTest extends TestCase
         $pedido = Pedido::create([
             'user_id' => $solicitante->id,
             'institucion_id' => $institucion->id,
-            'estado' => 'Pendiente',
+            'estado' => Pedido::ESTADO_PENDIENTE,
             'fecha_solicitud' => now(),
             'total_gramos_pla' => 10,
             'costo_total' => 0.50,
@@ -269,16 +296,71 @@ class PedidosTest extends TestCase
         $this->actingAs($admin)->patch(route('pedidos.rechazar', $pedido), ['motivo_rechazo' => ''])
             ->assertSessionHasErrors('motivo_rechazo');
 
-        $this->assertDatabaseHas('pedidos', ['id' => $pedido->id, 'estado' => 'Pendiente']);
+        $this->assertDatabaseHas('pedidos', ['id' => $pedido->id, 'estado' => Pedido::ESTADO_PENDIENTE]);
 
         $this->actingAs($admin)->patch(route('pedidos.rechazar', $pedido), ['motivo_rechazo' => 'Filamento insuficiente'])
             ->assertRedirect(route('pedidos.index'));
 
         $this->assertDatabaseHas('pedidos', [
             'id' => $pedido->id,
-            'estado' => 'Rechazado',
+            'estado' => Pedido::ESTADO_RECHAZADO,
             'motivo_rechazo' => 'Filamento insuficiente',
         ]);
+    }
+
+    public function test_admin_puede_rechazar_desde_aprobado_y_en_impresion(): void
+    {
+        $admin = $this->crearAdmin();
+        $solicitante = $this->crearSolicitante();
+        $institucion = $this->crearInstitucion();
+
+        $pedidoAprobado = Pedido::create([
+            'user_id' => $solicitante->id,
+            'institucion_id' => $institucion->id,
+            'estado' => Pedido::ESTADO_APROBADO,
+            'fecha_solicitud' => now(),
+            'total_gramos_pla' => 10,
+            'costo_total' => 0.50,
+        ]);
+
+        $this->actingAs($admin)->patch(route('pedidos.rechazar', $pedidoAprobado), ['motivo_rechazo' => 'Error de diseño'])
+            ->assertRedirect(route('pedidos.index'));
+        $this->assertDatabaseHas('pedidos', ['id' => $pedidoAprobado->id, 'estado' => Pedido::ESTADO_RECHAZADO]);
+
+        $pedidoImpresion = Pedido::create([
+            'user_id' => $solicitante->id,
+            'institucion_id' => $institucion->id,
+            'estado' => Pedido::ESTADO_EN_IMPRESION,
+            'fecha_solicitud' => now(),
+            'total_gramos_pla' => 10,
+            'costo_total' => 0.50,
+        ]);
+
+        $this->actingAs($admin)->patch(route('pedidos.rechazar', $pedidoImpresion), ['motivo_rechazo' => 'Fallo de adherencia en cama'])
+            ->assertRedirect(route('pedidos.index'));
+        $this->assertDatabaseHas('pedidos', ['id' => $pedidoImpresion->id, 'estado' => Pedido::ESTADO_RECHAZADO]);
+    }
+
+    public function test_rechazo_de_pedido_completado_o_ya_rechazado_es_bloqueado(): void
+    {
+        $admin = $this->crearAdmin();
+        $solicitante = $this->crearSolicitante();
+        $institucion = $this->crearInstitucion();
+
+        $pedidoCompletado = Pedido::create([
+            'user_id' => $solicitante->id,
+            'institucion_id' => $institucion->id,
+            'estado' => Pedido::ESTADO_COMPLETADO,
+            'fecha_solicitud' => now(),
+            'total_gramos_pla' => 10,
+            'costo_total' => 0.50,
+        ]);
+
+        $this->actingAs($admin)->patch(route('pedidos.rechazar', $pedidoCompletado), ['motivo_rechazo' => 'Intento posterior'])
+            ->assertRedirect(route('pedidos.index'))
+            ->assertSessionHasErrors('estado');
+
+        $this->assertDatabaseHas('pedidos', ['id' => $pedidoCompletado->id, 'estado' => Pedido::ESTADO_COMPLETADO]);
     }
 
     public function test_admin_puede_descargar_gcode_del_pedido(): void
@@ -296,7 +378,7 @@ class PedidosTest extends TestCase
         $pedido = Pedido::create([
             'user_id' => $solicitante->id,
             'institucion_id' => $institucion->id,
-            'estado' => 'Pendiente',
+            'estado' => Pedido::ESTADO_PENDIENTE,
             'fecha_solicitud' => now(),
             'total_gramos_pla' => 10,
             'costo_total' => 0.50,
@@ -374,7 +456,7 @@ class PedidosTest extends TestCase
         $pedido = Pedido::create([
             'user_id' => $solicitante->id,
             'institucion_id' => $institucion->id,
-            'estado' => 'En impresión',
+            'estado' => Pedido::ESTADO_EN_IMPRESION,
             'fecha_solicitud' => now(),
             'total_gramos_pla' => 10,
             'costo_total' => 0.50,
@@ -385,7 +467,7 @@ class PedidosTest extends TestCase
             ->assertRedirect(route('pedidos.mis'))
             ->assertSessionHasErrors('cancelar');
 
-        $this->assertDatabaseHas('pedidos', ['id' => $pedido->id, 'estado' => 'En impresión', 'deleted_at' => null]);
+        $this->assertDatabaseHas('pedidos', ['id' => $pedido->id, 'estado' => Pedido::ESTADO_EN_IMPRESION, 'deleted_at' => null]);
     }
 
     public function test_solicitante_ve_sus_solicitudes_y_admin_es_redirigido(): void
