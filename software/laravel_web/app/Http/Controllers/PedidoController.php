@@ -6,6 +6,7 @@ use App\Exports\PedidosExport;
 use App\Http\Requests\RechazarPedidoRequest;
 use App\Http\Requests\StorePedidoRequest;
 use App\Http\Requests\UpdatePedidoRequest;
+use App\Models\ConfiguracionSistema;
 use App\Models\Institucion;
 use App\Models\Pedido;
 use App\Models\Recurso;
@@ -46,11 +47,14 @@ class PedidoController extends Controller
      */
     public function create(Request $request)
     {
-        $recursos = Recurso::where('estado', Recurso::ESTADO_ACTIVO)->get();
+        $recursos = Recurso::with('categoria')
+            ->where('estado', Recurso::ESTADO_ACTIVO)
+            ->get();
         $instituciones = Institucion::all();
         $recursoSeleccionado = $request->integer('recurso');
+        $precioGramo = (float) (ConfiguracionSistema::where('clave', 'precio_gramo_pla')->value('valor') ?? 0.05);
 
-        return view('pedidos.create', compact('recursos', 'instituciones', 'recursoSeleccionado'));
+        return view('pedidos.create', compact('recursos', 'instituciones', 'recursoSeleccionado', 'precioGramo'));
     }
 
     public function store(StorePedidoRequest $request, PedidoService $pedidoService)

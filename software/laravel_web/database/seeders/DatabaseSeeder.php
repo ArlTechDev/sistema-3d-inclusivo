@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Categoria;
 use App\Models\ConfiguracionSistema;
+use App\Models\Recurso;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -57,7 +58,7 @@ class DatabaseSeeder extends Seeder
         // Recursos didácticos de muestra
         $catBraille = Categoria::where('nombre', 'Braille')->first();
         if ($catBraille) {
-            \App\Models\Recurso::updateOrCreate(
+            Recurso::updateOrCreate(
                 ['titulo' => 'Ficha Didáctica Táctil 3D (Demostración)'],
                 [
                     'descripcion' => 'Cuerpo didáctico tridimensional con relieves Braille táctiles para estimulación háptica.',
@@ -65,7 +66,7 @@ class DatabaseSeeder extends Seeder
                     'gramos_pla' => 12.50,
                     'tiempo_minutos' => 35,
                     'fecha_creacion' => now()->toDateString(),
-                    'estado' => \App\Models\Recurso::ESTADO_ACTIVO,
+                    'estado' => Recurso::ESTADO_ACTIVO,
                     'archivo_glb' => 'recursos/3d/ficha_tactil_demo.glb',
                 ]
             );
