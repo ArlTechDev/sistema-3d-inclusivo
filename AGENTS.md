@@ -86,6 +86,14 @@ Guía completa: `docs/anexos/12_guia_migracion_docker.md`. El compose fija `imag
 - **Rutas**: Rutas personalizadas ANTES de `Route::resource()` en `web.php`.
 - **Layouts por rol**: `resources/views/layouts/app.blade.php` (público, autocontenido, sin AdminLTE) → Solicitante/catálogo/formulario; `resources/views/layouts/admin.blade.php` (wrapper de `adminlte::page`) → vistas de administración. No usar `adminlte::page` directamente en vistas nuevas.
 
+### Convenciones de Arquitectura PHP
+- **Thin Controllers**: Los controladores solo reciben la petición HTTP, delegan a Services/Form Requests, y devuelven respuesta. La lógica de negocio (cálculos, traducciones, interacción con CLI) va en clases de servicio (`app/Services/`). Excepción: CRUDs simples que solo hacen Eloquent CRUD no necesitan un Service wrapper.
+- **Form Requests**: Toda validación usa Form Requests (`app/Http/Requests/`). No usar `$request->validate()` ni `ValidationException::withMessages()` en controladores.
+- **Constantes de estado**: Los estados de pedido se referencian mediante constantes del modelo (`Pedido::ESTADO_PENDIENTE`), no strings mágicos. Las medidas ONCE se centralizan en `BrailleTranslator::configuracionPorDefecto()`.
+- **SRP para Services**: Cada Service class tiene una responsabilidad única. El traductor Braille no llama a PrusaSlicer. Los services CLI (`OpenScadService`, `PrusaSlicerService`) manejan sus propios errores con `try/catch` + `Log::error()`.
+- **Tests obligatorios (TDD)**: Cada nueva funcionalidad o refactorización incluye su test correspondiente. Cobertura 100% en lógica crítica (traducción Braille, cálculo de costos, transiciones de estado).
+
+
 ### BrailleTranslator (PHP — decisión de arquitectura)
 - **Decisión: PHP puro** (2026-08): el algoritmo vive en `app/Services/BrailleTranslator.php` como Service class de Laravel. `python_core/` quedó archivado.
 - Traduce texto → Braille Grado 1 (Código Braille Español/ONCE, sin estenografía) → coordenadas G-Code.
