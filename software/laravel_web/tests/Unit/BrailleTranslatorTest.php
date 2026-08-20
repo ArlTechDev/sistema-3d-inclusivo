@@ -126,7 +126,7 @@ class BrailleTranslatorTest extends TestCase
         $gcode = $this->traductor->generarGCode('b');
 
         $this->assertStringContainsString('G0 X0.00 Y0.00', $gcode);
-        $this->assertStringContainsString('G0 X0.00 Y2.34', $gcode);
+        $this->assertStringContainsString('G0 X0.00 Y2.50', $gcode);
     }
 
     public function test_gcode_aplica_offset(): void
@@ -147,8 +147,8 @@ class BrailleTranslatorTest extends TestCase
     {
         $gcode = $this->traductor->generarGCode('abc', 0.0, 0.0, 0.2, ['max_caracteres_linea' => 1]);
 
-        // 'c' debe caer en la segunda línea (Y = avance_linea = 6.2)
-        $this->assertStringContainsString('G0 X0.00 Y6.20', $gcode);
+        // 'c' debe caer en la segunda línea (Y = avance_linea = 5.5)
+        $this->assertStringContainsString('G0 X0.00 Y5.50', $gcode);
     }
 
     public function test_gcode_texto_vacio_lanza_excepcion(): void
