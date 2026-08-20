@@ -3,12 +3,12 @@
 @section('title', 'Editar Institución')
 
 @section('content_header')
-    <h1>Editar Institución</h1>
-    <!-- REQUISITO: Nombre del integrante -->
-    <h5 class="text-primary mb-0">
-        Integrante: [AGUILAR CASTELLON CRISTHIAN AGUILAR]
-    </h5>
-
+    <div class="d-flex justify-content-between align-items-center">
+        <h1><i class="fas fa-edit text-primary mr-2"></i>Editar Institución</h1>
+        <a href="{{ route('instituciones.index') }}" class="btn btn-outline-secondary btn-sm">
+            <i class="fas fa-arrow-left mr-1"></i> Volver a la lista
+        </a>
+    </div>
 @endsection
 
 @section('content')

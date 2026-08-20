@@ -4,10 +4,10 @@
 
 @section('content_header')
 <div class="d-flex justify-content-between align-items-center">
-    <h1>Gestión de Usuarios</h1>
-    <h4 class="text-primary mb-0">
-        Integrantes: [ROSALES MAMANI ARIEL EDSON] - [AGUILAR CASTELLON CRISTHIAN AGUILAR]
-    </h4>
+    <h1><i class="fas fa-users text-primary mr-2"></i>Gestión de Usuarios</h1>
+    <a href="{{ route('usuarios.create') }}" class="btn btn-primary btn-sm">
+        <i class="fas fa-user-plus mr-1"></i> Nuevo Usuario
+    </a>
 </div>
 @stop
 

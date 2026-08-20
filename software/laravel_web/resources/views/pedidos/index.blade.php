@@ -4,8 +4,7 @@
 
 @section('content_header')
 <div class="d-flex justify-content-between align-items-center">
-    <h1>Gestión de Solicitudes de Impresión</h1>
-    <h4 class="text-primary mb-0">Integrante: [ROSALES MAMANI ARIEL EDSON]</h4>
+    <h1><i class="fas fa-tasks text-primary mr-2"></i>Gestión de Solicitudes de Impresión</h1>
 </div>
 @stop
 

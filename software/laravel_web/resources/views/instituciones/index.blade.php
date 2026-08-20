@@ -4,8 +4,10 @@
 
 @section('content_header')
 <div class="d-flex justify-content-between align-items-center">
-    <h1>Gestión de Instituciones</h1>
-    <h4 class="text-primary mb-0">Integrante: [AGUILAR CASTELLON CRISTHIAN AGUILAR]</h4>
+    <h1><i class="fas fa-university text-primary mr-2"></i>Gestión de Instituciones</h1>
+    <a href="{{ route('instituciones.create') }}" class="btn btn-primary btn-sm">
+        <i class="fas fa-plus mr-1"></i> Nueva Institución
+    </a>
 </div>
 @stop
 

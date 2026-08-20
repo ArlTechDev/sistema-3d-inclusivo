@@ -4,8 +4,10 @@
 
 @section('content_header')
 <div class="d-flex justify-content-between align-items-center">
-    <h1>Gestión de Recursos Táctiles</h1>
-    <h4 class="text-primary mb-0">Integrante: [ROSALES MAMANI ARIEL EDSON]</h4>
+    <h1><i class="fas fa-cubes text-primary mr-2"></i>Gestión de Recursos Táctiles</h1>
+    <a href="{{ route('recursos.create') }}" class="btn btn-primary btn-sm">
+        <i class="fas fa-plus mr-1"></i> Nuevo Recurso
+    </a>
 </div>
 @stop
 

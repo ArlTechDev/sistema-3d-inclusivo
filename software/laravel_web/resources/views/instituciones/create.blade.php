@@ -4,12 +4,10 @@
 
 @section('content_header')
     <div class="d-flex justify-content-between align-items-center">
-        <h1>Gestión de Instituciones</h1>
-
-        <!-- REQUISITO: Nombre del integrante -->
-        <h5 class="text-primary mb-0">
-            Integrante: [AGUILAR CASTELLON CRISTHIAN AGUILAR]
-        </h5>
+        <h1><i class="fas fa-university text-primary mr-2"></i>Nueva Institución</h1>
+        <a href="{{ route('instituciones.index') }}" class="btn btn-outline-secondary btn-sm">
+            <i class="fas fa-arrow-left mr-1"></i> Volver a la lista
+        </a>
     </div>
 @stop
 
