@@ -14,7 +14,7 @@
             margin: 0 0 4px;
         }
         .tabla-pedidos .sub {
-            color: var(--texto-suave, #6b7280);
+            color: var(--tinta-suave);
             margin: 0 0 20px;
         }
         .tabla-pedidos table {
@@ -32,9 +32,14 @@
             border-bottom: 1px solid var(--linea);
             text-align: left;
             font-size: 0.92rem;
+            color: var(--tinta);
         }
         .tabla-pedidos th {
-            background: var(--fondo-suave, #f3f4f6);
+            background: var(--papel);
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
         .etiqueta {
             display: inline-block;
@@ -49,7 +54,15 @@
         .etiqueta-completado  { background: #d1fae5; color: #065f46; }
         .etiqueta-rechazado   { background: #fee2e2; color: #991b1b; }
         .etiqueta-cancelada   { background: #e5e7eb; color: #374151; }
-        .motivo { color: #6b7280; font-size: 0.85rem; }
+
+        [data-theme="dark"] .etiqueta-pendiente   { background: rgba(245, 158, 11, 0.2); color: #FCD34D; }
+        [data-theme="dark"] .etiqueta-aprobado    { background: rgba(56, 189, 248, 0.2); color: #7DD3FC; }
+        [data-theme="dark"] .etiqueta-impresion   { background: rgba(96, 165, 250, 0.2); color: #93C5FD; }
+        [data-theme="dark"] .etiqueta-completado  { background: rgba(16, 185, 129, 0.2); color: #6EE7B7; }
+        [data-theme="dark"] .etiqueta-rechazado   { background: rgba(239, 68, 68, 0.2); color: #FCA5A5; }
+        [data-theme="dark"] .etiqueta-cancelada   { background: rgba(148, 163, 184, 0.2); color: #CBD5E1; }
+
+        .motivo { color: var(--tinta-suave); font-size: 0.85rem; }
         .acciones form { display: inline; }
         .boton-cancelar {
             background: #fee2e2;
@@ -61,7 +74,12 @@
             cursor: pointer;
         }
         .boton-cancelar:hover { background: #fecaca; }
-        .vacio { text-align: center; color: #6b7280; padding: 32px 0; }
+        [data-theme="dark"] .boton-cancelar {
+            background: rgba(239, 68, 68, 0.2);
+            color: #FCA5A5;
+            border-color: rgba(239, 68, 68, 0.4);
+        }
+        .vacio { text-align: center; color: var(--tinta-suave); padding: 32px 0; }
     </style>
 
     <div class="tabla-pedidos">

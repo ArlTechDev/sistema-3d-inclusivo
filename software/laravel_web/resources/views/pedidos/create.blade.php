@@ -32,7 +32,7 @@
         .preview-viewer-container {
             width: 100%;
             height: 340px;
-            background: radial-gradient(circle, #f8fafc 0%, #e2e8f0 100%);
+            background: var(--viewer-bg);
             border-radius: 8px;
             overflow: hidden;
             display: flex;

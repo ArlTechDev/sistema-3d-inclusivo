@@ -208,11 +208,12 @@
         }
         .modal-overlay.activo { display: flex; }
         .modal-card {
-            background: #fff;
+            background: var(--blanco);
             width: 100%;
             max-width: 680px;
             border-radius: var(--radio);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            border: 1px solid var(--linea);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
             overflow: hidden;
             display: flex;
             flex-direction: column;
@@ -230,7 +231,7 @@
             justify-content: space-between;
             background: var(--papel);
         }
-        .modal-header h3 { margin: 0; font-size: 1.15rem; font-family: var(--font-display); }
+        .modal-header h3 { margin: 0; font-size: 1.15rem; font-family: var(--font-display); color: var(--tinta); }
         .modal-close {
             background: transparent;
             border: none;
@@ -244,11 +245,12 @@
             display: flex;
             flex-direction: column;
             gap: 12px;
+            background: var(--blanco);
         }
         .modal-viewer-container {
             width: 100%;
             height: 420px;
-            background: radial-gradient(circle, #f8fafc 0%, #e2e8f0 100%);
+            background: var(--viewer-bg);
             border-radius: 8px;
             overflow: hidden;
             position: relative;
