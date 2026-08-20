@@ -23,11 +23,12 @@ class PedidoService
     {
         return DB::transaction(function () use ($datos, $userId) {
             $recurso = Recurso::where('estado', Recurso::ESTADO_ACTIVO)->findOrFail($datos['recurso_id']);
-            $costos = $this->calcularCostos($recurso, (int) $datos['cantidad']);
+            $textoPersonalizado = trim((string) ($datos['texto_personalizado'] ?? ''));
+            $costos = $this->calcularCostos($recurso, (int) $datos['cantidad'], $textoPersonalizado);
 
             $pedido = Pedido::create([
                 'user_id' => $userId,
-                'institucion_id' => $datos['institucion_id'],
+                'institucion_id' => $datos['institucion_id'] ?? null,
                 'estado' => Pedido::ESTADO_PENDIENTE,
                 'fecha_solicitud' => now(),
                 'total_gramos_pla' => $costos['gramos'],
@@ -41,8 +42,6 @@ class PedidoService
                 'costo_unitario' => $costos['costo_unitario'],
             ]);
 
-            $textoPersonalizado = trim((string) ($datos['texto_personalizado'] ?? ''));
-
             if ($textoPersonalizado !== '') {
                 $gcodePath = $this->generarYGuardarGCode($pedido, $textoPersonalizado);
                 $pedido->update(['gcode_path' => $gcodePath]);
@@ -53,16 +52,25 @@ class PedidoService
     }
 
     /**
-     * Calcula los gramos totales de PLA y los costos (unitario y total) del pedido.
+     * Calcula los gramos totales de PLA y los costos (unitario y total) del pedido,
+     * incorporando opcionalmente el consumo adicional de filamento del relieve Braille.
      *
      * @return array{gramos: float, costo_unitario: float, costo: float}
      */
-    public function calcularCostos(Recurso $recurso, int $cantidad): array
+    public function calcularCostos(Recurso $recurso, int $cantidad, string $textoPersonalizado = ''): array
     {
-        $precioGramo = (float) (ConfiguracionSistema::where('clave', 'precio_gramo_pla')->value('valor') ?? 0.05);
+        $precioGramo = (float) (ConfiguracionSistema::where('clave', 'precio_gramo_pla')->value('valor') ?? 0.15);
+        $gramosPorCelda = (float) (ConfiguracionSistema::where('clave', 'gramos_por_celda_braille')->value('valor') ?? 0.02);
 
-        $gramos = round($recurso->gramos_pla * $cantidad, 2);
-        $costoUnitario = round($recurso->gramos_pla * $precioGramo, 2);
+        $gramosExtra = 0.0;
+        if ($textoPersonalizado !== '') {
+            $celdas = count($this->brailleTranslator->traducir($textoPersonalizado));
+            $gramosExtra = round($celdas * $gramosPorCelda, 3);
+        }
+
+        $gramosUnitario = round($recurso->gramos_pla + $gramosExtra, 2);
+        $gramos = round($gramosUnitario * $cantidad, 2);
+        $costoUnitario = round($gramosUnitario * $precioGramo, 2);
         $costo = round($gramos * $precioGramo, 2);
 
         return [

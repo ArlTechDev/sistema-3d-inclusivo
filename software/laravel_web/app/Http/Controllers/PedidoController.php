@@ -39,7 +39,16 @@ class PedidoController extends Controller
 
         $instituciones = Institucion::all();
 
-        return view('pedidos.index', compact('pedidos', 'instituciones'));
+        $stats = [
+            'pendientes' => Pedido::where('estado', Pedido::ESTADO_PENDIENTE)->count(),
+            'en_impresion' => Pedido::where('estado', Pedido::ESTADO_EN_IMPRESION)->count(),
+            'completados' => Pedido::where('estado', Pedido::ESTADO_COMPLETADO)->count(),
+            'total_gramos' => (float) Pedido::where('estado', '!=', Pedido::ESTADO_RECHAZADO)->sum('total_gramos_pla'),
+            'total_costo' => (float) Pedido::where('estado', '!=', Pedido::ESTADO_RECHAZADO)->sum('costo_total'),
+            'moneda' => (string) (ConfiguracionSistema::where('clave', 'moneda_simbolo')->value('valor') ?? 'Bs'),
+        ];
+
+        return view('pedidos.index', compact('pedidos', 'instituciones', 'stats'));
     }
 
     /**
@@ -52,9 +61,11 @@ class PedidoController extends Controller
             ->get();
         $instituciones = Institucion::all();
         $recursoSeleccionado = $request->integer('recurso');
-        $precioGramo = (float) (ConfiguracionSistema::where('clave', 'precio_gramo_pla')->value('valor') ?? 0.05);
+        $precioGramo = (float) (ConfiguracionSistema::where('clave', 'precio_gramo_pla')->value('valor') ?? 0.15);
+        $moneda = (string) (ConfiguracionSistema::where('clave', 'moneda_simbolo')->value('valor') ?? 'Bs');
+        $gramosPorCelda = (float) (ConfiguracionSistema::where('clave', 'gramos_por_celda_braille')->value('valor') ?? 0.02);
 
-        return view('pedidos.create', compact('recursos', 'instituciones', 'recursoSeleccionado', 'precioGramo'));
+        return view('pedidos.create', compact('recursos', 'instituciones', 'recursoSeleccionado', 'precioGramo', 'moneda', 'gramosPorCelda'));
     }
 
     public function store(StorePedidoRequest $request, PedidoService $pedidoService)

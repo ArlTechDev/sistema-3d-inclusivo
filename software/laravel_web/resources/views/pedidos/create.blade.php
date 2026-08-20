@@ -264,7 +264,8 @@
                 <div class="campo">
                     <label for="texto_personalizado">Texto Personalizado Braille (Opcional)</label>
                     <textarea name="texto_personalizado" id="texto_personalizado" rows="3"
-                              maxlength="200" placeholder="Ej.: ÑANDÚ — El sistema generará el G-Code automáticamente en tiempo real">{{ old('texto_personalizado') }}</textarea>
+                              maxlength="200" oninput="actualizarCostos()"
+                              placeholder="Ej.: ÑANDÚ — El sistema generará el G-Code automáticamente en tiempo real">{{ old('texto_personalizado') }}</textarea>
                     <span class="ayuda">💡 Si especificas texto, el motor de traducción Braille creará el código de relieve para esta pieza. Si lo dejas vacío, se usará el G-Code predeterminado del catálogo.</span>
                 </div>
 
@@ -277,7 +278,9 @@
     </div>
 
     <script>
-        const PRECIO_GRAMO = {{ $precioGramo ?? 0.05 }};
+        const PRECIO_GRAMO = {{ $precioGramo ?? 0.15 }};
+        const MONEDA_SIMBOLO = "{{ $moneda ?? 'Bs' }}";
+        const GRAMOS_POR_CELDA = {{ $gramosPorCelda ?? 0.02 }};
 
         function actualizarPrevisualizacion() {
             const select = document.getElementById('recurso_id');
@@ -299,14 +302,12 @@
                 document.getElementById('preview-gramos').innerText = '0 g PLA';
                 document.getElementById('preview-tiempo').innerText = '0 min';
                 document.getElementById('preview-categoria').innerText = '—';
-                document.getElementById('preview-costo').innerText = '$0.00';
+                document.getElementById('preview-costo').innerText = `${MONEDA_SIMBOLO} 0.00`;
                 return;
             }
 
             const titulo = selectedOpt.dataset.titulo || '';
             const desc = selectedOpt.dataset.descripcion || '';
-            const gramos = parseFloat(selectedOpt.dataset.gramos || 0);
-            const tiempo = selectedOpt.dataset.tiempo || 0;
             const categoria = selectedOpt.dataset.categoria || 'General';
             const glb = selectedOpt.dataset.glb || '';
             const imgUrl = selectedOpt.dataset.img || '';
@@ -342,19 +343,26 @@
             const selectedOpt = select.options[select.selectedIndex];
             const cantInput = document.getElementById('cantidad');
             const cantidad = parseInt(cantInput.value) || 1;
+            const textoInput = document.getElementById('texto_personalizado');
+            const texto = textoInput ? textoInput.value.trim() : '';
 
             if (!selectedOpt || !selectedOpt.value) return;
 
             const gramosBase = parseFloat(selectedOpt.dataset.gramos || 0);
             const tiempoBase = parseInt(selectedOpt.dataset.tiempo || 0);
 
-            const gramosTotales = (gramosBase * cantidad).toFixed(2);
+            // Estimación de celdas Braille según longitud de texto
+            const celdasBraille = texto.length;
+            const gramosExtraBraille = celdasBraille * GRAMOS_POR_CELDA;
+
+            const gramosUnitarios = gramosBase + gramosExtraBraille;
+            const gramosTotales = (gramosUnitarios * cantidad).toFixed(2);
             const tiempoTotal = tiempoBase * cantidad;
             const costoTotal = (gramosTotales * PRECIO_GRAMO).toFixed(2);
 
             document.getElementById('preview-gramos').innerText = `${gramosTotales} g PLA`;
             document.getElementById('preview-tiempo').innerText = `≈ ${tiempoTotal} min`;
-            document.getElementById('preview-costo').innerText = `$${costoTotal}`;
+            document.getElementById('preview-costo').innerText = `${MONEDA_SIMBOLO} ${costoTotal}`;
         }
 
         // Ejecutar al cargar la página si ya viene un recurso preseleccionado

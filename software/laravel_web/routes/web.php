@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ConfiguracionController;
 use App\Http\Controllers\InstitucionController;
 use App\Http\Controllers\PedidoController;
 use App\Http\Controllers\RecursoController;
@@ -150,4 +151,13 @@ Route::middleware('auth')->group(function () {
         ->only(['index', 'create', 'store', 'edit', 'update', 'destroy'])
         ->middleware('role:Administrador')
         ->parameters(['usuarios' => 'usuario']);
+
+    // Configuración del Sistema (Costos y Filamento): Solo Administrador
+    Route::get('configuracion', [ConfiguracionController::class, 'index'])
+        ->name('configuracion.index')
+        ->middleware('role:Administrador');
+
+    Route::post('configuracion', [ConfiguracionController::class, 'update'])
+        ->name('configuracion.update')
+        ->middleware('role:Administrador');
 });

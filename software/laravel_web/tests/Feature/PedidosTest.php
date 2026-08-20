@@ -146,6 +146,34 @@ class PedidosTest extends TestCase
         $this->assertStringContainsString('G28', Storage::disk('local')->get($pedido->gcode_path));
     }
 
+    public function test_texto_personalizado_calcula_filamento_braille_adicional(): void
+    {
+        $this->crearPrecioGramo(0.10);
+        ConfiguracionSistema::create([
+            'clave' => 'gramos_por_celda_braille',
+            'valor' => '0.05',
+            'descripcion' => 'Gramos por celda',
+        ]);
+
+        $solicitante = $this->crearSolicitante();
+        $recurso = $this->crearRecurso(); // 10.00 gramos base
+
+        // Texto: "HOLA" (4 celdas Braille) -> 4 * 0.05 = 0.20 g extra -> 10.20 g unitario
+        $response = $this->actingAs($solicitante)->post(route('pedidos.store'), [
+            'recurso_id' => $recurso->id,
+            'cantidad' => 2,
+            'texto_personalizado' => 'hola',
+        ]);
+
+        $response->assertSessionHasNoErrors();
+        $pedido = Pedido::first();
+
+        // 10.20 g unitario * 2 = 20.40 g totales
+        $this->assertEquals(20.40, $pedido->total_gramos_pla);
+        // 20.40 * 0.10 = 2.04 Bs costo total
+        $this->assertEquals(2.04, $pedido->costo_total);
+    }
+
     public function test_texto_personalizado_con_caracteres_invalidos_no_genera_pedido(): void
     {
         $this->crearPrecioGramo();

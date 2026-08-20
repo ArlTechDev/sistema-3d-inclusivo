@@ -50,8 +50,22 @@ class DatabaseSeeder extends Seeder
         ConfiguracionSistema::updateOrCreate(
             ['clave' => 'precio_gramo_pla'],
             [
-                'valor' => '0.05',
-                'descripcion' => 'Costo por gramo de PLA en dólares (USD)',
+                'valor' => '0.15',
+                'descripcion' => 'Costo por gramo de PLA reciclado en Bolivianos (Bs)',
+            ]
+        );
+        ConfiguracionSistema::updateOrCreate(
+            ['clave' => 'moneda_simbolo'],
+            [
+                'valor' => 'Bs',
+                'descripcion' => 'Símbolo de moneda nacional de Bolivia',
+            ]
+        );
+        ConfiguracionSistema::updateOrCreate(
+            ['clave' => 'gramos_por_celda_braille'],
+            [
+                'valor' => '0.02',
+                'descripcion' => 'Gramos de filamento PLA adicionales por cada celda Braille en relieve',
             ]
         );
 

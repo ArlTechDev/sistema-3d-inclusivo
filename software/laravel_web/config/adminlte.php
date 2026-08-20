@@ -330,6 +330,13 @@ return [
             'icon' => 'fas fa-users',
             'can' => 'administrador',
         ],
+        ['header' => 'ADMINISTRACIÓN Y PARÁMETROS'],
+        [
+            'text' => 'Configuración de Costos',
+            'route' => 'configuracion.index',
+            'icon' => 'fas fa-cogs',
+            'can' => 'administrador',
+        ],
     ],
 
     /*
