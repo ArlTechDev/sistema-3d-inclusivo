@@ -15,42 +15,38 @@ skinparam state {
 }
 
 ' === ESTADOS ===
-[*] --> Pendiente : <b>Crear pedido</b>\nSolicitante confirma solicitud
+[*] --> Pendiente : <b>Crear pedido</b>\nSolicitante confirma
 
-state Pendiente <<activo>> : Estado inicial del pedido.\nEspera revisión del Administrador.
+state Pendiente <<activo>> : Estado inicial.\nEspera revisión Admin.
 
-state "En impresión" as EP <<activo>> : Administrador inicia\nel proceso de impresión 3D.
+state "Aprobado" as Ap <<activo>> : Admin valida solicitud.
 
-state "Completado" as Comp <<final>> : Impresión finalizada.\nFicha táctil lista para entregar.
+state "En impresión" as EP <<activo>> : Admin inicia impresión 3D.
 
-state "Rechazado" as Rech <<final>> : Administrador rechaza\nla solicitud con motivo.
+state "Completado" as Comp <<final>> : Impresión finalizada.\nFicha táctil lista.
 
-' === TRANSICIONES ===
-Pendiente --> EP : **Admin actualiza estado**\n"Cambiar a En impresión"
+state "Rechazado" as Rech <<final>> : Admin rechaza con motivo.
 
-Pendiente --> Rech : **Admin rechaza**\n(registra motivo de rechazo)
+' === TRANSICIONES LINEALES VERTICALES ===
+Pendiente --> Ap : **Admin aprueba**
+Ap --> EP : **Admin inicia**\n"En impresión"
+EP --> Comp : **Admin finaliza**\n"Completado"
 
-EP --> Comp : **Admin finaliza**\n"Marcar como Completado"
+' === RECHAZOS LATERALES ===
+Pendiente -right-> Rech : **Admin rechaza**\n(con motivo)
+Ap -right-> Rech : **Admin rechaza**
+EP -right-> Rech : **Admin rechaza**
 
-Pendiente --> [*] : **Solicitante cancela**\n( SoftDelete )
+Pendiente --> [*] : **Solicitante cancela**\n(SoftDelete)
 
 Comp --> [*]
 Rech --> [*]
 
-' === NOTAS ===
-note right of Pendiente
-  **Transiciones válidas:**
-  → En impresión (Admin)
-  → Rechazado (Admin)
-  → Cancelado (Solicitante, solo si es Pendiente)
-end note
-
+' === NOTA COMPACTA ABAJO ===
 note bottom of Comp
-  **Regla de negocio:**
-  Solo se puede cancelar un pedido
-  en estado "Pendiente".
-  Una vez "En impresión" o "Completado",
-  no hay retroceso.
+  **Regla de negocio (Pedido::TRANSICIONES):**
+  Solo se puede cancelar en estado "Pendiente".
+  Transición estricta: Pendiente → Aprobado → En impresión → Completado.
 end note
 
 @enduml

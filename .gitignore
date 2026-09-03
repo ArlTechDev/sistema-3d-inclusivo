@@ -48,6 +48,8 @@ software/laravel_web/public/vendor/
 
 # Archivos de backup
 *.backup
+*.bak
+docs/documento_pscp/backup/
 *.FCBak
 *.FCBak*
 *.FCStd1

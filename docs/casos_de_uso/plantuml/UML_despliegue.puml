@@ -57,7 +57,7 @@ navO --> internet : <b>Acceso Web</b>\n(gestion completa)
 
 internet --> laravel : HTTPS\npuerto 443
 laravel --> mysql : TCP\npuerto 3306
-laravel --> python : Llamada\ninterna
+laravel --> traductor : Invocación interna\n(PHP puro)
 
 pronterface --> arduino : <b>Conexion USB / Serial</b>\n(Cable USB-B)
 arduino --> motores : Senales\nStep/Dir
