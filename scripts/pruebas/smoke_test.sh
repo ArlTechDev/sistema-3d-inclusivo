@@ -72,11 +72,14 @@ logout() {
     fi
 }
 
-# --- 1. Sin sesión ----------------------------------------------------------
-echo "── Sin sesión"
+# --- 1. Sin sesión (Rutas Públicas) -----------------------------------------
+echo "── Sin sesión / Públicas"
+check "GET / → 200 (Landing Page)"  200 "$(code /)"
+check "GET /acerca-de → 200"        200 "$(code /acerca-de)"
+check "GET /ayuda → 200"            200 "$(code /ayuda)"
 check "GET /login → 200"            200 "$(code /login)"
-check "GET / → 302 (a /login)"      302 "$(code /)"
-check "GET /recursos → 302"         302 "$(code /recursos)"
+check "GET /registro → 200"         200 "$(code /registro)"
+check "GET /recursos → 302 (a login)" 302 "$(code /recursos)"
 check "GET /recursos/exportar/excel → 302" 302 "$(code /recursos/exportar/excel)"
 
 # --- 2. Login Administrador ------------------------------------------------

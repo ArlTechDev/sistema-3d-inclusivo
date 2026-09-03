@@ -18,7 +18,7 @@ PROYECTO="$RAIZ/software/laravel_web"
 SALIDA="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/salida"
 
 # Imágenes a exportar (deben coincidir con docker-compose.yml y Dockerfile)
-IMAGENES=(laravel_web-app:latest mysql:8.0 php:8.4-cli composer:latest)
+IMAGENES=(laravel_web-app:latest mysql:8.0 php:8.4-cli composer:latest cloudflare/cloudflared:latest)
 VOLUMEN="laravel_web_db_data"   # nombre fijado en docker-compose.yml
 
 echo "══════════════════════════════════════════════════════════════════════"
