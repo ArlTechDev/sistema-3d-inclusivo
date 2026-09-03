@@ -57,6 +57,7 @@ docker compose up -d --build
 docker exec -it laravel_app php artisan migrate:fresh --seed
 ```
 MySQL expuesto en puerto **3307** (no el 3306 por defecto).
+El servicio `app` arranca automáticamente el servidor HTTP en **http://localhost:8000** (`command: php artisan serve --host=0.0.0.0 --port=8000`).
 
 ## Migración a otra PC (offline)
 ```bash
