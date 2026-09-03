@@ -9,7 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('titulo', 'Catálogo de Recursos Táctiles') · Sistema Braille Inclusivo</title>
-    
+
     {{-- Anti-flicker: Aplicar tema guardado antes de renderizar el DOM --}}
     <script>
         (function() {
@@ -22,7 +22,7 @@
     </script>
 
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
-    
+
     <style>
         :root {
             /* Tema Claro (Default) */
@@ -98,15 +98,18 @@
             background: var(--blanco);
             border-bottom: 1px solid var(--linea);
             transition: background-color .2s ease, border-color .2s ease;
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
         .encabezado-interno {
             max-width: 1120px;
             margin: 0 auto;
-            padding: 14px 20px;
+            padding: 12px 20px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 16px;
+            gap: 12px;
             flex-wrap: wrap;
         }
         .marca {
@@ -117,6 +120,7 @@
             font-weight: 700;
             font-size: 1.15rem;
             color: var(--tinta);
+            text-decoration: none !important;
         }
         .marca .celda-braille { flex: 0 0 auto; }
         .marca small {
@@ -128,24 +132,39 @@
             text-transform: uppercase;
             color: var(--tinta-suave);
         }
-        .usuario { display: flex; align-items: center; gap: 12px; font-size: .92rem; }
-        .usuario .nombre { color: var(--tinta-suave); font-weight: 500; }
+        .usuario {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: .92rem;
+            flex-wrap: wrap;
+        }
+        .usuario .nombre {
+            color: var(--tinta-suave);
+            font-weight: 500;
+            max-width: 110px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
 
         .boton {
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 8px;
-            padding: 10px 18px;
+            padding: 9px 16px;
             border-radius: var(--radio);
             border: 0;
             font-family: var(--font-body);
             font-weight: 600;
-            font-size: .95rem;
+            font-size: .92rem;
             cursor: pointer;
             color: #fff;
             background: var(--ambar);
             text-decoration: none;
             transition: background .15s ease, transform .15s ease;
+            white-space: nowrap;
         }
         .boton:hover { background: var(--ambar-oscuro); color: #fff; text-decoration: none; }
         .boton-secundario { background: var(--verde); }
@@ -155,20 +174,20 @@
             color: var(--tinta);
             border: 1px solid var(--linea);
         }
-        .boton-sutil:hover { background: var(--papel); color: var(--tinta); }
+        .boton-sutil:hover { background: var(--papel); color: var(--tinta); text-decoration: none; }
 
         /* Botón de alternar Tema Oscuro / Claro */
         .boton-tema {
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            padding: 7px 14px;
+            padding: 7px 12px;
             border-radius: 999px;
             border: 1px solid var(--linea);
             background: var(--papel);
             color: var(--tinta);
             font-family: var(--font-mono);
-            font-size: 0.84rem;
+            font-size: 0.82rem;
             cursor: pointer;
             transition: all .15s ease;
         }
@@ -176,8 +195,39 @@
             border-color: var(--verde);
             color: var(--verde);
         }
-        @media (max-width: 580px) {
+
+        @media (max-width: 640px) {
+            .encabezado-interno {
+                padding: 10px 14px;
+                gap: 8px;
+            }
+            .marca {
+                font-size: 1.02rem;
+                gap: 8px;
+            }
+            .marca small { font-size: 0.58rem; }
+            .usuario {
+                gap: 6px;
+                font-size: 0.82rem;
+            }
+            .usuario .nombre { display: none; }
+            .boton {
+                padding: 7px 12px;
+                font-size: 0.84rem;
+            }
+            .boton-tema {
+                padding: 6px 9px;
+            }
             .boton-tema .texto-tema { display: none; }
+            .contenido {
+                padding: 18px 14px 48px;
+            }
+            .pie-interno {
+                flex-direction: column;
+                text-align: center;
+                gap: 8px;
+                padding: 16px 14px;
+            }
         }
 
         @media (prefers-reduced-motion: reduce) {
@@ -199,6 +249,7 @@
             padding: 20px;
             display: flex;
             justify-content: space-between;
+            align-items: center;
             gap: 12px;
             flex-wrap: wrap;
         }
@@ -214,20 +265,26 @@
     <a class="salto" href="#contenido">Saltar al contenido</a>
     <header class="encabezado">
         <div class="encabezado-interno">
-            <a href="{{ route('recursos.index') }}" class="marca" aria-label="Catálogo de recursos táctiles">
-                <svg class="celda-braille" width="26" height="34" viewBox="0 0 26 34" aria-hidden="true" focusable="false">
-                    <g fill="var(--punto)">
-                        <circle cx="7"  cy="7"  r="3.4" />
-                        <circle cx="19" cy="7"  r="3.4" />
-                        <circle cx="7"  cy="17" r="3.4" />
-                        <circle cx="19" cy="17" r="3.4" />
-                        <circle cx="7"  cy="27" r="3.4" />
-                        <circle cx="19" cy="27" r="3.4" />
-                    </g>
-                </svg>
-                <span>Recursos Táctiles<small>Material educativo · Braille Grado 1</small></span>
+            <a href="{{ route('home') }}" class="marca" aria-label="Ir a Inicio - Táctil3D">
+                <div style="width: 38px; height: 38px; flex-shrink: 0;">
+                    <x-logo-svg size="38" />
+                </div>
+                <div style="display: flex; flex-direction: column; justify-content: center; line-height: 1.1;">
+                    <span style="font-size: 1.25rem; font-weight: 800; letter-spacing: 0.5px; color: var(--tinta);">
+                        TÁCTIL<span style="color: var(--verde);">3D</span>
+                    </span>
+                    <small style="font-size: 0.62rem; font-weight: 700; color: var(--tinta-suave); letter-spacing: 0.1em; text-transform: uppercase;">
+                        Sistema Braille Inclusivo
+                    </small>
+                </div>
             </a>
             <div class="usuario">
+                <div class="nav-links" style="display: flex; gap: 4px; margin-right: 8px;">
+                    <a href="{{ route('recursos.index') }}" class="boton boton-sutil" style="border-color: transparent; padding: 7px 12px;">Catálogo</a>
+                    <a href="{{ route('pages.about') }}" class="boton boton-sutil" style="border-color: transparent; padding: 7px 12px;">Acerca del Proyecto</a>
+                    <a href="{{ route('pages.help') }}" class="boton boton-sutil" style="border-color: transparent; padding: 7px 12px;">Ayuda</a>
+                </div>
+
                 <!-- Botón de Modo Oscuro / Claro -->
                 <button type="button" id="btn-tema" class="boton-tema" aria-label="Alternar tema visual" title="Cambiar a tema claro/oscuro">
                     <span id="icono-tema">🌙</span>
@@ -255,8 +312,8 @@
 
     <footer class="pie">
         <div class="pie-interno">
-            <span>Proyecto Sociocomunitario Productivo · Sistema Web e Impresora 3D con Materiales Reciclados</span>
-            <span class="mono">Inclusión educativa · Impresión 3D · Economía circular</span>
+            <span>Proyecto Sociocomunitario Productivo · Inst. Técnico "Federico Álvarez Plata" Nocturno</span>
+            <span class="mono">Inclusión educativa · Impresión 3D · Cochabamba, Bolivia</span>
         </div>
     </footer>
 

@@ -4,149 +4,232 @@
 
 @section('contenido')
     <style>
-        .tabla-pedidos {
-            max-width: 860px;
+        .pedidos-container {
+            max-width: 900px;
             margin: 0 auto;
         }
-        .tabla-pedidos h1 {
+        .pedidos-header h1 {
             font-family: var(--font-display);
-            font-size: 1.5rem;
-            margin: 0 0 4px;
+            font-size: 2rem;
+            color: var(--verde-oscuro);
+            margin: 0 0 8px;
         }
-        .tabla-pedidos .sub {
+        .pedidos-header p {
             color: var(--tinta-suave);
-            margin: 0 0 20px;
+            margin: 0 0 32px;
         }
-        .tabla-pedidos table {
-            width: 100%;
-            border-collapse: collapse;
+        .pedido-card {
             background: var(--blanco);
             border: 1px solid var(--linea);
             border-radius: var(--radio);
+            padding: 24px;
+            margin-bottom: 24px;
             box-shadow: var(--sombra);
-            overflow: hidden;
         }
-        .tabla-pedidos th,
-        .tabla-pedidos td {
-            padding: 12px 14px;
+        .pedido-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
             border-bottom: 1px solid var(--linea);
-            text-align: left;
-            font-size: 0.92rem;
+            padding-bottom: 16px;
+        }
+        .pedido-titulo {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
             color: var(--tinta);
+            margin: 0 0 4px;
+            font-weight: 700;
         }
-        .tabla-pedidos th {
-            background: var(--papel);
+        .pedido-meta {
             font-family: var(--font-mono);
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
+            font-size: 0.85rem;
+            color: var(--tinta-suave);
         }
-        .etiqueta {
-            display: inline-block;
-            padding: 3px 10px;
-            border-radius: 999px;
-            font-size: 0.78rem;
+        /* Línea de tiempo */
+        .timeline {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            margin: 32px 0 16px;
+            padding-top: 10px;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            top: 22px;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--linea);
+            z-index: 1;
+            border-radius: 2px;
+        }
+        .timeline-step {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            flex: 1;
+        }
+        .timeline-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: var(--linea);
+            color: var(--tinta-suave);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 8px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            border: 4px solid var(--blanco);
+            transition: all 0.3s ease;
+        }
+        .timeline-label {
+            font-size: 0.85rem;
+            color: var(--tinta-suave);
             font-weight: 600;
         }
-        .etiqueta-pendiente   { background: #fef3c7; color: #92400e; }
-        .etiqueta-aprobado    { background: #e0f2fe; color: #0369a1; }
-        .etiqueta-impresion   { background: #dbeafe; color: #1e40af; }
-        .etiqueta-completado  { background: #d1fae5; color: #065f46; }
-        .etiqueta-rechazado   { background: #fee2e2; color: #991b1b; }
-        .etiqueta-cancelada   { background: #e5e7eb; color: #374151; }
 
-        [data-theme="dark"] .etiqueta-pendiente   { background: rgba(245, 158, 11, 0.2); color: #FCD34D; }
-        [data-theme="dark"] .etiqueta-aprobado    { background: rgba(56, 189, 248, 0.2); color: #7DD3FC; }
-        [data-theme="dark"] .etiqueta-impresion   { background: rgba(96, 165, 250, 0.2); color: #93C5FD; }
-        [data-theme="dark"] .etiqueta-completado  { background: rgba(16, 185, 129, 0.2); color: #6EE7B7; }
-        [data-theme="dark"] .etiqueta-rechazado   { background: rgba(239, 68, 68, 0.2); color: #FCA5A5; }
-        [data-theme="dark"] .etiqueta-cancelada   { background: rgba(148, 163, 184, 0.2); color: #CBD5E1; }
+        /* Estados Activos / Completados */
+        .step-done .timeline-icon {
+            background: var(--verde);
+            color: white;
+        }
+        .step-done .timeline-label {
+            color: var(--verde);
+        }
+        .step-active .timeline-icon {
+            background: var(--ambar);
+            color: white;
+            box-shadow: 0 0 0 4px rgba(180, 83, 9, 0.2);
+        }
+        .step-active .timeline-label {
+            color: var(--ambar-oscuro);
+        }
+        .step-rejected .timeline-icon {
+            background: #ef4444;
+            color: white;
+        }
+        .step-rejected .timeline-label {
+            color: #ef4444;
+        }
 
-        .motivo { color: var(--tinta-suave); font-size: 0.85rem; }
-        .acciones form { display: inline; }
+        .pedido-footer {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
         .boton-cancelar {
-            background: #fee2e2;
-            color: #991b1b;
-            border: 1px solid #fecaca;
+            background: transparent;
+            color: #ef4444;
+            border: 1px solid #fca5a5;
             border-radius: var(--radio);
-            padding: 5px 12px;
-            font-size: 0.85rem;
+            padding: 8px 16px;
+            font-size: 0.9rem;
+            font-weight: 600;
             cursor: pointer;
+            transition: all 0.2s;
         }
-        .boton-cancelar:hover { background: #fecaca; }
-        [data-theme="dark"] .boton-cancelar {
-            background: rgba(239, 68, 68, 0.2);
-            color: #FCA5A5;
-            border-color: rgba(239, 68, 68, 0.4);
+        .boton-cancelar:hover {
+            background: #fef2f2;
+            border-color: #ef4444;
         }
-        .vacio { text-align: center; color: var(--tinta-suave); padding: 32px 0; }
+        .vacio { text-align: center; color: var(--tinta-suave); padding: 48px 0; font-size: 1.1rem; }
     </style>
 
-    <div class="tabla-pedidos">
-        <h1>Mis solicitudes de impresión</h1>
-        <p class="sub">Sigue el estado de tus solicitudes. Puedes cancelar las que estén en «Pendiente».</p>
+    <div class="pedidos-container">
+        <div class="pedidos-header">
+            <h1>Mis Solicitudes</h1>
+            <p>Rastrea el progreso de tus impresiones en tiempo real.</p>
+        </div>
 
         @if (session('success'))
-            <p class="aviso-ok" role="status">{{ session('success') }}</p>
-        @endif
-        @if ($errors->any())
-            <div class="errores" role="alert">
-                <ul>
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
+            <div style="background: #d1fae5; color: #065f46; padding: 12px 16px; border-radius: var(--radio); margin-bottom: 24px;">
+                {{ session('success') }}
             </div>
         @endif
 
         @if ($pedidos->isEmpty())
-            <p class="vacio">Aún no has realizado solicitudes de impresión.</p>
+            <div class="pedido-card vacio">
+                Aún no has realizado solicitudes de impresión. <br>
+                <a href="{{ route('recursos.index') }}" style="color: var(--verde); font-weight: bold; display: inline-block; margin-top: 12px;">Explorar Catálogo</a>
+            </div>
         @else
-            <table>
-                <thead>
-                    <tr>
-                        <th>Recurso</th>
-                        <th>Fecha</th>
-                        <th>Gramos</th>
-                        <th>Costo (Bs)</th>
-                        <th>Estado</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($pedidos as $pedido)
-                        <tr>
-                            <td>{{ $pedido->detalles->first()?->recurso?->titulo ?? '—' }}</td>
-                            <td>{{ $pedido->fecha_solicitud->format('d/m/Y') }}</td>
-                            <td>{{ number_format($pedido->total_gramos_pla, 2) }}</td>
-                            <td>{{ number_format($pedido->costo_total, 2) }}</td>
-                            <td>
-                                @if ($pedido->trashed())
-                                    <span class="etiqueta etiqueta-cancelada">Cancelada</span>
-                                @else
-                                     @php $estado = $pedido->estado; @endphp
-                                     <span class="etiqueta etiqueta-{{ $estado === \App\Models\Pedido::ESTADO_EN_IMPRESION ? 'impresion' : ($estado === \App\Models\Pedido::ESTADO_APROBADO ? 'aprobado' : strtolower($estado)) }}">
-                                         {{ $estado }}
-                                     </span>
-                                     @if ($pedido->motivo_rechazo)
-                                         <div class="motivo">Motivo: {{ $pedido->motivo_rechazo }}</div>
-                                     @endif
-                                 @endif
-                             </td>
-                             <td class="acciones">
-                                 @if (! $pedido->trashed() && $pedido->estado === \App\Models\Pedido::ESTADO_PENDIENTE)
-                                    <form method="POST" action="{{ route('pedidos.cancelar', $pedido) }}"
-                                          onsubmit="return confirm('¿Cancelar esta solicitud?');">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="boton-cancelar">Cancelar</button>
-                                    </form>
-                                @endif
-                            </td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
+            @foreach ($pedidos as $pedido)
+                @php
+                    $estado = $pedido->estado;
+                    $esCancelado = $pedido->trashed();
+
+                    // Lógica para determinar el progreso (1 a 4)
+                    $progreso = 0;
+                    if ($estado === \App\Models\Pedido::ESTADO_PENDIENTE) $progreso = 1;
+                    if ($estado === \App\Models\Pedido::ESTADO_APROBADO) $progreso = 2;
+                    if ($estado === \App\Models\Pedido::ESTADO_EN_IMPRESION) $progreso = 3;
+                    if ($estado === \App\Models\Pedido::ESTADO_COMPLETADO) $progreso = 4;
+                @endphp
+
+                <div class="pedido-card">
+                    <div class="pedido-header">
+                        <div>
+                            <h2 class="pedido-titulo">{{ $pedido->detalles->first()?->recurso?->titulo ?? 'Recurso Eliminado' }}</h2>
+                            <div class="pedido-meta">
+                                Solicitado el {{ $pedido->fecha_solicitud->format('d/m/Y') }} •
+                                {{ number_format($pedido->total_gramos_pla, 0) }}g PLA •
+                                Bs. {{ number_format($pedido->costo_total, 2) }}
+                            </div>
+                        </div>
+                        @if ($esCancelado)
+                            <span style="background: #f1f5f9; color: #475569; padding: 6px 12px; border-radius: 999px; font-weight: 600; font-size: 0.85rem;">Cancelado</span>
+                        @elseif ($estado === \App\Models\Pedido::ESTADO_RECHAZADO)
+                            <span style="background: #fee2e2; color: #991b1b; padding: 6px 12px; border-radius: 999px; font-weight: 600; font-size: 0.85rem;">Rechazado</span>
+                        @else
+                            <span style="background: var(--verde); color: white; padding: 6px 12px; border-radius: 999px; font-weight: 600; font-size: 0.85rem;">{{ $estado }}</span>
+                        @endif
+                    </div>
+
+                    @if (!$esCancelado && $estado !== \App\Models\Pedido::ESTADO_RECHAZADO)
+                        <div class="timeline">
+                            <div class="timeline-step {{ $progreso >= 1 ? ($progreso > 1 ? 'step-done' : 'step-active') : '' }}">
+                                <div class="timeline-icon">✓</div>
+                                <div class="timeline-label">Pendiente</div>
+                            </div>
+                            <div class="timeline-step {{ $progreso >= 2 ? ($progreso > 2 ? 'step-done' : 'step-active') : '' }}">
+                                <div class="timeline-icon">✓</div>
+                                <div class="timeline-label">Aprobado</div>
+                            </div>
+                            <div class="timeline-step {{ $progreso >= 3 ? ($progreso > 3 ? 'step-done' : 'step-active') : '' }}">
+                                <div class="timeline-icon">⚙</div>
+                                <div class="timeline-label">En Impresión</div>
+                            </div>
+                            <div class="timeline-step {{ $progreso >= 4 ? 'step-done' : '' }}">
+                                <div class="timeline-icon">📦</div>
+                                <div class="timeline-label">Completado</div>
+                            </div>
+                        </div>
+                    @endif
+
+                    @if ($estado === \App\Models\Pedido::ESTADO_RECHAZADO && $pedido->motivo_rechazo)
+                        <div style="background: #fef2f2; border-left: 4px solid #ef4444; padding: 12px; margin-top: 16px; border-radius: 4px;">
+                            <strong>Motivo del rechazo:</strong> {{ $pedido->motivo_rechazo }}
+                        </div>
+                    @endif
+
+                    @if (! $pedido->trashed() && $pedido->estado === \App\Models\Pedido::ESTADO_PENDIENTE)
+                        <div class="pedido-footer" style="display: flex; justify-content: space-between; align-items: center; gap: 12px;">
+                            <a href="{{ route('pedidos.checkout', $pedido) }}" style="display: inline-flex; align-items: center; gap: 6px; background: var(--verde); color: #ffffff; padding: 8px 16px; border-radius: var(--radio); font-size: 0.9rem; font-weight: 600; text-decoration: none; box-shadow: 0 2px 6px rgba(13, 148, 136, 0.2);">
+                                <i class="fas fa-qrcode"></i> Pagar con QR / Enviar Comprobante
+                            </a>
+                            <form method="POST" action="{{ route('pedidos.cancelar', $pedido) }}" onsubmit="return confirm('¿Estás seguro de cancelar esta solicitud?');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="boton-cancelar">Cancelar Solicitud</button>
+                            </form>
+                        </div>
+                    @endif
+                </div>
+            @endforeach
         @endif
     </div>
 @endsection

@@ -19,7 +19,7 @@ class RecursoController extends Controller
         $categorias = Categoria::withCount('recursos')->get();
 
         // El Solicitante ve el catálogo público (cards); el Administrador, la tabla de gestión.
-        if (auth()->user()->rol === 'Administrador') {
+        if (auth()->check() && auth()->user()->rol === 'Administrador') {
             $recursos = Recurso::all();
 
             return view('recursos.index', compact('recursos', 'categorias'));

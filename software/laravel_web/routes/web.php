@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ConfiguracionController;
 use App\Http\Controllers\InstitucionController;
+use App\Http\Controllers\PageController;
 use App\Http\Controllers\PedidoController;
 use App\Http\Controllers\RecursoController;
 use App\Http\Controllers\UserController;
@@ -14,11 +15,12 @@ Route::get('registro', [AuthController::class, 'registerForm'])->name('register'
 Route::post('registro', [AuthController::class, 'register'])->name('register.post')->middleware('throttle:registro');
 Route::post('logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
 
-Route::middleware('auth')->group(function () {
-    Route::get('/', function () {
-        return redirect()->route('recursos.index');
-    });
+// Rutas Públicas (Información y Bienvenida)
+Route::get('/', [PageController::class, 'welcome'])->name('home');
+Route::get('acerca-de', [PageController::class, 'about'])->name('pages.about');
+Route::get('ayuda', [PageController::class, 'help'])->name('pages.help');
 
+Route::middleware('auth')->group(function () {
     // Pedidos: rutas personalizadas ANTES de cualquier resource
     Route::get('pedidos', [PedidoController::class, 'index'])
         ->name('pedidos.index')

@@ -175,6 +175,7 @@
             display: flex;
             gap: 8px;
             margin-top: 4px;
+            flex-wrap: wrap;
         }
         .tarjeta .acciones-tarjeta .boton {
             flex: 1;
@@ -182,6 +183,7 @@
             text-align: center;
             padding: 9px 12px;
             font-size: 0.88rem;
+            min-width: 110px;
         }
         .tarjeta .boton-3d {
             background: var(--papel);
@@ -192,6 +194,30 @@
             background: var(--verde);
             color: #fff;
             text-decoration: none;
+        }
+
+        @media (max-width: 640px) {
+            .hero {
+                padding: 24px 18px;
+                margin-bottom: 20px;
+            }
+            .hero h1 { font-size: 1.35rem; }
+            .hero p { font-size: 0.92rem; }
+            .hero .stats { gap: 14px; }
+            .hero .stats b { font-size: 1.2rem; }
+            .filtros { gap: 6px; margin-bottom: 16px; }
+            .filtro { padding: 5px 12px; font-size: 0.82rem; }
+            .rejilla {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+            .tarjeta { padding: 14px; }
+            .tarjeta .acciones-tarjeta {
+                flex-direction: column;
+            }
+            .tarjeta .acciones-tarjeta .boton {
+                width: 100%;
+            }
         }
 
         /* Modal 3D */

@@ -22,9 +22,9 @@ return [
     |
     */
 
-    'title' => 'AdminLTE 3',
+    'title' => 'Sistema Braille Inclusivo',
     'title_prefix' => '',
-    'title_postfix' => '',
+    'title_postfix' => ' | Álvarez Plata',
 
     /*
     |--------------------------------------------------------------------------
@@ -71,12 +71,12 @@ return [
     |
     */
 
-    'logo' => '<b>Sistema</b> Inclusivo',
-    'logo_img' => 'vendor/adminlte/dist/img/AdminLTELogo.png',
-    'logo_img_class' => 'brand-image img-circle elevation-3',
+    'logo' => '<b>Táctil3D</b> Inclusivo',
+    'logo_img' => 'images/logo-tactil3d.svg',
+    'logo_img_class' => 'brand-image elevation-3',
     'logo_img_xl' => null,
     'logo_img_xl_class' => 'brand-image-xs',
-    'logo_img_alt' => 'Sistema Inclusivo',
+    'logo_img_alt' => 'Logo Táctil3D',
 
     /*
     |--------------------------------------------------------------------------
