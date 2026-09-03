@@ -1,2 +1,5 @@
 *
 !.gitignore
+!recursos/
+!recursos/3d/
+!recursos/3d/ficha_base_blanco_base.gcode

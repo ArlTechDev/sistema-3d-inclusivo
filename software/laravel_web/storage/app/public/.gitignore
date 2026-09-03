@@ -1,2 +1,8 @@
 *
 !.gitignore
+!recursos/
+!recursos/3d/
+!recursos/3d/ficha_base_blanco.stl
+!recursos/3d/ficha_base_blanco.glb
+!recursos/images/
+!recursos/images/ficha_base_blanco_thumb.png

@@ -73,6 +73,27 @@ class DatabaseSeeder extends Seeder
         $catBraille = Categoria::where('nombre', 'Braille')->first();
         if ($catBraille) {
             Recurso::updateOrCreate(
+                ['titulo' => 'Ficha Base Estándar (80x30 mm)'],
+                [
+                    'descripcion' => 'Placa base sólida en blanco (80x30 mm, 3 mm de espesor) para personalización e impresión de texto Braille táctil.',
+                    'categoria_id' => $catBraille->id,
+                    'gramos_pla' => 8.29,
+                    'tiempo_minutos' => 11,
+                    'fecha_creacion' => now()->toDateString(),
+                    'estado' => Recurso::ESTADO_ACTIVO,
+                    'tipo_placa' => 'integrada',
+                    'placa_ancho' => 80,
+                    'placa_alto' => 30,
+                    'placa_z_altura' => 3,
+                    'max_caracteres' => 22,
+                    'archivo_stl' => 'recursos/3d/ficha_base_blanco.stl',
+                    'archivo_glb' => 'recursos/3d/ficha_base_blanco.glb',
+                    'url_imagen' => 'recursos/images/ficha_base_blanco_thumb.png',
+                    'url_gcode' => 'recursos/3d/ficha_base_blanco_base.gcode',
+                ]
+            );
+
+            Recurso::updateOrCreate(
                 ['titulo' => 'Ficha Didáctica Táctil 3D (Demostración)'],
                 [
                     'descripcion' => 'Cuerpo didáctico tridimensional con relieves Braille táctiles para estimulación háptica.',
