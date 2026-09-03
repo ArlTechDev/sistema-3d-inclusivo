@@ -2,7 +2,11 @@
 software/laravel_web/vendor/
 software/laravel_web/node_modules/
 software/python_core/venv/
-software/python_core/__pycache__/
+__pycache__/
+*.py[cod]
+*$py.class
+*.venv/
+venv/
 
 # Archivos de entorno
 software/laravel_web/.env
@@ -44,6 +48,9 @@ software/laravel_web/public/vendor/
 
 # Archivos de backup
 *.backup
+*.FCBak
+*.FCBak*
+*.FCStd1
 auth.json
 
 # Archivos temporales de Microsoft Word
@@ -58,3 +65,8 @@ software/laravel_web/.env.capturas
 
 # Artefactos de migración Docker (generados por scripts/docker/exportar_proyecto.sh)
 scripts/docker/salida/
+
+# Material temporal o externo que no forma parte del proyecto
+scratch/
+software/laravel_web/utils/
+docs/files.zip

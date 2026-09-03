@@ -17,7 +17,8 @@ hardware/
 docs/
 ├── documento_pscp/       # Documento PSCP (.docx) — aplica protocolo de bloqueo
 └── anexos/               # Anexos técnicos 01–11 (contexto, seguridad, revisión doc, borradores, código)
-.reasonix/skills/         # Skills de proyecto (braille-gcode, laravel-conventions)
+.reasonix/skills/         # Skills de proyecto (braille-gcode, frontend-design, laravel-conventions, laravel-frontend)
+.agents/skills/           # Espejo universal de skills para agentes de IA (Antigravity, Reasonix, Claude Code, Cursor)
 ```
 
 ## Comandos
