@@ -18,21 +18,29 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.3'
-          extensions: mbstring, xml, ctype, iconv, intl, pdo, pdo_sqlite, bcmath, gd
+          php-version: '8.4'
+          extensions: mbstring, xml, ctype, iconv, intl, pdo, pdo_sqlite, bcmath, gd, zip
           coverage: none
 
       - name: Cache Composer dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: software/laravel_web/vendor
           key: ${{ runner.os }}-composer-${{ hashFiles('software/laravel_web/composer.lock') }}
           restore-keys: |
             ${{ runner.os }}-composer-
 
+      - name: Prepare environment file
+        working-directory: software/laravel_web
+        run: cp .env.example .env
+
       - name: Install dependencies
         working-directory: software/laravel_web
         run: composer install --prefer-dist --no-interaction --no-progress
+
+      - name: Generate Application Key
+        working-directory: software/laravel_web
+        run: php artisan key:generate
 
       - name: Run test suite
         working-directory: software/laravel_web
