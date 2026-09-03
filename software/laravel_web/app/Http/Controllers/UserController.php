@@ -80,6 +80,11 @@ class UserController extends Controller
 
     public function destroy(User $usuario)
     {
+        if ($usuario->id === auth()->id()) {
+            return redirect()->route('usuarios.index')
+                ->withErrors(['error' => 'No puedes enviar a la papelera tu propia cuenta de usuario en uso.']);
+        }
+
         $usuario->delete();
 
         return redirect()->route('usuarios.index')

@@ -83,4 +83,15 @@ class UserControllerTest extends TestCase
         $loginResponse->assertRedirect();
         $this->assertAuthenticated();
     }
+
+    public function test_admin_no_puede_enviar_su_propia_cuenta_a_papelera(): void
+    {
+        $admin = $this->crearAdmin();
+
+        $response = $this->actingAs($admin)->delete(route('usuarios.destroy', $admin));
+
+        $response->assertRedirect(route('usuarios.index'));
+        $response->assertSessionHasErrors('error');
+        $this->assertDatabaseHas('users', ['id' => $admin->id]);
+    }
 }
