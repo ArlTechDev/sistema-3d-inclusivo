@@ -1,63 +1,135 @@
 @startuml UML_secuencia_UC06
 skinparam monochrome true
-' Diagrama de Secuencia — UC-06 / UC-07 (flujo implementado, 2026-08)
-' Traducción a Braille (Grado 1), generación de G-Code y solicitud de impresión.
-' La previsión 2D (RF-08) está marcada como PENDIENTE: no se renderiza en la UI.
-title Diagrama de Secuencia — UC-06 / UC-07\nTraducción Braille, G-Code y Solicitud de Impresión
-
-skinparam backgroundColor white
+skinparam dpi 300
+skinparam defaultFontName Arial
 skinparam sequenceMessageAlign center
-skinparam maxMessageSize 160
+skinparam maxMessageSize 180
+skinparam responseMessageBelowArrow true
+skinparam BoxPadding 10
+skinparam ParticipantPadding 10
 
-actor "Usuario\nSolicitante" as S #LightBlue
-participant "Catálogo / Formulario\n(Blade)" as F #White
-participant "PedidoController\n(Laravel)" as PC #LightGreen
-participant "BrailleTranslator\n(App\\Services, PHP)" as BT #LightYellow
-participant "ConfiguracionSistema\n(key-value)" as CFG #LightCyan
-database "MySQL 8.0" as BD #LightPink
-participant "Storage local\n(privado)" as ST #White
+header
+<b>Integrantes:</b> Aguilar Castellon Cristhian Alessandro, Aramayo Eguino Jose Matias, Rosales Mamani Ariel Edson
+endheader
 
-== UC-06: Traducción de texto a Braille y generación de G-Code ==
+title Diagrama de Secuencia DS-02 (UC-06 / UC-07): Traducción Braille Grado 1, Generación de G-Code y Solicitud de Pedido\n(Validación Código Braille Español ONCE, Transacción Atómica y Almacenamiento G-Code)
 
-S -> F : Selecciona recurso del catálogo\ny pulsa «Solicitar Impresión»
-F -> PC : GET /pedidos/crear?recurso=N
-PC --> F : Formulario (recurso, institución,\ncantidad, texto personalizado opcional)
-F --> S : Renderiza formulario
+actor "Usuario\nSolicitante" as S
+boundary "Catálogo / Formulario\n(Blade UI)" as UI
+control "PedidoController\n(Laravel Controller)" as PC
+control "StorePedidoRequest\n(Validador / Sanitizer)" as PR
+control "PedidoService\n(App\\Services)" as PS
+control "BrailleTranslator\n(App\\Services / PHP)" as BT
+database "MySQL 8.0\n(Eloquent ORM)" as DB
+entity "Storage Local\n(Disco Privado)" as ST
 
-S -> PC : POST /pedidos (recurso_id, institucion_id,\ncantidad, texto_personalizado)
+autonumber 1 "<b>[00]</b>"
 
-alt Con texto personalizado (Opción A)
-    PC -> BT : validarCaracteres(texto)
-    alt Existen caracteres no soportados
-        BT --> PC : [@, #, %...]
-        PC --> S : Response 422\n{error: "El texto contiene caracteres\nno soportados: @, #. Solo Código\nBraille Español (Grado 1)."}
-    else Caracteres válidos
-        PC -> BT : generarGCode(texto, 5.0, 5.0, 0.2)\n(ficha 100×100 mm, profundidad 0.2 mm)
-        BT --> PC : {gcode: "G21\nG28\nG1 X..."}
-        PC -> ST : guardar pedidos/gcode/pedido_N.gcode\n(disco local, privado)
-        ST --> PC : gcode_path
+S -> UI : Selecciona recurso del catálogo\ny pulsa «Solicitar Impresión»
+activate S
+activate UI
+
+UI -> PC : GET /pedidos/crear?recurso={id}
+activate PC
+PC -> DB : SELECT * FROM recursos WHERE id = ? AND estado = 'Activo'
+activate DB
+DB --> PC : Datos del recurso (peso base, dimensiones, z_altura)
+deactivate DB
+PC -> DB : SELECT * FROM instituciones WHERE activo = 1
+activate DB
+DB --> PC : Lista de instituciones asociadas
+deactivate DB
+PC --> UI : Formulario de solicitud cargado
+deactivate PC
+UI --> S : Renderiza interfaz de solicitud (parámetros y texto opcional)
+deactivate UI
+
+S -> UI : Completa formulario (institución, cantidad,\ntexto personalizado opcional) y pulsa «Confirmar Solicitud»
+activate UI
+UI -> PC : POST /pedidos\n(recurso_id, institucion_id, cantidad, texto_personalizado)
+activate PC
+
+PC -> PR : validateResolved()\n(Reglas de validación, sanitización y chequeo de caracteres Braille)
+activate PR
+
+opt Con texto personalizado (Personalización de Ficha)
+    PR -> BT : validarCaracteres(texto_personalizado)
+    activate BT
+    BT --> PR : Lista de caracteres no válidos []
+    deactivate BT
+
+    alt Contiene caracteres no soportados en Braille Grado 1
+        PR --> PC : ValidationException (422 Unprocessable Entity)
+        PC --> UI : Retorna errores: «Caracteres no soportados: @, #. Solo Braille Español.»
+        UI --> S : Muestra alerta de validación al solicitante
     end
-else Sin texto personalizado
-    PC -> BD : usar url_gcode del recurso\n(como respaldo en la descarga)
 end
 
-== UC-07: Registro de la solicitud y cálculo de costos ==
+PR --> PC : Datos validados y sanitizados
+deactivate PR
 
-PC -> CFG : precio_gramo_pla (default 0.05 Bs)
-CFG --> PC : 0.05
-PC -> BD : INSERT pedidos\n{user_id, institucion_id,\nestado: "Pendiente",\nfecha_solicitud: now,\ntotal_gramos_pla,\ncosto_total}
-BD --> PC : pedido_id
-PC -> BD : INSERT detalle_pedidos\n{recurso_id, cantidad, costo_unitario}
+PC -> PS : crearPedido(datos_validados, auth_user_id)
+activate PS
 
-note over S: RF-08 «previsión visual 2D de la ficha»:\n[PENDIENTE DE IMPLEMENTACIÓN] — la verificación\nse hace sobre el archivo .gcode generado.
+PS -> DB : DB::beginTransaction()
+activate DB
+deactivate DB
 
-PC --> S : Response 302 → /recursos\n{flash: "Solicitud registrada correctamente."}
+PS -> PS : calcularCostos(recurso, cantidad, texto_personalizado)
+activate PS
+opt Si existe texto personalizado
+    PS -> BT : traducir(texto_personalizado)
+    activate BT
+    BT --> PS : Array de celdas Braille traducidas (puntos 1-6)
+    deactivate BT
+    PS -> PS : Calcula filamento adicional (celdas * 0.02g)
+end
+PS --> PS : {gramos_totales, costo_unitario, costo_total}
+deactivate PS
 
-== Seguimiento del Solicitante (Mis solicitudes) ==
+PS -> DB : INSERT INTO pedidos (user_id, institucion_id, estado='Pendiente', fecha_solicitud=NOW(), total_gramos_pla, costo_total)
+activate DB
+DB --> PS : pedido_id generado
+deactivate DB
 
-S -> PC : GET /pedidos/mis
-PC -> BD : SELECT pedidos WHERE user_id = S\n(incluye cancelados, SoftDelete)
-BD --> PC : lista de pedidos
-PC --> S : Tabla con estado, gramos, costo\n(«Pendiente» con botón Cancelar)
+PS -> DB : INSERT INTO detalle_pedidos (pedido_id, recurso_id, cantidad, gramos_pla, costo_unitario)
+activate DB
+DB --> PS : detalle_id generado
+deactivate DB
+
+opt Si incluye texto personalizado (Generación de G-Code a medida)
+    PS -> PS : generarYGuardarGCode(pedido, recurso, texto_personalizado)
+    activate PS
+    PS -> BT : generarGCode(texto, offsetX=5.0, offsetY=5.0, z=placa_z_altura, config)
+    activate BT
+    BT --> PS : Contenido G-Code estructurado (G21, G28, G1 X... Y... E...)
+    deactivate BT
+
+    PS -> ST : Storage::disk('local')->put('pedidos/gcode/pedido_{id}_{hash}.gcode', gcode)
+    activate ST
+    ST --> PS : gcode_path guardado exitosamente
+    deactivate ST
+
+    PS -> DB : UPDATE pedidos SET gcode_path = ? WHERE id = ?
+    activate DB
+    DB --> PS : Pedido actualizado con ruta G-Code
+    deactivate DB
+    deactivate PS
+end
+
+PS -> DB : DB::commit()
+activate DB
+deactivate DB
+
+PS --> PC : Instancia de Pedido registrado
+deactivate PS
+
+PC --> UI : Response 302 → Redirect /pedidos/{id}/checkout\n(Mensaje Flash: «Solicitud registrada correctamente»)
+deactivate PC
+UI --> S : Renderiza pantalla de Checkout / Factura Proforma con QR de confirmación
+deactivate UI
+deactivate S
+
+center footer Fuente: Elaboración propia, 2026.
 
 @enduml

@@ -66,7 +66,7 @@ Las 17 figuras del documento corresponden por orden de inserción a las imágene
 | Figura 6 · UC-03 | image6.png | *(sin cambios)* |
 | Figura 7 · UC-04 | image7.png | *(sin cambios)* |
 | **Figura 8 · UC-05** | image8.png | `casos_de_uso/imagenes/UC05_Gestionar_Usuarios.png` |
-| **Figura 9 · UC-06** | image9.png | `diagramas/imagenes/otros/UML_Secuencia_UC06.png` |
+| **Figura 9 · UC-06** | image9.png | `diagramas/imagenes/otros/UML_secuencia_UC06.png` |
 | Figura 10 · UC-07 | image10.png | *(sin cambios)* |
 | Figura 11 · UC-08 | image11.png | *(sin cambios — el flujo de estados se cubre en la Figura 15)* |
 | Figura 12 · UC-09 | image12.png | *(sin cambios)* |
