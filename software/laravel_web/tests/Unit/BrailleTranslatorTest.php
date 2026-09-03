@@ -157,6 +157,27 @@ class BrailleTranslatorTest extends TestCase
         $this->traductor->generarGCode('');
     }
 
+    public function test_traducir_en_lineas_word_wrap_respeta_palabras(): void
+    {
+        // "Hola Mundo" -> "Hola" (5 celdas: Mayus + H + o + l + a), "Mundo" (6 celdas: Mayus + M + u + n + d + o)
+        // Con max=6, "Hola" entra en línea 1 (5 celdas). "Mundo" no cabe (5+1+6=12 > 6), pasa a línea 2
+        $lineas = $this->traductor->traducirEnLineas('Hola Mundo', 6);
+
+        $this->assertCount(2, $lineas);
+        $this->assertCount(5, $lineas[0]); // Signo mayus + H + o + l + a
+        $this->assertCount(6, $lineas[1]); // Signo mayus + M + u + n + d + o
+    }
+
+    public function test_traducir_en_lineas_palabra_larga_se_particiona_sin_desbordar(): void
+    {
+        // "ABCDEF" (6 celdas sin mayúsculas si es minúscula) -> 'abcdef' con max=3 celdas por línea
+        $lineas = $this->traductor->traducirEnLineas('abcdef', 3);
+
+        $this->assertCount(2, $lineas);
+        $this->assertCount(3, $lineas[0]);
+        $this->assertCount(3, $lineas[1]);
+    }
+
     public function test_gcode_parametros_personalizables(): void
     {
         $gcode = $this->traductor->generarGCode('a', 0.0, 0.0, 0.2, ['temperatura' => 200.0]);

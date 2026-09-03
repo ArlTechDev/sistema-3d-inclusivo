@@ -82,4 +82,33 @@ class GcodeGeneratorTest extends TestCase
         // Avance celda 1 = 3.5. Espacio palabra = 3.5. Celda 3 en X = 3.5 + 3.5 = 7.0
         $this->assertStringContainsString('G0 X7.00 Y0.00', $gcode);
     }
+
+    public function test_generar_por_lineas_posiciona_filas_correctamente(): void
+    {
+        // Línea 0: [[1]], Línea 1: [[1, 2]]
+        $lineas = [
+            [[1]],
+            [[1, 2]],
+        ];
+        $gcode = $this->generator->generarPorLineas($lineas, 'a\nb', 5.0, 5.0, 3.0);
+
+        // Fila 0 en Y = 5.00
+        $this->assertStringContainsString('G0 X5.00 Y5.00', $gcode);
+        // Fila 1 en Y = 5.00 + 5.50 (avance_linea) = 10.50
+        $this->assertStringContainsString('G0 X5.00 Y10.50', $gcode);
+        // Altura Z base = 3.00 mm
+        $this->assertStringContainsString('G1 Z3.00', $gcode);
+        // Altura de relieve Z = 3.00 + 0.80 = 3.80 mm
+        $this->assertStringContainsString('G1 Z3.80', $gcode);
+    }
+
+    public function test_gcode_respeta_altura_z_de_placa_personalizada(): void
+    {
+        // Placa con espesor Z = 4.5 mm
+        $gcode = $this->generator->generar([[1]], 'a', 0.0, 0.0, 4.5);
+
+        $this->assertStringContainsString('G1 Z4.50', $gcode);
+        $this->assertStringContainsString('G1 Z5.30', $gcode); // 4.5 + 0.8
+        $this->assertStringContainsString('G0 Z14.50', $gcode); // 4.5 + 10 al final
+    }
 }

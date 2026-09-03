@@ -75,7 +75,7 @@ class BrailleTranslator
         $invalidos = [];
 
         foreach (mb_str_split($texto) as $caracter) {
-            if (ctype_space($caracter)) {
+            if (preg_match('/^\s$/u', $caracter)) {
                 continue;
             }
 
@@ -103,7 +103,7 @@ class BrailleTranslator
         $enNumero = false;
 
         foreach (mb_str_split($texto) as $caracter) {
-            if (ctype_space($caracter)) {
+            if (preg_match('/^\s$/u', $caracter)) {
                 $celdas[] = [];
                 $enNumero = false;
 
@@ -136,6 +136,85 @@ class BrailleTranslator
     }
 
     /**
+     * Traduce el texto a una matriz de líneas de celdas Braille con Word-Wrap por palabras.
+     * Si una palabra excede el límite restante de la línea, pasa a la siguiente línea completa.
+     * Si una palabra sola es más larga que el límite, se particiona para no desbordar.
+     *
+     * @param  int  $maxCeldasPorLinea  0 = sin límite por línea (devuelve 1 sola línea)
+     * @return array<int, array<int, array<int>>> Matriz de [línea][celda][puntos]
+     */
+    public function traducirEnLineas(string $texto, int $maxCeldasPorLinea = 0): array
+    {
+        if ($maxCeldasPorLinea <= 0) {
+            return [$this->traducir($texto)];
+        }
+
+        $parrafos = preg_split("/\r\n|\n|\r/", $texto);
+        $lineasResultado = [];
+
+        foreach ($parrafos as $parrafo) {
+            $palabras = preg_split('/\s+/', trim((string) $parrafo));
+            $lineaActual = [];
+            $celdasLineaActual = 0;
+
+            foreach ($palabras as $palabra) {
+                if ($palabra === '') {
+                    continue;
+                }
+
+                $celdasPalabra = $this->traducir($palabra);
+                $cantCeldas = count($celdasPalabra);
+
+                // Si la palabra sola excede la línea completa, partirla
+                if ($cantCeldas > $maxCeldasPorLinea) {
+                    if (! empty($lineaActual)) {
+                        $lineasResultado[] = $lineaActual;
+                        $lineaActual = [];
+                        $celdasLineaActual = 0;
+                    }
+
+                    $trozos = array_chunk($celdasPalabra, $maxCeldasPorLinea);
+                    foreach ($trozos as $i => $trozo) {
+                        if ($i === count($trozos) - 1 && count($trozo) < $maxCeldasPorLinea) {
+                            $lineaActual = $trozo;
+                            $celdasLineaActual = count($trozo);
+                        } else {
+                            $lineasResultado[] = $trozo;
+                        }
+                    }
+
+                    continue;
+                }
+
+                $espacioNecesario = (! empty($lineaActual)) ? 1 : 0;
+
+                if (($celdasLineaActual + $espacioNecesario + $cantCeldas) <= $maxCeldasPorLinea) {
+                    if ($espacioNecesario > 0) {
+                        $lineaActual[] = []; // celda vacía para representar espacio
+                        $celdasLineaActual += 1;
+                    }
+                    foreach ($celdasPalabra as $c) {
+                        $lineaActual[] = $c;
+                    }
+                    $celdasLineaActual += $cantCeldas;
+                } else {
+                    if (! empty($lineaActual)) {
+                        $lineasResultado[] = $lineaActual;
+                    }
+                    $lineaActual = $celdasPalabra;
+                    $celdasLineaActual = $cantCeldas;
+                }
+            }
+
+            if (! empty($lineaActual)) {
+                $lineasResultado[] = $lineaActual;
+            }
+        }
+
+        return ! empty($lineasResultado) ? $lineasResultado : [[]];
+    }
+
+    /**
      * Genera un programa G-Code (Marlin 1.1.x) que deposita el texto como puntos Braille en relieve.
      *
      * @param  string  $texto  Texto a imprimir
@@ -148,6 +227,15 @@ class BrailleTranslator
     {
         if ($texto === '') {
             throw new InvalidArgumentException('El texto a traducir no puede estar vacío.');
+        }
+
+        $cfg = array_merge($this->gcodeGenerator->configuracionPorDefecto(), $config);
+        $maxCaracteres = (int) ($cfg['max_caracteres_linea'] ?? 0);
+
+        if ($maxCaracteres > 0) {
+            $lineas = $this->traducirEnLineas($texto, $maxCaracteres);
+
+            return $this->gcodeGenerator->generarPorLineas($lineas, $texto, $offsetX, $offsetY, $z, $config);
         }
 
         $celdas = $this->traducir($texto);

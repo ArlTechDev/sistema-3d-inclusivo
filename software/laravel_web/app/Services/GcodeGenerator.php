@@ -22,7 +22,7 @@ class GcodeGenerator
     {
         $cfg = array_merge($this->configuracionPorDefecto(), $config);
 
-        $lineas = [
+        $lineasGcode = [
             '; G-Code generado por App\\Services\\GcodeGenerator',
             '; Texto: '.str_replace(["\r", "\n", "\t"], ' ', $texto),
             '; Braille Grado 1 (Código Braille Español - ONCE)',
@@ -46,7 +46,7 @@ class GcodeGenerator
                 continue;
             }
 
-            // Salto de línea automático (ajuste de texto)
+            // Salto de línea automático (ajuste simple si no viene preformateado)
             if ($cfg['max_caracteres_linea'] > 0
                 && ($x - $offsetX) > ($cfg['max_caracteres_linea'] * $cfg['avance_celda'])) {
                 $lineaActual++;
@@ -54,30 +54,89 @@ class GcodeGenerator
                 $y = $offsetY + ($lineaActual * $cfg['avance_linea']);
             }
 
-            foreach ($celda as $punto) {
-                [$columna, $fila] = $this->posicionPunto($punto);
-
-                $px = $x + ($columna * $cfg['paso_puntos_x']);
-                $py = $y + ($fila * $cfg['paso_puntos_y']);
-
-                $lineas[] = sprintf('G0 Z%.2f ; elevar boquilla', $z + $cfg['altura_punto'] + $cfg['holgura_z']);
-                $lineas[] = sprintf('G0 X%.2f Y%.2f F%.0f ; posicionar punto', $px, $py, $cfg['velocidad_xy']);
-                $lineas[] = sprintf('G1 Z%.2f F%.0f ; descender a la base del punto', $z, $cfg['velocidad_z']);
-                $lineas[] = 'G92 E0';
-                $lineas[] = sprintf('G1 E%.3f F%.0f ; extruir volumen del punto', $cfg['volumen_punto'], $cfg['velocidad_e']);
-                $lineas[] = sprintf('G1 Z%.2f F%.0f ; subir mientras se forma el relieve', $z + $cfg['altura_punto'], $cfg['velocidad_z']);
-                $lineas[] = 'G92 E0';
-            }
+            $this->extruirCelda($celda, $x, $y, $z, $cfg, $lineasGcode);
 
             $x += $cfg['avance_celda'];
         }
 
-        $lineas[] = 'G0 Z'.number_format($z + 10, 2).' ; retraer boquilla al final';
-        $lineas[] = 'M104 S0 ; apagar extrusor';
-        $lineas[] = 'M84 ; desactivar motores';
-        $lineas[] = '; Fin del programa';
+        $lineasGcode[] = 'G0 Z'.number_format($z + 10, 2).' ; retraer boquilla al final';
+        $lineasGcode[] = 'M104 S0 ; apagar extrusor';
+        $lineasGcode[] = 'M84 ; desactivar motores';
+        $lineasGcode[] = '; Fin del programa';
 
-        return implode("\n", $lineas)."\n";
+        return implode("\n", $lineasGcode)."\n";
+    }
+
+    /**
+     * Genera G-Code a partir de una matriz de líneas preformateadas (con Word-Wrap).
+     *
+     * @param  array<int, array<int, array<int>>>  $lineasCeldas  Matriz [línea][celda][puntos]
+     */
+    public function generarPorLineas(array $lineasCeldas, string $texto, float $offsetX = 0.0, float $offsetY = 0.0, float $z = 0.2, array $config = []): string
+    {
+        $cfg = array_merge($this->configuracionPorDefecto(), $config);
+
+        $lineasGcode = [
+            '; G-Code generado por App\\Services\\GcodeGenerator',
+            '; Texto: '.str_replace(["\r", "\n", "\t"], ' ', $texto),
+            '; Braille Grado 1 (Código Braille Español - ONCE)',
+            'G21 ; milímetros',
+            'G90 ; posicionamiento absoluto',
+            'G28 ; home de todos los ejes',
+            'G92 E0 ; reset extrusor',
+            'M104 S'.number_format($cfg['temperatura'], 1).' ; temperatura del extrusor (PLA)',
+        ];
+
+        foreach ($lineasCeldas as $indiceFila => $celdasLinea) {
+            $x = $offsetX;
+            $y = $offsetY + ($indiceFila * $cfg['avance_linea']);
+
+            foreach ($celdasLinea as $indiceCelda => $celda) {
+                if ($celda === []) {
+                    if (($indiceCelda + 1) < count($celdasLinea)) {
+                        $x += $cfg['espaciado_palabra'];
+                    }
+
+                    continue;
+                }
+
+                $this->extruirCelda($celda, $x, $y, $z, $cfg, $lineasGcode);
+
+                $x += $cfg['avance_celda'];
+            }
+        }
+
+        $lineasGcode[] = 'G0 Z'.number_format($z + 10, 2).' ; retraer boquilla al final';
+        $lineasGcode[] = 'M104 S0 ; apagar extrusor';
+        $lineasGcode[] = 'M84 ; desactivar motores';
+        $lineasGcode[] = '; Fin del programa';
+
+        return implode("\n", $lineasGcode)."\n";
+    }
+
+    /**
+     * Genera las instrucciones de extrusión para los puntos de una celda Braille.
+     *
+     * @param  array<int>  $celda
+     * @param  array<string, mixed>  $cfg
+     * @param  array<int, string>  &$lineasGcode
+     */
+    protected function extruirCelda(array $celda, float $x, float $y, float $z, array $cfg, array &$lineasGcode): void
+    {
+        foreach ($celda as $punto) {
+            [$columna, $fila] = $this->posicionPunto($punto);
+
+            $px = $x + ($columna * $cfg['paso_puntos_x']);
+            $py = $y + ($fila * $cfg['paso_puntos_y']);
+
+            $lineasGcode[] = sprintf('G0 Z%.2f ; elevar boquilla', $z + $cfg['altura_punto'] + $cfg['holgura_z']);
+            $lineasGcode[] = sprintf('G0 X%.2f Y%.2f F%.0f ; posicionar punto', $px, $py, $cfg['velocidad_xy']);
+            $lineasGcode[] = sprintf('G1 Z%.2f F%.0f ; descender a la base del punto', $z, $cfg['velocidad_z']);
+            $lineasGcode[] = 'G92 E0';
+            $lineasGcode[] = sprintf('G1 E%.3f F%.0f ; extruir volumen del punto', $cfg['volumen_punto'], $cfg['velocidad_e']);
+            $lineasGcode[] = sprintf('G1 Z%.2f F%.0f ; subir mientras se forma el relieve', $z + $cfg['altura_punto'], $cfg['velocidad_z']);
+            $lineasGcode[] = 'G92 E0';
+        }
     }
 
     /**
