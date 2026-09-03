@@ -54,7 +54,7 @@
 | RB-02 | Caracteres soportados: letras A-Z, números 0-9, signos de puntuación básicos |
 | RB-03 | No se soportan caracteres acentuados complejos ni símbolos especiales |
 | RB-04 | El texto tiene longitud máxima limitada por el tamaño de la ficha |
-| RB-05 | La traducción se realiza en el backend (Python Core) |
+| RB-05 | La traducción se realiza en el backend (Service PHP: App\Services\BrailleTranslator; python_core archivado) |
 | RB-06 | Se muestra previsión visual 2D antes de confirmar el pedido |
 
 ---
@@ -64,7 +64,7 @@
 | Regla | Descripción |
 |---|---|
 | RS-01 | Todo pedido inicia en estado "Pendiente" |
-| RS-02 | Ciclo de estados: Pendiente → En impresión → Completado |
+| RS-02 | Ciclo de estados: Pendiente → Aprobado → En impresión → Completado (o Rechazado en cualquier fase previa) |
 | RS-03 | El Administrador puede rechazar un pedido (con motivo) |
 | RS-04 | El Solicitante solo puede cancelar si el estado es "Pendiente" |
 | RS-05 | El G-Code se genera automáticamente al confirmar la solicitud |

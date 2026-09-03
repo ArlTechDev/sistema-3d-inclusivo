@@ -43,9 +43,9 @@ deactivate UI
 
 == Fase 2: Transición de Estado y Aprobación (UC-08) ==
 
-A -> UI : Selecciona pedido y cambia estado\nde «Pendiente» a «En impresión»
+A -> UI : Selecciona pedido y cambia estado\nde «Pendiente» a «Aprobado»
 activate UI
-UI -> PC : PATCH /pedidos/{id} (estado='En impresión')
+UI -> PC : PATCH /pedidos/{id} (estado='Aprobado')
 activate PC
 
 PC -> UR : validated()['estado']
@@ -58,9 +58,9 @@ activate DB
 DB --> PC : Instancia $pedido
 deactivate DB
 
-PC -> PC : $pedido->puedeTransicionarA('En impresión')
+PC -> PC : $pedido->puedeTransicionarA('Aprobado')
 activate PC
-note right of PC: Valida contra Pedido::TRANSICIONES\n(Pendiente → En impresión → Completado\nó Pendiente → Rechazado)
+note right of PC: Valida contra Pedido::TRANSICIONES\n(Pendiente → Aprobado → En impresión → Completado\nó Rechazado en cualquier fase)
 PC --> PC : true (transición permitida)
 deactivate PC
 
@@ -68,12 +68,12 @@ alt Transición inválida (ej. Completado → Pendiente)
     PC --> UI : Redirect back() con error: «No se puede pasar de Completado a Pendiente»
     UI --> A : Muestra alerta de regla de negocio
 else Transición válida
-    PC -> DB : UPDATE pedidos SET estado = 'En impresión', updated_at = NOW() WHERE id = ?
+    PC -> DB : UPDATE pedidos SET estado = 'Aprobado', updated_at = NOW() WHERE id = ?
     activate DB
     DB --> PC : Confirmación de actualización
     deactivate DB
     PC --> UI : Response 302 → Redirect /pedidos (Flash: «Estado del pedido actualizado»)
-    UI --> A : Actualiza fila con badge «En impresión»
+    UI --> A : Actualiza fila con badge «Aprobado»\n(Permite avanzar a «En impresión» al iniciar fabricación)
 end
 deactivate PC
 deactivate UI

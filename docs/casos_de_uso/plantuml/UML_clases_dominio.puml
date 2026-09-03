@@ -20,6 +20,7 @@ enum EstadoRecurso {
 
 enum EstadoPedido {
     Pendiente
+    Aprobado
     En impresión
     Completado
     Rechazado

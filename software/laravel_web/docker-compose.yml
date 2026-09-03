@@ -11,7 +11,7 @@ services:
       - "5173:5173" # Puerto para Vite (Hot Reload)
     depends_on:
       - db
-    command: tail -f /dev/null
+    command: php artisan serve --host=0.0.0.0 --port=8000
 
   db:
     image: mysql:8.0

@@ -13,6 +13,7 @@ rectangle "Sistema Braille Inclusivo" {
     usecase "Ver todas las solicitudes" as UC08a
     usecase "Filtrar por estado o institución" as UC08b
     usecase "Actualizar estado de pedido" as UC08c
+    usecase "Aprobar solicitud\n(Cambiar a 'Aprobado')" as UC08k
     usecase "Cambiar a 'En impresión'" as UC08d
     usecase "Cambiar a 'Completado'" as UC08e
     usecase "Rechazar solicitud" as UC08f
@@ -25,12 +26,14 @@ rectangle "Sistema Braille Inclusivo" {
 A --> UC08a
 A --> UC08b
 A --> UC08c
+A --> UC08k
 A --> UC08d
 A --> UC08e
 A --> UC08f
 A --> UC08g
 A --> UC08i
 
+UC08k ..> UC08c : <<extend>>
 UC08d ..> UC08c : <<extend>>
 UC08e ..> UC08c : <<extend>>
 UC08f ..> UC08c : <<extend>>

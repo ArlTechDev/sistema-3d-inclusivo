@@ -90,7 +90,7 @@ class PedidoController extends Controller
     }
 
     /**
-     * El Administrador avanza el estado del pedido (Pendiente → En impresión → Completado).
+     * El Administrador avanza el estado del pedido (Pendiente → Aprobado → En impresión → Completado).
      */
     public function update(UpdatePedidoRequest $request, Pedido $pedido)
     {

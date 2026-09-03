@@ -30,7 +30,7 @@
 | Impresora 3D | Arquitectura cartesiana modular tipo Prusa i3 |
 | Controlador | Arduino Mega 2560 + RAMPS 1.4 |
 | Drivers | 4× A4988 |
-| Motores | 3× NEMA 17 (recuperados de e-waste) |
+| Motores | 4× NEMA 17 (recuperados de e-waste: ejes X, Y, Z + extrusor MK8) |
 | Tracción | Correa GT2 + poleas (X/Y), varillas roscadas (Z) |
 | Extrusor | MK8 directo, boquilla 0.4 mm o 0.8 mm |
 | Material | Filamento PLA 1.75 mm biodegradable |
@@ -78,7 +78,7 @@
 │  [Solicitante]                                                  │
 │       │                                                         │
 │       ▼                                                         │
-│  [Plataforma Web] ──► [Backend Laravel + Python Core]           │
+│  [Plataforma Web] ──► [Backend Laravel (Service PHP)]           │
 │       │                      │                                  │
 │       │                      ▼                                  │
 │       │              Traducción Braille                         │

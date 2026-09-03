@@ -119,7 +119,7 @@ cd laravel_web && docker compose up -d --no-build
 | `docker compose up` intenta *pull* o *build* | Las imágenes no están cargadas o el tag no coincide. Verificar `docker images` y que `docker-compose.yml` tenga `image: laravel_web-app:latest` (ya fijado). Nunca usar `--build` sin red. |
 | `unknown volume laravel_web_db_data` | El `name:` del volumen en `docker-compose.yml` ya lo fija; si usas un compose viejo sin esa línea, el nombre depende de la carpeta. |
 | La app responde pero sin datos | El volumen no se restauró o se reemplazó por uno vacío; reimportar `db_data.tar.gz` o hacer `docker compose exec app php artisan migrate --seed`. |
-| `curl localhost:8000` no responde | El contenedor `laravel_app` arranca con `tail -f /dev/null`; la app se sirve con `docker compose exec app php artisan serve --host=0.0.0.0 --port=8000` (o `composer dev`). Revisar `docker compose ps`. |
+| `curl localhost:8000` no responde | El servicio `app` arranca automáticamente con `php artisan serve --host=0.0.0.0 --port=8000`. Si no responde, revisar `docker compose ps` y los logs con `docker compose logs app`. Se puede reiniciar el servicio con `docker compose restart app`. |
 | Scripts `.sh` con error `bad interpreter` en Linux | Líneas CRLF: convertir con `sed -i 's/\r$//' script.sh` o `dos2unix`. |
 | Vite/HMR lento en Windows | Bind mount a través de WSL2; normal. Para producción usar `npm run build` (los assets ya están en `public/build`). |
 | `APP_KEY` / error de sesión | El `.env` viaja en el tar; si se pierde, copiar `.env.example` y ejecutar `php artisan key:generate`. En Docker, `DB_HOST=db` (nombre del servicio). |

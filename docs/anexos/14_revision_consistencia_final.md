@@ -1,42 +1,43 @@
 # 14 — Revisión de Consistencia de la Documentación Final
 
-Revisión integral (2026-08) del paquete documental del proyecto para garantizar consistencia entre el documento PSCP (`DocumentoFinalPSCP3DJulio24.docx`), el código implementado y los diagramas/UML. Complementa y actualiza los anexos 09 (revisión del documento), 10 (borradores de contenido) y 11 (código ↔ documento).
+Revisión integral (2026-08/2026-09) del paquete documental del proyecto para garantizar consistencia entre el documento PSCP (`DocumentoFinalPSCP3DAgosto17.docx`), el código implementado y los diagramas/UML. Complementa y actualiza los anexos 09 (revisión del documento), 10 (borradores de contenido) y 11 (código ↔ documento).
 
 ## 1. Inventario de la documentación existente
 
 | Ruta | Contenido | Estado |
 |---|---|---|
-| `docs/documento_pscp/DocumentoFinalPSCP3DJulio24.docx` | Documento PSCP completo (17 figuras, 13 tablas) | **Pendiente de aplicar cambios** (lo edita el autor) |
-| `docs/anexos/01…08` | Contexto, arquitectura, seguridad, análisis de inconsistencias, plan de corrección, guía Word | Actualizados (02 con stack PHP corregido) |
-| `docs/anexos/09_informe_revision_documento_final.md` | Hallazgos C1–C4, A1–A5, M1–M10, B1–B8 y decisiones D1–D7 | Vigente; ver §2 |
-| `docs/anexos/10_borradores_contenido_documento_final.md` | Borradores listos para pegar (título, aperturas, secciones, bibliografía) | Vigente |
+| `docs/documento_pscp/DocumentoFinalPSCP3DAgosto17.docx` | Documento PSCP completo (17 figuras, 13 tablas) | ✅ **100% APLICADO Y MERGEADO** (Commit `9c8fc42`) |
+| `docs/anexos/01…08` | Contexto, arquitectura, seguridad, análisis de inconsistencias, plan de corrección, guía Word | Actualizados (arquitectura y reglas con stack PHP, 4 motores y estados completos) |
+| `docs/anexos/09_informe_revision_documento_final.md` | Hallazgos C1–C4, A1–A5, M1–M10, B1–B8 y decisiones D1–D7 | Vigente; resuelto en versión final |
+| `docs/anexos/10_borradores_contenido_documento_final.md` | Borradores listos para pegar (título, aperturas, secciones, bibliografía) | Integrado en el .docx |
 | `docs/anexos/11_revision_codigo_vs_documento.md` | Matriz código↔documento, decisión PHP puro, especificación objetivo | Vigente |
-| `docs/anexos/12_guia_migracion_docker.md` | Migración offline Docker | Vigente |
-| `docs/anexos/13_guia_pruebas_version_final.md` | Guía de pruebas + smoke test | Vigente |
-| `docs/casos_de_uso/plantuml/*.puml` | 12+ fuentes PlantUML (UC-00…UC-10, UML, Gantt) | **Corregidas en esta revisión** (ver §3) |
-| `docs/casos_de_uso/imagenes/*.png` | PNG de casos de uso | 3 re-renderizados (UC-00, UC-05, UC-10) |
-| `docs/diagramas/imagenes/**` | UML (clases, estados, ERD, despliegue, secuencia) | 4 re-renderizados |
-| `docs/diagramas/*.drawio/xml` | Diagrama de capas (drawio) | Sin Python ✓ (ya limpio) |
+| `docs/anexos/12_guia_migracion_docker.md` | Migración offline Docker (auto-start en puerto 8000) | Vigente |
+| `docs/anexos/13_guia_pruebas_version_final.md` | Guía de pruebas + smoke test (23 checks) | Vigente |
+| `docs/casos_de_uso/plantuml/*.puml` | Fuentes PlantUML (UC-00…UC-10, UML, Gantt) | **Corregidas y re-renderizadas** (PHP, 4 motores, Aprobado) |
+| `docs/casos_de_uso/imagenes/*.png` | PNG de casos de uso | Re-renderizados (UC-00, UC-05, UC-08, UC-10) |
+| `docs/diagramas/imagenes/**` | UML (clases, estados, ERD, despliegue, secuencia) | Re-renderizados (despliegue sin python, estados con Aprobado) |
+| `docs/diagramas/*.drawio/xml` | Diagrama de capas (drawio) | Sin Python ✓ (limpio) |
 
 ## 2. Estado de aplicación de los hallazgos previos (09/10/11)
 
 | Hallazgo / cambio documentado | Estado |
 |---|---|
-| Título nuevo unificado (C3) | 🔴 **Pendiente en el .docx** — borradores listos en 10 §5.1 (5 ubicaciones) |
-| 10 secciones «No definido» (C2) | 🔴 **Pendiente en el .docx** — borradores en 10 §5.2–§5.9 |
-| Bibliografía vacía (C1) | 🔴 **Pendiente en el .docx** — 17 fuentes en 10 §5.10 |
-| Tabla 3 alfabeto Braille incompleta (C4) | 🔴 **Pendiente en el .docx** — correcciones en 10 anexo |
-| Tabla 5 stack: Laravel 13 / PHP 8.3, fila Python→PHP (A2) | 🔴 **Pendiente en el .docx** (verificado: código Laravel 13.6.0/PHP 8.3) |
-| Motores: 3 → **4** NEMA 17 (A1) | 🟡 **Documento corregido** en puml; pendiente en el .docx (Tabla 4 / Figura 16) |
-| Rol «Docente» → «Solicitante» (M8) | ✅ Código y AGENTS corregidos; el .docx ya usa «Solicitante» |
-| Encuadre conceptual «impresora Braille» → «recursos táctiles» (11) | 🔴 **Pendiente en el .docx** — 9 filas con texto de reemplazo en 09 §11.2 |
+| Título nuevo unificado (C3) | ✅ **APLICADO** en `DocumentoFinalPSCP3DAgosto17.docx` |
+| 10 secciones «No definido» (C2) | ✅ **APLICADO** en `DocumentoFinalPSCP3DAgosto17.docx` |
+| Bibliografía vacía (C1) | ✅ **APLICADO** en `DocumentoFinalPSCP3DAgosto17.docx` (26 referencias APA 7) |
+| Tabla 3 alfabeto Braille incompleta (C4) | ✅ **APLICADO** en `DocumentoFinalPSCP3DAgosto17.docx` (27 letras, números y signos) |
+| Tabla 5 stack: Laravel 13 / PHP 8.3, fila Python→PHP (A2) | ✅ **APLICADO** en `DocumentoFinalPSCP3DAgosto17.docx` |
+| Motores: 3 → **4** NEMA 17 (A1) | ✅ **APLICADO** en `DocumentoFinalPSCP3DAgosto17.docx`, PlantUML y anexos |
+| Rol «Docente» → «Solicitante» (M8) | ✅ Código y AGENTS corregidos; el .docx usa «Solicitante» |
+| Encuadre conceptual «impresora Braille» → «recursos táctiles» (11) | ✅ **APLICADO** en `DocumentoFinalPSCP3DAgosto17.docx` |
 | Exports admin-only | ✅ Implementado + tests |
 | G-Codes en disco privado + descarga autenticada | ✅ Implementado |
 | Catálogo requiere sesión (README corregido) | ✅ Coherente con el documento (UC-03) |
 | Login: sin enlaces muertos AdminLTE | ✅ Implementado (2026-08) |
 | `fecha_creacion` en recursos (validación sin columna) | ✅ Migración + ERD actualizado |
 | Cancelación de pedidos por el Solicitante | ✅ Implementado (2026-08) + tests |
-| Metodología Scrum/Kanban (PSCP) | ✅ Documentada en AGENTS.md y anexo 02; 🔴 declararla en el .docx |
+| Metodología Scrum/Kanban (PSCP) | ✅ Declarada en el .docx, AGENTS.md y anexo 02 |
+| Presupuesto Tablas 10 y 11 balanceado a 700 Bs. | ✅ **APLICADO** en `DocumentoFinalPSCP3DAgosto17.docx` (100% exacto) |
 
 ## 3. Nuevos hallazgos de esta revisión (figuras y UML)
 
@@ -79,25 +80,27 @@ Las 17 figuras del documento corresponden por orden de inserción a las imágene
 
 ## 5. Checklist final de consistencia para la entrega
 
-**En el .docx (edición manual del autor):**
-- [ ] Aplicar el título nuevo unificado en las 5 ubicaciones (10 §5.1)
-- [ ] Llenar las 10 secciones «No definido» con los borradores (10 §5.2–§5.9), marcando `[PENDIENTE DE EJECUCIÓN FÍSICA]` donde aplique
-- [ ] Poner la bibliografía (10 §5.10)
-- [ ] Completar la Tabla 3 (alfabeto Braille) — 27 letras + dígitos + puntuación (09 C4)
-- [ ] Tabla 5: Laravel 13 / PHP 8.3, fila Python → Service PHP (09 A2) **y los 9 hallazgos N1–N9 de la §7**
-- [ ] Tabla 4 / Figura 16: motores NEMA 17 **x4** (09 A1)
-- [ ] Reemplazar las 7 figuras de la tabla del §4 por los PNG re-renderizados
-- [ ] Aplicar las correcciones de encuadre conceptual «recursos táctiles» (09 §11.2, 9 filas)
-- [ ] Figura 15: verificar que muestra «Solicitante cancela (SoftDelete)» y NO «Error de impresión»
-- [ ] Figura 13: verificar que las estadísticas aparecen como `[PENDIENTE]`
-- [ ] Declarar la metodología Scrum/Kanban (AGENTS.md §Metodología)
-- [ ] Eliminar los residuos «Python» del cuerpo y las Tablas 9/10/11 (N2–N9 de la §7)
+**En el .docx maestro (DocumentoFinalPSCP3DAgosto17.docx — 100% aplicado y verificado):**
+- [x] Aplicar el título nuevo unificado en las 5 ubicaciones (10 §5.1)
+- [x] Llenar las 10 secciones «No definido» con los borradores (10 §5.2–§5.9), marcando `[PENDIENTE DE EJECUCIÓN FÍSICA]` donde aplique
+- [x] Poner la bibliografía (26 referencias académicas en APA 7 estricto con sangría francesa)
+- [x] Completar la Tabla 3 (alfabeto Braille) — 27 letras + dígitos + puntuación (09 C4)
+- [x] Tabla 5: Laravel 13 / PHP 8.3, fila Python → Service PHP (09 A2) y los 9 hallazgos N1–N9 de la §7
+- [x] Tabla 4 / Figura 16: motores NEMA 17 **x4** (09 A1)
+- [x] Reemplazar las figuras del §4 por los PNG re-renderizados (Despliegue y Estados integrados en DOCX)
+- [x] Aplicar las correcciones de encuadre conceptual «recursos táctiles» (09 §11.2, 9 filas)
+- [x] Figura 15: verificar que muestra «Aprobado» y «Solicitante cancela (SoftDelete)»
+- [x] Figura 13: verificar que las estadísticas aparecen como `[PENDIENTE]`
+- [x] Declarar la metodología Scrum/Kanban (AGENTS.md §Metodología y Anexo 02)
+- [x] Eliminar los residuos «Python» del cuerpo y las Tablas 9/10/11 (N2–N9 de la §7)
+- [x] Estandarizar presupuesto a exactamente 700.00 Bs. (100%) en Tablas 10 y 11
 
-**En el repo (ya aplicado):**
-- [ ] `git status` limpio en `main`
-- [ ] `composer test` (47 tests) + `composer analyse` (0 errores) + Pint limpio
-- [ ] `bash scripts/pruebas/smoke_test.sh` → 20 PASS · 0 FAIL
-- [ ] `grep -rl "Python Core\|Python 3\|BrailleService" docs/` → sin resultados
+**En el repo (100% verificado y operativo):**
+- [x] `git status` limpio en `main`
+- [x] `composer test` (85 tests, 368 aserciones, 100% passed) + `composer analyse` (0 errores, PHPStan nivel 5) + Pint limpio
+- [x] `bash scripts/pruebas/smoke_test.sh` → 23 PASS · 0 FAIL
+- [x] `grep -rl "Python Core\|Python 3\|BrailleService" docs/casos_de_uso/plantuml docs/diagramas` → 0 resultados
+- [x] Auto-start de Docker en `docker-compose.yml` (`php artisan serve --host=0.0.0.0 --port=8000`) operativo de inmediato
 
 ## 6. Notas
 
