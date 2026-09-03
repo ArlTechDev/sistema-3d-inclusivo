@@ -1,0 +1,65 @@
+#!/usr/bin/env bash
+# =============================================================================
+#  Git Hook: commit-msg
+#  Validador de Conventional Commits y Seguridad para Monorepo Público
+# =============================================================================
+set -euo pipefail
+
+COMMIT_MSG_FILE="$1"
+
+# Leer la primera línea que no sea comentario ni esté vacía
+SUBJECT=$(grep -v '^#' "$COMMIT_MSG_FILE" | grep -v '^[[:space:]]*$' | head -n 1 || true)
+
+if [ -z "$SUBJECT" ]; then
+    echo "✗ Error: El mensaje de commit no puede estar vacío."
+    exit 1
+fi
+
+# Permitir commits automáticos de merge o revert de Git
+if echo "$SUBJECT" | grep -qE '^(Merge branch|Revert |fixup!|squash!)'; then
+    exit 0
+fi
+
+# Expresión regular para Conventional Commits:
+# Tipos: feat, fix, docs, chore, refactor, test
+# Scope opcional: (web|api|hw|pscp|infra|sec) o cualquier identificador en minúsculas
+# Separador: dos puntos y espacio ": "
+# Descripción: mínimo 4 caracteres
+PATTERN='^(feat|fix|docs|chore|refactor|test)(\([a-z0-9_-]+\))?: .{4,}$'
+
+if ! echo "$SUBJECT" | grep -qE "$PATTERN"; then
+    echo "══════════════════════════════════════════════════════════════════════"
+    echo "  ✗ ERROR EN EL FORMATO DEL COMMIT"
+    echo "══════════════════════════════════════════════════════════════════════"
+    echo "  Tu mensaje no cumple la convención de Conventional Commits:"
+    echo "    \"$SUBJECT\""
+    echo ""
+    echo "  El formato obligatorio es:"
+    echo "    <tipo>(<alcance>): <descripción corta en minúsculas>"
+    echo ""
+    echo "  Tipos permitidos:"
+    echo "    feat      Nueva funcionalidad en software o hardware"
+    echo "    fix       Corrección de errores o inconsistencias"
+    echo "    docs      Modificaciones en documentación (.docx, .md, puml)"
+    echo "    refactor  Refactorización sin alterar el comportamiento"
+    echo "    test      Nuevas pruebas unitarias o de integración"
+    echo "    chore     Mantenimiento, configuración o monorepo"
+    echo ""
+    echo "  Alcances recomendados (scopes):"
+    echo "    web, api, hw, pscp, infra, sec"
+    echo ""
+    echo "  Ejemplos válidos:"
+    echo "    feat(web): agregar catálogo interactivo de recursos"
+    echo "    docs(pscp): actualizar justificación y bibliografía APA 7"
+    echo "    fix(infra): habilitar auto-start de docker en puerto 8000"
+    echo "══════════════════════════════════════════════════════════════════════"
+    exit 1
+fi
+
+# Validación de seguridad: evitar cadenas comunes de secretos accidentales
+if grep -iE '(PRIVATE KEY|aws_secret|DB_PASSWORD=[^ ]{3,}|ghp_[a-zA-Z0-9]{30,})' "$COMMIT_MSG_FILE" >/dev/null 2>&1; then
+    echo "✗ ALERTA DE SEGURIDAD: Se detectó una posible clave o credencial en el mensaje de commit."
+    exit 1
+fi
+
+exit 0

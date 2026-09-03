@@ -1,5 +1,11 @@
 # Sistema Web e Impresora 3D con Materiales Reciclados para la Creación de Recursos Táctiles Destinados a Personas No Videntes
 
+[![Laravel CI](https://github.com/ArlTechDev/sistema-3d-inclusivo/actions/workflows/ci.yml/badge.svg)](https://github.com/ArlTechDev/sistema-3d-inclusivo/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Laravel 13](https://img.shields.io/badge/Laravel-13.x-FF2D20?logo=laravel)](https://laravel.com)
+[![PHP 8.3 | 8.4](https://img.shields.io/badge/PHP-8.3%20%7C%208.4-777BB4?logo=php)](https://php.net)
+[![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-%23FE5196?logo=conventionalcommits&logoColor=white)](CONTRIBUTING.md)
+
 > **Proyecto Sociocomunitario Productivo (PSCP)**
 > Instituto Técnico "Federico Alvarez Plata" — Cochabamba, Bolivia
 > Mayo – Septiembre 2026
@@ -46,7 +52,13 @@ sistema-3d-inclusivo/
 │   ├── documento_pscp/       # Documento PSCP (.docx SSOT + .md espejo indexable de consulta)
 │   ├── anexos/               # Anexos técnicos 01–14, contexto sociocomunitario y seguridad
 │   └── casos_de_uso/         # Diagramas UML (PlantUML + PNGs)
+├── scripts/
+│   ├── git/                  # Scripts de gobernanza Git (hooks commit-msg)
+│   ├── docker/               # Scripts de exportación e importación Docker
+│   └── docx/                 # Sincronización DOCX a Markdown
 ├── .github/workflows/        # CI/CD automatizado (PHPUnit + Larastan)
+├── .gitmessage               # Plantilla interactiva para Conventional Commits
+├── CONTRIBUTING.md           # Guía de contribución, exclusión de secretos y Ley 223
 ├── AGENTS.md                 # Configuración del equipo y convenciones del monorepo
 ├── LICENSE                   # MIT License
 └── README.md                 # Este archivo
@@ -189,6 +201,21 @@ docker exec -it laravel_app php artisan migrate:fresh --seed
 - **Espejo Canónico (Markdown)**: [`docs/documento_pscp/DocumentoFinal.md`](docs/documento_pscp/DocumentoFinal.md) (enlace a `DocumentoFinalPSCP3DAgosto17.md`) — Versión completa indexable para consulta rápida, búsqueda con `grep`, agentes de IA y `git diff`.
 - **Anexos Técnicos**: Carpeta [`docs/anexos/`](docs/anexos/) con especificaciones de arquitectura, metodología, reglas comunitarias, migraciones y seguridad OWASP.
 - **Sincronización Automatizada**: Ejecutar `bash scripts/docx/exportar_docx_a_md.sh` para actualizar el espejo tras cualquier edición del `.docx`.
+
+---
+
+## Contribución y Gobernanza
+
+Dado que este repositorio es público, todos los colaboradores y miembros del equipo deben seguir las pautas de [CONTRIBUTING.md](CONTRIBUTING.md) para garantizar la seguridad de credenciales y la confidencialidad de datos personales conforme a la **Ley N° 223**:
+
+1. **Instalar hooks locales de Git**:
+   ```bash
+   bash scripts/git/instalar_hooks.sh
+   ```
+2. **Formato obligatorio de commits**:
+   Se exige el estándar Conventional Commits en español (`<tipo>(<alcance>): <descripción>`). El hook `.git/hooks/commit-msg` valida automáticamente cada commit antes de aceptarlo.
+3. **Protección de datos sensibles**:
+   Nunca commitear archivos `.env`, credenciales de base de datos ni datos personales de estudiantes o beneficiarios.
 
 ---
 
