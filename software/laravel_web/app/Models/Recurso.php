@@ -9,7 +9,29 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Carbon;
 
+/**
+ * @property int $id
+ * @property string $titulo
+ * @property string|null $descripcion
+ * @property float $gramos_pla
+ * @property int $tiempo_minutos
+ * @property string|null $url_imagen
+ * @property string|null $url_gcode
+ * @property string $estado
+ * @property int $categoria_id
+ * @property string|null $archivo_stl
+ * @property string|null $archivo_glb
+ * @property string|null $tipo_placa
+ * @property float|null $placa_ancho
+ * @property float|null $placa_alto
+ * @property float|null $placa_z_altura
+ * @property int|null $max_caracteres
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property Carbon|null $deleted_at
+ */
 class Recurso extends Model
 {
     use HasFactory, SoftDeletes;

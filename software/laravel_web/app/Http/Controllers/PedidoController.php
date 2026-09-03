@@ -70,9 +70,23 @@ class PedidoController extends Controller
 
     public function store(StorePedidoRequest $request, PedidoService $pedidoService)
     {
-        $pedidoService->crearPedido($request->validated(), (int) auth()->id());
+        $pedido = $pedidoService->crearPedido($request->validated(), (int) auth()->id());
 
-        return redirect()->route('recursos.index')->with('success', 'Solicitud de impresión registrada correctamente.');
+        return redirect()->route('pedidos.checkout', $pedido)->with('success', 'Solicitud registrada correctamente. Por favor completa el pago o confirmación.');
+    }
+
+    /**
+     * Pantalla de Checkout / Factura Proforma con QR Simple y WhatsApp (Flujo inclusivo).
+     */
+    public function checkout(Pedido $pedido)
+    {
+        abort_if($pedido->user_id !== auth()->id() && auth()->user()->rol !== User::ROL_ADMINISTRADOR, 403, 'No tienes permiso para ver esta orden.');
+
+        $pedido->load(['detalles.recurso.categoria', 'institucion', 'user']);
+        $moneda = (string) (ConfiguracionSistema::where('clave', 'moneda_simbolo')->value('valor') ?? 'Bs');
+        $whatsappNumero = '59160774117';
+
+        return view('pedidos.checkout', compact('pedido', 'moneda', 'whatsappNumero'));
     }
 
     /**

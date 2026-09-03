@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Recurso;
 use App\Services\BrailleTranslator;
 use App\Support\Sanitizer;
 use Illuminate\Foundation\Http\FormRequest;
@@ -42,12 +43,28 @@ class StorePedidoRequest extends FormRequest
         $validator->after(function ($validator) {
             $textoPersonalizado = trim((string) $this->input('texto_personalizado'));
             if ($textoPersonalizado !== '') {
-                $invalidos = app(BrailleTranslator::class)->validarCaracteres($textoPersonalizado);
+                $traductor = app(BrailleTranslator::class);
+                $invalidos = $traductor->validarCaracteres($textoPersonalizado);
                 if ($invalidos !== []) {
                     $validator->errors()->add(
                         'texto_personalizado',
                         'El texto contiene caracteres no soportados: '.implode(', ', $invalidos).'.'
                     );
+                } else {
+                    $recursoId = $this->integer('recurso_id');
+                    if ($recursoId > 0) {
+                        /** @var Recurso|null $recurso */
+                        $recurso = Recurso::find($recursoId);
+                        if ($recurso instanceof Recurso && $recurso->max_caracteres) {
+                            $totalCeldas = count($traductor->traducir($textoPersonalizado));
+                            if ($totalCeldas > $recurso->max_caracteres) {
+                                $validator->errors()->add(
+                                    'texto_personalizado',
+                                    "El texto traducido ocupa {$totalCeldas} celdas Braille, superando la capacidad máxima de la placa ({$recurso->max_caracteres} celdas)."
+                                );
+                            }
+                        }
+                    }
                 }
             }
         });

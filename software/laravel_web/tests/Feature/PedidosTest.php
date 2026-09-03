@@ -82,8 +82,9 @@ class PedidosTest extends TestCase
             'cantidad' => 3,
         ]);
 
-        $response->assertRedirect(route('recursos.index'));
-        $this->actingAs($solicitante)->get(route('recursos.index'))->assertOk();
+        $pedido = Pedido::first();
+        $response->assertRedirect(route('pedidos.checkout', $pedido));
+        $this->actingAs($solicitante)->get(route('pedidos.checkout', $pedido))->assertOk();
 
         $this->assertDatabaseHas('pedidos', [
             'user_id' => $solicitante->id,
@@ -113,7 +114,8 @@ class PedidosTest extends TestCase
             'cantidad' => 2,
         ]);
 
-        $response->assertRedirect(route('recursos.index'));
+        $pedido = Pedido::first();
+        $response->assertRedirect(route('pedidos.checkout', $pedido));
         $this->assertDatabaseHas('pedidos', [
             'user_id' => $solicitante->id,
             'institucion_id' => null,
@@ -144,6 +146,57 @@ class PedidosTest extends TestCase
         $this->assertNotNull($pedido->gcode_path);
         Storage::disk('local')->assertExists($pedido->gcode_path);
         $this->assertStringContainsString('G28', Storage::disk('local')->get($pedido->gcode_path));
+    }
+
+    public function test_gcode_respeta_altura_z_de_placa_del_recurso(): void
+    {
+        Storage::fake('local');
+        $this->crearPrecioGramo();
+        $solicitante = $this->crearSolicitante();
+        $recurso = $this->crearRecurso();
+        $recurso->update([
+            'tipo_placa' => 'integrada',
+            'placa_ancho' => 80,
+            'placa_alto' => 30,
+            'placa_z_altura' => 3,
+            'max_caracteres' => 22,
+        ]);
+
+        $response = $this->actingAs($solicitante)->post(route('pedidos.store'), [
+            'recurso_id' => $recurso->id,
+            'cantidad' => 1,
+            'texto_personalizado' => 'HOLA',
+        ]);
+
+        $response->assertSessionHasNoErrors();
+        $pedido = Pedido::first();
+
+        $gcodeContent = Storage::disk('local')->get($pedido->gcode_path);
+        // Debe descender a Z = 3.00 mm (espesor de la placa), no a 0.20 mm
+        $this->assertStringContainsString('G1 Z3.00', $gcodeContent);
+        $this->assertStringContainsString('G1 Z3.80', $gcodeContent); // 3.0 + 0.8 relieve
+    }
+
+    public function test_texto_personalizado_que_excede_capacidad_de_placa_es_rechazado(): void
+    {
+        $this->crearPrecioGramo();
+        $solicitante = $this->crearSolicitante();
+        $recurso = $this->crearRecurso();
+        $recurso->update([
+            'tipo_placa' => 'integrada',
+            'max_caracteres' => 5, // Capacidad máxima pequeña para probar
+        ]);
+
+        // "HOLA MUNDO" ocupa 12 celdas Braille (con mayúsculas) > 5 celdas
+        $response = $this->actingAs($solicitante)->from(route('pedidos.create'))->post(route('pedidos.store'), [
+            'recurso_id' => $recurso->id,
+            'cantidad' => 1,
+            'texto_personalizado' => 'HOLA MUNDO',
+        ]);
+
+        $response->assertRedirect(route('pedidos.create'));
+        $response->assertSessionHasErrors('texto_personalizado');
+        $this->assertDatabaseCount('pedidos', 0);
     }
 
     public function test_texto_personalizado_calcula_filamento_braille_adicional(): void
@@ -544,5 +597,36 @@ class PedidosTest extends TestCase
         $this->actingAs($admin)
             ->get(route('pedidos.mis'))
             ->assertRedirect(route('pedidos.index'));
+    }
+
+    public function test_solicitante_puede_ver_checkout_de_su_pedido_y_no_de_otro(): void
+    {
+        $this->crearPrecioGramo();
+        $solicitanteA = $this->crearSolicitante();
+        $solicitanteB = User::create([
+            'name' => 'Otro Usuario',
+            'email' => 'otro_user@test.com',
+            'password' => bcrypt('password'),
+            'rol' => 'Solicitante',
+        ]);
+        $recurso = $this->crearRecurso();
+
+        $this->actingAs($solicitanteA)->post(route('pedidos.store'), [
+            'recurso_id' => $recurso->id,
+            'cantidad' => 1,
+        ]);
+        $pedido = Pedido::first();
+
+        // Solicitante A puede ver su checkout
+        $this->actingAs($solicitanteA)
+            ->get(route('pedidos.checkout', $pedido))
+            ->assertOk()
+            ->assertSee('Confirmación y Pago')
+            ->assertSee('Ficha de vocabulario');
+
+        // Solicitante B recibe 403 al intentar ver el checkout de Solicitante A
+        $this->actingAs($solicitanteB)
+            ->get(route('pedidos.checkout', $pedido))
+            ->assertForbidden();
     }
 }

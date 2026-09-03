@@ -43,7 +43,7 @@ class PedidoService
             ]);
 
             if ($textoPersonalizado !== '') {
-                $gcodePath = $this->generarYGuardarGCode($pedido, $textoPersonalizado);
+                $gcodePath = $this->generarYGuardarGCode($pedido, $recurso, $textoPersonalizado);
                 $pedido->update(['gcode_path' => $gcodePath]);
             }
 
@@ -82,12 +82,30 @@ class PedidoService
 
     /**
      * Genera el G-Code para un pedido con texto personalizado y lo guarda en almacenamiento local.
+     * Toma en cuenta la altura Z real de la placa y sus dimensiones para evitar colisiones.
      *
      * @return string Ruta del archivo G-Code generado
      */
-    public function generarYGuardarGCode(Pedido $pedido, string $textoPersonalizado): string
+    public function generarYGuardarGCode(Pedido $pedido, Recurso $recurso, string $textoPersonalizado): string
     {
-        $gcode = $this->brailleTranslator->generarGCode($textoPersonalizado, 5.0, 5.0, 0.2);
+        $zBase = (float) ($recurso->placa_z_altura ?? 0.2);
+
+        $config = [];
+        if (! empty($recurso->placa_ancho)) {
+            // Margen de seguridad de 5mm a cada lado (10mm total)
+            $anchoUtil = max(10.0, (float) $recurso->placa_ancho - 10.0);
+            $avanceCelda = 6.0;
+            $config['max_caracteres_linea'] = max(1, (int) floor($anchoUtil / $avanceCelda));
+        }
+
+        $gcode = $this->brailleTranslator->generarGCode(
+            texto: $textoPersonalizado,
+            offsetX: 5.0,
+            offsetY: 5.0,
+            z: $zBase,
+            config: $config
+        );
+
         $nombre = 'pedidos/gcode/pedido_'.$pedido->id.'_'.uniqid().'.gcode';
         Storage::disk('local')->put($nombre, $gcode);
 

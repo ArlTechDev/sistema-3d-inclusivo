@@ -38,6 +38,9 @@ Route::middleware('auth')->group(function () {
     Route::get('pedidos/mis', [PedidoController::class, 'mis'])
         ->name('pedidos.mis');
 
+    Route::get('pedidos/{pedido}/checkout', [PedidoController::class, 'checkout'])
+        ->name('pedidos.checkout');
+
     Route::delete('pedidos/{pedido}/cancelar', [PedidoController::class, 'cancelar'])
         ->name('pedidos.cancelar');
 
