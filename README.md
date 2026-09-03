@@ -43,7 +43,7 @@ sistema-3d-inclusivo/
 │   ├── exportaciones_3d/     # Exportaciones STL desde CAD
 │   └── fotos_avance/         # Fotos de progreso de ensamblaje
 ├── docs/
-│   ├── documento_pscp/       # Documento PSCP (.docx) — aplica protocolo de bloqueo
+│   ├── documento_pscp/       # Documento PSCP (.docx SSOT + .md espejo indexable de consulta)
 │   ├── anexos/               # Anexos técnicos 01–14, contexto sociocomunitario y seguridad
 │   └── casos_de_uso/         # Diagramas UML (PlantUML + PNGs)
 ├── .github/workflows/        # CI/CD automatizado (PHPUnit + Larastan)
@@ -180,6 +180,15 @@ docker exec -it laravel_app php artisan migrate:fresh --seed
 | **TOTAL** | **~700** | **100%** | **≈ $100 USD (al tipo de cambio de mayo 2026)** |
 
 *Representa una reducción del ~93% frente a equipos comerciales equivalentes (≈ 15× más costosos).*
+
+---
+
+## Documentación del Proyecto
+
+- **Documento Maestro Oficial (DOCX)**: [`docs/documento_pscp/DocumentoFinalPSCP3DAgosto17.docx`](docs/documento_pscp/DocumentoFinalPSCP3DAgosto17.docx) — Única Fuente de la Verdad (SSOT).
+- **Espejo Canónico (Markdown)**: [`docs/documento_pscp/DocumentoFinal.md`](docs/documento_pscp/DocumentoFinal.md) (enlace a `DocumentoFinalPSCP3DAgosto17.md`) — Versión completa indexable para consulta rápida, búsqueda con `grep`, agentes de IA y `git diff`.
+- **Anexos Técnicos**: Carpeta [`docs/anexos/`](docs/anexos/) con especificaciones de arquitectura, metodología, reglas comunitarias, migraciones y seguridad OWASP.
+- **Sincronización Automatizada**: Ejecutar `bash scripts/docx/exportar_docx_a_md.sh` para actualizar el espejo tras cualquier edición del `.docx`.
 
 ---
 

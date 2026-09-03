@@ -15,8 +15,8 @@ hardware/
 ├── exportaciones_3d/     # Exportaciones STL desde CAD
 └── fotos_avance/         # Fotos de progreso de ensamblaje
 docs/
-├── documento_pscp/       # Documento PSCP (.docx) — aplica protocolo de bloqueo
-└── anexos/               # Anexos técnicos 01–11 (contexto, seguridad, revisión doc, borradores, código)
+├── documento_pscp/       # Documento PSCP (.docx SSOT + .md espejo indexable) — aplica protocolo de bloqueo
+└── anexos/               # Anexos técnicos 01–14 (contexto, seguridad, revisión doc, borradores, código)
 .reasonix/skills/         # Skills de proyecto (braille-gcode, frontend-design, laravel-conventions, laravel-frontend)
 .agents/skills/           # Espejo universal de skills para agentes de IA (Antigravity, Reasonix, Claude Code, Cursor)
 ```
@@ -34,6 +34,11 @@ docs/
 | Compilar frontend | `npm run build` |
 | Migrar (Docker) | `docker exec -it laravel_app php artisan migrate` |
 | Seed de usuarios | `php artisan db:seed` |
+
+### Documentación (`docs/`)
+| Tarea | Comando |
+|---|---|
+| Exportar DOCX a Markdown espejo | `bash scripts/docx/exportar_docx_a_md.sh` |
 
 ### Python Core (ARCHIVADO — `software/python_core/`)
 | Tarea | Comando |
@@ -125,15 +130,16 @@ Prefijos: `feat`, `fix`, `docs`, `chore`, `refactor`, `test`. Alcances: `web`, `
 Tipos de archivo rastreados: `*.FCStd`, `*.STEP`, `*.stl`, `*.gcode`, `*.docx`, `*.pdf`, `*.png`, `*.jpg`.
 Siempre ejecutar `git lfs pull` después de `git pull`.
 
-### Protocolo de Bloqueo de Archivo de Documento PSCP
-Solo una persona edita archivos `.docx` a la vez. Anunciar en chat grupal antes de editar, hacer commit inmediatamente después, anunciar cuando termine.
+### Protocolo de Bloqueo y Espejo Markdown del Documento PSCP
+- **SSOT Formal**: Solo una persona edita archivos `.docx` a la vez. Anunciar en chat grupal antes de editar, hacer commit inmediatamente después, anunciar cuando termine.
+- **Espejo Canónico Markdown**: El archivo `docs/documento_pscp/DocumentoFinalPSCP3DAgosto17.md` (y su symlink `DocumentoFinal.md`) es un **espejo de solo lectura** para consultas rápidas de contexto por IAs, auditorías y `git diff`. Nunca se edita a mano; tras modificar el `.docx`, se sincroniza ejecutando `bash scripts/docx/exportar_docx_a_md.sh`.
 
 ### EditorConfig
 Indentación de 4 espacios, finales de línea LF (2 espacios para YAML). Forzado vía `.editorconfig`.
 
 ## Testing
-- **Laravel**: PHPUnit con SQLite `:memory:`, cola sincronizada. Ejecutar `composer test` desde `software/laravel_web/`.
-- **Smoke test HTTP**: `bash scripts/pruebas/smoke_test.sh [-u URL]` con la app corriendo (20 checks de rutas/roles). Guía completa de pruebas manuales: `docs/anexos/13_guia_pruebas_version_final.md`.
+- **Laravel**: PHPUnit con SQLite `:memory:`, cola sincronizada. Ejecutar `composer test` desde `software/laravel_web/` (85 tests, 368 aserciones).
+- **Smoke test HTTP**: `bash scripts/pruebas/smoke_test.sh [-u URL]` con la app corriendo (23 checks de rutas/roles). Guía completa de pruebas manuales: `docs/anexos/13_guia_pruebas_version_final.md`.
 - **BrailleTranslator**: tests unitarios en `tests/Unit/BrailleTranslatorTest.php` (cobertura 100% alfabeto Grado 1).
 - **Hardware**: Validación en 3 fases — cubo de calibración XYZ (20mm) → regla geométrica → hoja de texto Braille.
 
