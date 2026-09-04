@@ -271,9 +271,11 @@
                     value="{{ old('name') }}"
                     required
                     autofocus
+                    aria-required="true"
+                    @error('name') aria-invalid="true" aria-describedby="name-error" @enderror
                 >
                 @error('name')
-                    <span class="form-error">{{ $message }}</span>
+                    <span id="name-error" class="form-error" role="alert">{{ $message }}</span>
                 @enderror
             </div>
 
@@ -287,9 +289,11 @@
                     placeholder="docente@escuela.edu.bo"
                     value="{{ old('email') }}"
                     required
+                    aria-required="true"
+                    @error('email') aria-invalid="true" aria-describedby="reg-email-error" @enderror
                 >
                 @error('email')
-                    <span class="form-error">{{ $message }}</span>
+                    <span id="reg-email-error" class="form-error" role="alert">{{ $message }}</span>
                 @enderror
             </div>
 
@@ -320,7 +324,7 @@
                 >
             </div>
 
-            <button type="submit" class="btn-auth-submit">
+            <button type="submit" class="btn-auth-submit" aria-label="Crear cuenta gratuita de solicitante">
                 Crear mi Cuenta Gratuita →
             </button>
 
