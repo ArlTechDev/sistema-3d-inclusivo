@@ -7,9 +7,13 @@
 @stop
 
 @section('content_header')
-    @yield('content_header')
+    <div role="region" aria-label="Encabezado de página de administración">
+        @yield('content_header')
+    </div>
 @stop
 
 @section('content')
-    @yield('content')
+    <main id="main-content" role="main" aria-label="Contenido principal del panel">
+        @yield('content')
+    </main>
 @stop
