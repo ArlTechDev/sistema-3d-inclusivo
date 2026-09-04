@@ -13,7 +13,7 @@ Guardar los datos de la impresora en base al repositorio original — ver `hardw
 | 2 | Prueba motores/DRV8825 | En organización | 2026-09-04 |
 
 ## Índice bitácora histórica
-- `01-dia-1.md` … `12-dia-4-a-10.md` — trabajo ene-jun 2026 previo a web
-- `hardware/fotos_avance/` — 21 JPG
+- `01-dia-1.md` … `12-dia-4-a-10.md` — trabajo ene-jun 2026 previo a web (ver `hardware/README.md`)
+- `hardware/fotos_avance/` — 21 JPG (excl. `2026-08-16_00-00-00.jpg` pendiente)
 - `hardware/README.md` — índice hardware y enlace repo original https://github.com/ag-cris21/Impresora-3D-casera
 
