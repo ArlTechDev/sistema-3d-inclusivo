@@ -139,14 +139,14 @@
         .vacio { text-align: center; color: var(--tinta-suave); padding: 48px 0; font-size: 1.1rem; }
     </style>
 
-    <div class="pedidos-container">
+    <div class="pedidos-container" role="region" aria-label="Historial de solicitudes de material táctil">
         <div class="pedidos-header">
             <h1>Mis Solicitudes</h1>
             <p>Rastrea el progreso de tus impresiones en tiempo real.</p>
         </div>
 
         @if (session('success'))
-            <div style="background: #d1fae5; color: #065f46; padding: 12px 16px; border-radius: var(--radio); margin-bottom: 24px;">
+            <div role="alert" style="background: #d1fae5; color: #065f46; padding: 12px 16px; border-radius: var(--radio); margin-bottom: 24px;">
                 {{ session('success') }}
             </div>
         @endif
