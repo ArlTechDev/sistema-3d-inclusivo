@@ -457,8 +457,8 @@
                 Crear Cuenta Gratuita →
             </a>
         @endauth
-        <a href="https://wa.me/59160774117?text=Hola,%20me%20comunico%20desde%20la%20p%C3%A1gina%20principal%20de%20T%C3%A1ctil3D." target="_blank" class="btn-cta-white" style="background: #25D366; color: white !important;">
-            <span>💬</span> WhatsApp (+591 60774117)
+        <a href="https://wa.me/59160774117?text=Hola,%20me%20comunico%20desde%20la%20p%C3%A1gina%20principal%20de%20T%C3%A1ctil3D." target="_blank" rel="noopener noreferrer" aria-label="Contactar al equipo de desarrollo por WhatsApp (abre nueva ventana)" class="btn-cta-white" style="background: #25D366; color: white !important;">
+            <span aria-hidden="true">💬</span> WhatsApp (+591 60774117)
         </a>
     </div>
 </div>
