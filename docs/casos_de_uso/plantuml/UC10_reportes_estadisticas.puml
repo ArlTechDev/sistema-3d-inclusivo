@@ -1,39 +1,28 @@
 @startuml UC10_Reportes_Estadisticas
-' =============================================
-' UC-10: Generar Reportes y Estadísticas
-' Módulo 3: Gestión de Pedidos y Costos de Producción
-' Actor: Administrador/Operador
-' =============================================
+title UC-10: Reportes y Estadísticas
+
+skinparam monochrome true
+skinparam shadowing false
+skinparam backgroundColor white
 
 left to right direction
-skinparam actorStyle awesome
-skinparam packageStyle rectangle
-skinparam backgroundColor #FEFEFE
-skinparam shadowing false
 
-title UC-10: Generar Reportes y Estadísticas
+actor "Administrador" as A
 
-' === ACTORES ===
-actor "Administrador\n/Operador" as A #LightGreen
-
-' === SISTEMA ===
 rectangle "Sistema Braille Inclusivo" {
-
-    usecase "Exportar recursos\na PDF" as UC10a
-    usecase "Exportar recursos\na Excel" as UC10b
-    usecase "Exportar instituciones\na PDF" as UC10c
-    usecase "Exportar instituciones\na Excel" as UC10d
-    usecase "Exportar usuarios\na PDF" as UC10e
-    usecase "Exportar usuarios\na Excel" as UC10f
-    usecase "Exportar pedidos\na PDF" as UC10g
-    usecase "Exportar pedidos\na Excel" as UC10h
-    usecase "Ver estadísticas\nde consumo PLA" as UC10i
-    usecase "Ver gráfico de\npedidos por estado" as UC10j
-    usecase "Ver historial\nde pedidos" as UC10k
-
+    usecase "Exportar recursos a PDF" as UC10a
+    usecase "Exportar recursos a Excel" as UC10b
+    usecase "Exportar instituciones a PDF" as UC10c
+    usecase "Exportar instituciones a Excel" as UC10d
+    usecase "Exportar usuarios a PDF" as UC10e
+    usecase "Exportar usuarios a Excel" as UC10f
+    usecase "Exportar pedidos a PDF" as UC10g
+    usecase "Exportar pedidos a Excel" as UC10h
+    usecase "Ver estadísticas de consumo PLA\n[PENDIENTE]" as UC10i
+    usecase "Ver gráfico de pedidos por estado\n[PENDIENTE]" as UC10j
+    usecase "Ver historial de pedidos" as UC10k
 }
 
-' === CONEXIONES ===
 A --> UC10a
 A --> UC10b
 A --> UC10c
@@ -45,56 +34,5 @@ A --> UC10h
 A --> UC10i
 A --> UC10j
 A --> UC10k
-
-' === NOTAS ===
-note right of UC10a
-  **Exportaciones disponibles:**
-
-  **Recursos:**
-  - PDF: Catálogo imprimible
-  - Excel: Lista completa con campos
-
-  **Instituciones:**
-  - PDF: Directorio institucional
-  - Excel: Lista con datos de contacto
-
-  **Usuarios:**
-  - PDF: Lista de cuentas
-  - Excel: Usuarios con roles
-
-  **Pedidos:**
-  - PDF: Historial de solicitudes
-  - Excel: Detalle con costos y estados
-end note
-
-note right of UC10i
-  **Estadísticas de consumo:**
-  - Total de PLA consumido (gramos)
-  - Costo total de producción (Bs.)
-  - Promedio de PLA por pedido
-  - Tendencia mensual de consumo
-
-  **Utilidad:**
-  Justificación de costos para el PSCP
-  y control del operador del servicio
-end note
-
-note right of UC10j
-  **Gráficos:**
-  - Pedidos por estado (Pendiente/
-    En impresión/Completado/Rechazado)
-  - Pedidos por institución
-  - Consumo de PLA por período
-  - Recursos más solicitados
-end note
-
-note bottom of UC10k
-  **Historial completo:**
-  - Todos los pedidos registrados
-  - Filtrables por fecha, estado,
-    institución y solicitante
-  - Incluye datos de costo real
-    vs. estimado
-end note
 
 @enduml

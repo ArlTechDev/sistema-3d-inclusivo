@@ -10,7 +10,7 @@ use Maatwebsite\Excel\Concerns\WithHeadings;
 class RecursosExport implements FromCollection, WithHeadings
 {
     /**
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @return Collection
      */
     public function collection()
     {

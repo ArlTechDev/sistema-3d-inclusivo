@@ -1,8 +1,7 @@
-version: '3.8'
-
 services:
   app:
     build: .
+    image: laravel_web-app:latest
     container_name: laravel_app
     working_dir: /var/www
     volumes:
@@ -12,7 +11,7 @@ services:
       - "5173:5173" # Puerto para Vite (Hot Reload)
     depends_on:
       - db
-    command: tail -f /dev/null
+    command: php artisan serve --host=0.0.0.0 --port=8000
 
   db:
     image: mysql:8.0
@@ -30,3 +29,4 @@ services:
 
 volumes:
   db_data:
+    name: laravel_web_db_data

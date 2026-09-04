@@ -1,110 +1,43 @@
 @startuml UC08_Gestionar_Solicitudes
-' =============================================
-' UC-08: Gestionar Solicitudes
-' Módulo 3: Gestión de Pedidos y Costos de Producción
-' Actor: Administrador/Operador
-' Incluye: Parametrización del costo por gramo de PLA
-' =============================================
+title UC-08: Gestionar Solicitudes
+
+skinparam monochrome true
+skinparam shadowing false
+skinparam backgroundColor white
 
 left to right direction
-skinparam actorStyle awesome
-skinparam packageStyle rectangle
-skinparam backgroundColor #FEFEFE
-skinparam shadowing false
 
-title UC-08: Gestionar Solicitudes de Impresión
+actor "Administrador" as A
 
-' === ACTORES ===
-actor "Administrador\n/Operador" as A #LightGreen
-actor "Sistema" as SYS #LightYellow
-
-' === SISTEMA ===
 rectangle "Sistema Braille Inclusivo" {
-
-    usecase "Ver todas las\nsolicitudes" as UC08a
-    usecase "Filtrar por estado\no institución" as UC08b
-    usecase "Actualizar estado\nde pedido" as UC08c
-    usecase "Cambiar a\n'En impresión'" as UC08d
-    usecase "Cambiar a\n'Completado'" as UC08e
-    usecase "Rechazar\nsolicitud" as UC08f
-    usecase "Parametrizar costo\npor gramo de PLA" as UC08g
-    usecase "Recalcular costos\nde pedidos" as UC08h
-    usecase "Ver detalle\ndel pedido" as UC08i
-    usecase "Agregar motivo\nde rechazo" as UC08j
-
+    usecase "Ver todas las solicitudes" as UC08a
+    usecase "Filtrar por estado o institución" as UC08b
+    usecase "Actualizar estado de pedido" as UC08c
+    usecase "Aprobar solicitud\n(Cambiar a 'Aprobado')" as UC08k
+    usecase "Cambiar a 'En impresión'" as UC08d
+    usecase "Cambiar a 'Completado'" as UC08e
+    usecase "Rechazar solicitud" as UC08f
+    usecase "Parametrizar costo por gramo de PLA" as UC08g
+    usecase "Recalcular costos de pedidos" as UC08h
+    usecase "Ver detalle del pedido" as UC08i
+    usecase "Agregar motivo de rechazo" as UC08j
 }
 
-' === CONEXIONES ===
 A --> UC08a
 A --> UC08b
 A --> UC08c
+A --> UC08k
 A --> UC08d
 A --> UC08e
 A --> UC08f
 A --> UC08g
 A --> UC08i
 
-UC08c ..> UC08d : <<extend>>
-UC08c ..> UC08e : <<extend>>
-UC08c ..> UC08f : <<extend>>
+UC08k ..> UC08c : <<extend>>
+UC08d ..> UC08c : <<extend>>
+UC08e ..> UC08c : <<extend>>
+UC08f ..> UC08c : <<extend>>
 UC08f ..> UC08j : <<include>>
 UC08g ..> UC08h : <<include>>
-
-SYS --> UC08h
-
-' === NOTAS ===
-note right of UC08a
-  **Precondiciones:**
-  1. Admin ha iniciado sesión
-  2. Existen solicitudes registradas
-
-  **Camino principal:**
-  1. Admin accede al panel de solicitudes
-  2. Sistema muestra lista completa
-  3. Cada fila muestra: ID, solicitante,
-     institución, recurso, fecha, PLA,
-     costo, estado
-  4. Admin puede filtrar por:
-     - Estado (Pendiente/En impresión/
-       Completado/Rechazado)
-     - Institución
-     - Rango de fechas
-end note
-
-note right of UC08c
-  **Ciclo de estados:**
-  Pendiente → En impresión → Completado
-
-  **Transiciones:**
-  - Pendiente → En impresión
-  - En impresión → Completado
-  - Pendiente → Rechazado
-  (con motivo de rechazo obligatorio)
-end note
-
-note right of UC08g
-  **Parametrización de Costo PLA:**
-  - Admin accede a "Configuración"
-  - Admin actualiza el costo por gramo
-    de filamento PLA (ej: 0.50 Bs./g)
-  - Sistema recalcula automáticamente
-    el costo estimado de todos los
-    pedidos pendientes
-  - Este valor se usa en UC-07 para
-    estimar el costo de nuevos pedidos
-
-  **Fórmula:**
-  Costo = Gramos PLA × Costo/gramo
-end note
-
-note right of UC08f
-  **Rechazo:**
-  1. Admin selecciona pedido
-  2. Admin hace clic en "Rechazar"
-  3. Sistema solicita motivo (obligatorio)
-  4. Admin ingresa motivo
-  5. Sistema actualiza estado a "Rechazado"
-  6. Sistema notifica al solicitante
-end note
 
 @enduml

@@ -1,0 +1,19 @@
+# <tipo>(<alcance>): <descripción imperativa en español>
+# │     │           │
+# │     │           └─> Minúsculas, sin punto final, máx 72 caracteres.
+# │     └─> web, api, hw, pscp, infra, sec
+# └─> feat, fix, docs, refactor, test, chore
+#
+# Línea en blanco obligatoria después del título.
+#
+# [Cuerpo opcional]: Explica el contexto, la motivación y los detalles técnicos.
+#
+# [Pie opcional]: Referencias a tareas o issues (ej. Ref #12, Cierra #4).
+#
+# ─────────────────────────────────────────────────────────────────────────────
+# REGLAS DE SEGURIDAD DEL MONOREPO PÚBLICO:
+# - NUNCA commitees archivos .env, credenciales, tokens o claves privadas.
+# - NUNCA incluyas datos personales sensibles (PII) según Ley N° 223 / CPE.
+# - Verifica que los binarios estén cubiertos por Git LFS (.gitattributes).
+# - Consulta CONTRIBUTING.md para la guía completa.
+# ─────────────────────────────────────────────────────────────────────────────

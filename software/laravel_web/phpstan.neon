@@ -1,0 +1,18 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+
+parameters:
+    paths:
+        - app
+
+    # El proyecto usa PHP 8.3+ y Laravel 13
+    level: 5
+
+    tmpDir: storage/framework/cache/phpstan
+
+    excludePaths:
+        - app/Providers
+
+    treatPhpDocTypesAsCertain: false
+
+    # Helpers y facades de Laravel no requieren importación

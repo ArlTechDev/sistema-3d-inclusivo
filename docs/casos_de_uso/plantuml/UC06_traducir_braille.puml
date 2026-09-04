@@ -1,86 +1,29 @@
 @startuml UC06_Traducir_Braille
-' =============================================
-' UC-06: Traducir Texto a Braille
-' Módulo 2: Traducción Automática Texto→Braille
-' Actor: Solicitante
-' =============================================
-
-skinparam actorStyle awesome
-skinparam packageStyle rectangle
-skinparam backgroundColor #FEFEFE
-skinparam shadowing false
-
 title UC-06: Traducir Texto a Braille
 
-' === ACTORES ===
-actor "Usuario\nSolicitante" as S #LightBlue
-actor "Sistema" as SYS #LightYellow
+skinparam monochrome true
+skinparam shadowing false
+skinparam backgroundColor white
 
-' === SISTEMA ===
+left to right direction
+
+actor "Solicitante" as S
+
 rectangle "Sistema Braille Inclusivo" {
-
-    usecase "Ingresar texto\nen español" as UC06a
-    usecase "Validar caracteres\nCódigo Braille Español" as UC06b
-    usecase "Traducir texto\na Braille" as UC06c
-    usecase "Mostrar previsión\nvisual 2D" as UC06d
-    usecase "Mostrar error\nde validación" as UC06e
-    usecase "Limitar longitud\nde texto" as UC06f
-
+    usecase "Ingresar texto en español" as UC06a
+    usecase "Validar caracteres Código Braille Español" as UC06b
+    usecase "Traducir texto a Braille" as UC06c
+    usecase "Mostrar previsión visual 2D\n[PENDIENTE]" as UC06d
+    usecase "Mostrar error de validación" as UC06e
+    usecase "Limitar longitud de texto" as UC06f
 }
 
-' === CONEXIONES ===
 S --> UC06a
+
 UC06a ..> UC06b : <<include>>
 UC06b ..> UC06c : <<include>>
 UC06c ..> UC06d : <<include>>
-UC06b ..> UC06e : <<extend>>
 UC06a ..> UC06f : <<include>>
-
-SYS --> UC06c
-
-' === NOTAS ===
-note right of UC06a
-  **Precondiciones:**
-  1. Solicitante ha iniciado sesión
-  2. Sistema dispone de conexión a internet
-
-  **Camino principal:**
-  1. Solicitante accede al módulo
-     "Traductor de Fichas"
-  2. Solicitante ingresa texto en español
-     (ej: "ÑANDÚ CANTÓ MUY FELIZ")
-  3. Sistema valida longitud máxima
-  4. Sistema valida caracteres del
-     Código Braille Español
-  5. Sistema traduce cada carácter a su
-     celda Braille correspondiente
-  6. Sistema muestra previsión 2D
-  7. Solicitante visualiza la ficha
-end note
-
-note right of UC06b
-  **Caracteres soportados\n(Código Braille Español — ONCE):**
-  - Letras: A-Z, **Ñ**
-  - Vocales acentuadas: **Á, É, Í, Ó, Ú, Ü**
-  - Números: 0-9
-  - Puntuación: . , ; : ? ! ( ) " -
-  - Espacio
-
-  **NO soportados:**
-  - Símbolos especiales (@ # $ % &)
-  - Estenografía Braille (Grado 2)
-end note
-
-note bottom of UC06d
-  **Previsión 2D muestra:**
-  - Representación visual de la ficha
-  - Posición de los puntos Braille
-  - Dimensiones de la placa base
-  - Permite confirmar antes de solicitar
-
-  **Nota:** La generación del G-Code
-  se realiza en UC-07 al confirmar
-  el pedido.
-end note
+UC06e ..> UC06b : <<extend>>
 
 @enduml

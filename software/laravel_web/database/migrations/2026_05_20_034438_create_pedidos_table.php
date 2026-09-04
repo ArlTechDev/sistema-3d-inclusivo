@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->foreignId('institucion_id')->nullable()->constrained('instituciones')->nullOnDelete();
-            $table->enum('estado', ['Pendiente', 'En impresión', 'Completado', 'Rechazado'])->default('Pendiente');
+            $table->enum('estado', ['Pendiente', 'Aprobado', 'En impresión', 'Completado', 'Rechazado'])->default('Pendiente');
             $table->date('fecha_solicitud');
             $table->decimal('total_gramos_pla', 8, 2)->default(0);
             $table->decimal('costo_total', 8, 2)->default(0);

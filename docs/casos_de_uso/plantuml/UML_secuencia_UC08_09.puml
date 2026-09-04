@@ -1,0 +1,128 @@
+@startuml UML_secuencia_UC08_09
+skinparam monochrome true
+skinparam dpi 300
+skinparam defaultFontName Arial
+skinparam sequenceMessageAlign center
+skinparam maxMessageSize 180
+skinparam responseMessageBelowArrow true
+skinparam BoxPadding 10
+skinparam ParticipantPadding 10
+
+header
+<b>Integrantes:</b> Aguilar Castellon Cristhian Alessandro, Aramayo Eguino Jose Matias, Rosales Mamani Ariel Edson
+endheader
+
+title Diagrama de Secuencia DS-03 (UC-08 / UC-09): Gestión de Solicitudes, Transición de Estados y Descarga de G-Code\n(Control de Producción CNC, Validación de Transición y Transferencia Air-Gapped)
+
+actor "Usuario\nAdministrador" as A
+boundary "Panel de Gestión\n(AdminLTE UI)" as UI
+control "PedidoController\n(Laravel Controller)" as PC
+control "UpdatePedidoRequest\n(Validador de Estado)" as UR
+database "MySQL 8.0\n(Modelo Pedido)" as DB
+entity "Storage Local\n(Disco Privado)" as ST
+entity "Impresora 3D CNC\n(Marlin / Tarjeta SD)" as CNC
+
+autonumber 1 "<b>[00]</b>"
+
+== Fase 1: Consulta y Filtrado de Solicitudes (UC-08) ==
+
+A -> UI : Accede a «Gestión de Pedidos»\n(aplica filtros por estado/institución)
+activate A
+activate UI
+
+UI -> PC : GET /pedidos?estado=Pendiente
+activate PC
+PC -> DB : SELECT pedidos con relaciones (user, institucion, detalles.recurso)
+activate DB
+DB --> PC : Colección de solicitudes y estadísticas (gramos, costo)
+deactivate DB
+PC --> UI : Renderiza vista de pedidos con tabla de control
+deactivate PC
+UI --> A : Muestra listado de solicitudes con acciones disponibles
+deactivate UI
+
+== Fase 2: Transición de Estado y Aprobación (UC-08) ==
+
+A -> UI : Selecciona pedido y cambia estado\nde «Pendiente» a «Aprobado»
+activate UI
+UI -> PC : PATCH /pedidos/{id} (estado='Aprobado')
+activate PC
+
+PC -> UR : validated()['estado']
+activate UR
+UR --> PC : Datos validados
+deactivate UR
+
+PC -> DB : findOrFail(id)
+activate DB
+DB --> PC : Instancia $pedido
+deactivate DB
+
+PC -> PC : $pedido->puedeTransicionarA('Aprobado')
+activate PC
+note right of PC: Valida contra Pedido::TRANSICIONES\n(Pendiente → Aprobado → En impresión → Completado\nó Rechazado en cualquier fase)
+PC --> PC : true (transición permitida)
+deactivate PC
+
+alt Transición inválida (ej. Completado → Pendiente)
+    PC --> UI : Redirect back() con error: «No se puede pasar de Completado a Pendiente»
+    UI --> A : Muestra alerta de regla de negocio
+else Transición válida
+    PC -> DB : UPDATE pedidos SET estado = 'Aprobado', updated_at = NOW() WHERE id = ?
+    activate DB
+    DB --> PC : Confirmación de actualización
+    deactivate DB
+    PC --> UI : Response 302 → Redirect /pedidos (Flash: «Estado del pedido actualizado»)
+    UI --> A : Actualiza fila con badge «Aprobado»\n(Permite avanzar a «En impresión» al iniciar fabricación)
+end
+deactivate PC
+deactivate UI
+
+== Fase 3: Descarga de G-Code y Transferencia a CNC (UC-09) ==
+
+A -> UI : Pulsa botón «Descargar G-Code»
+activate UI
+UI -> PC : GET /pedidos/{id}/gcode
+activate PC
+
+PC -> DB : Obtener $pedido->gcode_path
+activate DB
+DB --> PC : ruta_archivo (ej. 'pedidos/gcode/pedido_5_abc.gcode')
+deactivate DB
+
+opt Si el pedido no tiene gcode_path personalizado
+    PC -> DB : Obtener $pedido->detalles->first()->recurso->url_gcode
+    activate DB
+    DB --> PC : ruta_gcode_base_catalogo
+    deactivate DB
+end
+
+PC -> ST : Storage::disk('local')->exists(ruta)
+activate ST
+alt Archivo G-Code no existe en disco
+    ST --> PC : false
+    PC --> UI : Response 404 («El archivo G-Code no está disponible»)
+    UI --> A : Muestra alerta de error
+else Archivo G-Code existe
+    ST --> PC : true
+    deactivate ST
+    PC -> ST : Storage::disk('local')->download(ruta, 'pedido_5.gcode')
+    activate ST
+    ST --> PC : Stream de descarga binaria
+    deactivate ST
+    PC --> UI : Archivo .gcode transferido al navegador
+    deactivate PC
+    UI --> A : Descarga completada en el equipo del Administrador
+    deactivate UI
+end
+
+A -> CNC : Copia archivo .gcode a Tarjeta SD e inserta en lector RAMPS 1.4\n(Transferencia Air-Gapped sin red física hacia la máquina)
+activate CNC
+A -> CNC : Selecciona archivo desde display LCD e inicia impresión física
+CNC --> A : Fabricación aditiva de relieve Braille ejecutada en PLA
+deactivate CNC
+deactivate A
+
+center footer Fuente: Elaboración propia, 2026.
+
+@enduml

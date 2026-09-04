@@ -1,39 +1,28 @@
 @startuml UC07_Solicitar_Impresion
-' =============================================
-' UC-07: Solicitar Impresión
-' Módulo 3: Gestión de Pedidos y Costos de Producción
-' Actor: Solicitante
-' =============================================
+title UC-07: Solicitar Impresión
 
-skinparam actorStyle awesome
-skinparam packageStyle rectangle
-skinparam backgroundColor #FEFEFE
+skinparam monochrome true
 skinparam shadowing false
+skinparam backgroundColor white
 
-title UC-07: Solicitar Impresión de Recurso Táctil
+left to right direction
 
-' === ACTORES ===
-actor "Usuario\nSolicitante" as S #LightBlue
-actor "Sistema" as SYS #LightYellow
+actor "Solicitante" as S
 
-' === SISTEMA ===
 rectangle "Sistema Braille Inclusivo" {
-
-    usecase "Confirmar diseño\ny solicitar" as UC07a
-    usecase "Seleccionar recurso\ndel catálogo" as UC07b
-    usecase "Registrar\nsolicitud" as UC07c
-    usecase "Calcular consumo\nPLA (gramos)" as UC07d
-    usecase "Estimar costo\nde producción" as UC07e
-    usecase "Generar coordenadas\nG-Code (X,Y,Z)" as UC07f
-    usecase "Compilar archivo\n.gcode" as UC07g
-    usecase "Asignar estado\n'Pendiente'" as UC07h
-    usecase "Mostrar\nconfirmación" as UC07i
-    usecase "Ver mis\nsolicitudes" as UC07j
-    usecase "Cancelar solicitud\n(solo Pendiente)" as UC07k
-
+    usecase "Confirmar diseño y solicitar" as UC07a
+    usecase "Seleccionar recurso del catálogo" as UC07b
+    usecase "Registrar solicitud" as UC07c
+    usecase "Calcular consumo PLA (gramos)" as UC07d
+    usecase "Estimar costo de producción" as UC07e
+    usecase "Generar coordenadas G-Code (X,Y,Z)" as UC07f
+    usecase "Compilar archivo .gcode" as UC07g
+    usecase "Asignar estado 'Pendiente'" as UC07h
+    usecase "Mostrar confirmación" as UC07i
+    usecase "Ver mis solicitudes" as UC07j
+    usecase "Cancelar solicitud (solo Pendiente)" as UC07k
 }
 
-' === CONEXIONES ===
 S --> UC07a
 S --> UC07b
 S --> UC07j
@@ -46,68 +35,6 @@ UC07d ..> UC07f : <<include>>
 UC07f ..> UC07g : <<include>>
 UC07c ..> UC07h : <<include>>
 UC07h ..> UC07i : <<include>>
-
-UC07b ..> UC07c : <<extend>>
-
-SYS --> UC07d
-SYS --> UC07e
-SYS --> UC07f
-SYS --> UC07g
-
-' === NOTAS ===
-note right of UC07a
-  **Flujo desde UC-06 (Traducción):**
-  1. Solicitante ve previsión 2D
-  2. Solicitante confirma clicando
-     "Solicitar Impresión"
-  3. Sistema registra la solicitud
-  4. Sistema genera el G-Code
-  5. Sistema compila el archivo .gcode
-  6. Sistema asigna estado 'Pendiente'
-
-  **Flujo desde UC-03 (Catálogo):**
-  1. Solicitante selecciona recurso
-  2. Solicitante confirma solicitud
-  3. Sistema registra la solicitud
-end note
-
-note right of UC07d
-  **Cálculo automático:**
-  - Backend calcula volumen del modelo
-  - Convierte volumen a gramos de PLA
-  - Usa densidad del PLA (1.24 g/cm³)
-
-  **Fórmula costo:**
-  Costo = Gramos PLA × Costo por gramo
-  (Costo/gramo parametrizable por Admin)
-end note
-
-note right of UC07f
-  **Generación G-Code:**
-  - Coordenadas absolutas (G0/G1)
-  - Control de extrusión relativo (G92 E0)
-  - Compatible con Marlin 1.1.x
-  - Parámetros: volumen base + posición
-    de puntos Braille en relieve
-
-  **Nota:** La generación del G-Code
-  ocurre SOLO al confirmar el pedido,
-  NO en UC-06 (traducción).
-end note
-
-note right of UC07g
-  **Compilación:**
-  - Se genera archivo .gcode válido
-  - Se almacena en disco del servidor
-  - Ruta: public/recursos/gcode/
-  - Se asocia al pedido en BD
-end note
-
-note right of UC07k
-  **Cancelación:**
-  Solo permitida si el estado es "Pendiente".
-  Si el pedido ya está "En impresión" o
-  "Completado", no se puede cancelar.
-end note
+UC07c ..> UC07b : <<extend>>
 
 @enduml

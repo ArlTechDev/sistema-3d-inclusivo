@@ -1,0 +1,100 @@
+@startuml UML_componentes_sistema
+' Fuente canónica del diagrama de componentes del Sistema Braille Inclusivo.
+' Las interfaces son contratos UML lógicos; no implican interfaces PHP explícitas.
+
+title Diagrama de Componentes — Sistema Braille Inclusivo\nArquitectura actual y transferencia air-gapped de G-Code
+
+left to right direction
+
+skinparam monochrome true
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam dpi 300
+skinparam defaultFontName Arial
+skinparam defaultFontSize 12
+skinparam componentStyle uml2
+skinparam componentFontSize 14
+skinparam componentFontStyle bold
+skinparam interfaceFontSize 11
+skinparam actorFontSize 12
+skinparam noteFontSize 11
+skinparam ArrowFontSize 9
+skinparam ArrowThickness 1.2
+skinparam linetype ortho
+skinparam nodesep 28
+skinparam ranksep 52
+skinparam package {
+    BorderColor black
+    BackgroundColor white
+    FontColor black
+    FontStyle bold
+}
+
+actor "Solicitante" as Solicitante
+actor "Administrador" as Administrador
+
+rectangle "Sistema Braille Inclusivo" as Sistema {
+    interface "IAccesoWeb" as IAccesoWeb
+    interface "IPersistencia" as IPersistencia
+    interface "IArchivos" as IArchivos
+
+    component "Interfaz Web\ny Seguridad" as Web <<component>>
+    component "Administración\ny Catálogo" as Catalogo <<component>>
+    component "Gestión de\nPedidos" as Pedidos <<component>>
+    component "Motor Braille\ny G-Code" as Motor <<component>>
+    component "Persistencia\ny Archivos" as Persistencia <<component>>
+
+    ' Trazabilidad con el código vigente:
+    ' Web: rutas, Blade, AuthController, Form Requests y middleware de seguridad.
+    ' Catalogo: usuarios, instituciones, recursos, categorías, configuración y exports.
+    ' Pedidos: Pedido, DetallePedido, PedidoController y PedidoService.
+    ' Motor: BrailleTranslator y GcodeGenerator (PHP puro, Braille Grado 1 español).
+    ' Persistencia: Eloquent/MySQL y discos Laravel public/local.
+
+    IAccesoWeb -- Web : provista
+
+    ' Ensamblajes: el componente a la derecha provee al consumidor de la izquierda.
+    Web -(0- Catalogo : IAdministracionCatalogo
+    Web -(0- Pedidos : IGestionPedidos
+    Web -(0- Motor : IValidacionBraille
+
+    Pedidos -(0- Catalogo : IRecursosConfiguracion
+    Pedidos -(0- Motor : ITraduccionGCode
+
+    Catalogo --( IPersistencia
+    Pedidos --( IPersistencia
+    IPersistencia -- Persistencia
+
+    Catalogo --( IArchivos
+    Pedidos --( IArchivos
+    IArchivos -- Persistencia
+
+    ' Restricciones invisibles para mantener las capas legibles.
+    Catalogo -[hidden]down-> Pedidos
+    Motor -[hidden]down-> Persistencia
+}
+
+component "Control CNC /\nFirmware Marlin 1.1.x" as CNC <<external>>
+
+Solicitante --> IAccesoWeb : usa
+Administrador --> IAccesoWeb : usa
+Administrador ..> CNC : transfiere .gcode\nmanualmente por SD / USB
+Solicitante -[hidden]right-> Administrador
+Administrador -[hidden]right-> CNC
+
+note bottom of CNC
+  Sistema externo y aislado de la red.
+  No existe conexión servidor → CNC.
+end note
+
+legend bottom
+  |= Notación |= Significado |
+  | ○ | Interfaz provista |
+  | ◖ | Interfaz requerida (socket) |
+  | ○—◖ | Conector de ensamblaje compatible |
+  | ..> | Transferencia manual fuera del sistema |
+endlegend
+
+footer Fuente: elaboración propia, 2026.
+
+@enduml

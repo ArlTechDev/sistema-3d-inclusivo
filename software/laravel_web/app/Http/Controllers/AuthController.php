@@ -2,8 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\LoginRequest;
+use App\Http\Requests\RegisterRequest;
+use App\Models\User;
+use App\Support\SafeRedirect;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\RateLimiter;
 
 class AuthController extends Controller
 {
@@ -12,30 +17,46 @@ class AuthController extends Controller
         return view('auth.login');
     }
 
-    public function login(Request $request)
+    public function login(LoginRequest $request)
     {
-        $credentials = $request->validate([
-            'email'    => 'required|email',
-            'password' => 'required|string',
-        ]);
+        $credentials = $request->validated();
 
         if (Auth::attempt($credentials)) {
+            $key = strtolower($request->input('email')).'|'.$request->ip();
+            RateLimiter::clear($key);
+
             $request->session()->regenerate();
 
-            $intended = $request->session()->pull('url.intended', route('recursos.index'));
-            $host = parse_url($intended, PHP_URL_HOST);
-            $appHost = parse_url(config('app.url'), PHP_URL_HOST);
-
-            if ($host && $host !== $appHost) {
-                return redirect()->route('recursos.index');
-            }
-
-            return redirect($intended);
+            return SafeRedirect::intended(route('recursos.index'));
         }
 
         return back()->withErrors([
             'email' => 'Las credenciales no coinciden con nuestros registros.',
         ])->onlyInput('email');
+    }
+
+    public function registerForm()
+    {
+        return view('auth.register');
+    }
+
+    public function register(RegisterRequest $request)
+    {
+        $data = $request->validated();
+
+        $user = User::create([
+            'name' => $data['name'],
+            'email' => $data['email'],
+            'password' => $data['password'],
+            'rol' => User::ROL_SOLICITANTE,
+        ]);
+
+        Auth::login($user);
+
+        $request->session()->regenerate();
+
+        return redirect()->route('recursos.index')
+            ->with('success', '¡Cuenta creada exitosamente! Bienvenido al catálogo inclusivo.');
     }
 
     public function logout(Request $request)

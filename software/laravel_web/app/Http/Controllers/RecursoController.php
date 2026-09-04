@@ -3,47 +3,38 @@
 namespace App\Http\Controllers;
 
 use App\Exports\RecursosExport;
+use App\Http\Requests\StoreRecursoRequest;
+use App\Http\Requests\UpdateRecursoRequest;
+use App\Models\Categoria;
+use App\Models\ConfiguracionSistema;
 use App\Models\Recurso;
 use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
 
 class RecursoController extends Controller
 {
-    private array $reglas = [
-        'titulo'          => 'required|string|min:5|max:150',
-        'descripcion'     => 'required|string|min:10',
-        'gramos_pla'      => 'required|numeric|min:0.1',
-        'tiempo_minutos'  => 'required|integer|min:1',
-        'fecha_creacion'  => 'required|date',
-        'estado'          => 'required|in:Activo,Inactivo',
-        'url_imagen'      => 'nullable|image|max:2048',
-        'url_gcode'       => 'nullable|file|mimes:gcode,txt',
-    ];
-
-    private array $mensajes = [
-        'titulo.required'         => 'El título es obligatorio.',
-        'titulo.min'              => 'El título debe tener al menos 5 caracteres.',
-        'titulo.max'              => 'El título no puede superar 150 caracteres.',
-        'descripcion.required'    => 'La descripción es obligatoria.',
-        'descripcion.min'         => 'La descripción debe tener al menos 10 caracteres.',
-        'gramos_pla.required'     => 'Los gramos de PLA son obligatorios.',
-        'gramos_pla.numeric'      => 'Los gramos de PLA deben ser un valor numérico.',
-        'gramos_pla.min'          => 'Los gramos de PLA deben ser mayor a 0.',
-        'tiempo_minutos.required' => 'El tiempo en minutos es obligatorio.',
-        'tiempo_minutos.integer'  => 'El tiempo debe ser un número entero.',
-        'tiempo_minutos.min'      => 'El tiempo debe ser mayor a 0.',
-        'fecha_creacion.required' => 'La fecha es obligatoria.',
-        'fecha_creacion.date'     => 'Debe ingresar una fecha válida.',
-        'estado.required'         => 'El estado es obligatorio.',
-        'estado.in'               => 'El estado seleccionado no es válido.',
-    ];
-
     public function index()
     {
-        $recursos = Recurso::all();
-        return view('recursos.index', compact('recursos'));
+        $categorias = Categoria::withCount('recursos')->get();
+
+        // El Solicitante ve el catálogo público (cards); el Administrador, la tabla de gestión.
+        if (auth()->check() && auth()->user()->rol === 'Administrador') {
+            $recursos = Recurso::all();
+
+            return view('recursos.index', compact('recursos', 'categorias'));
+        }
+
+        $recursos = Recurso::with('categoria')
+            ->where('estado', Recurso::ESTADO_ACTIVO)
+            ->when(request('categoria'), fn ($q, $id) => $q->where('categoria_id', $id))
+            ->get();
+
+        $precioGramo = (float) (ConfiguracionSistema::where('clave', 'precio_gramo_pla')->value('valor') ?? 0.15);
+        $moneda = (string) (ConfiguracionSistema::where('clave', 'moneda_simbolo')->value('valor') ?? 'Bs');
+        $gramosPorCelda = (float) (ConfiguracionSistema::where('clave', 'gramos_por_celda_braille')->value('valor') ?? 0.02);
+
+        return view('recursos.catalogo', compact('recursos', 'categorias', 'precioGramo', 'moneda', 'gramosPorCelda'));
     }
 
     public function exportarPdf()
@@ -61,14 +52,14 @@ class RecursoController extends Controller
 
     public function create()
     {
-        return view('recursos.create');
+        $categorias = Categoria::all();
+
+        return view('recursos.create', compact('categorias'));
     }
 
-    public function store(Request $request)
+    public function store(StoreRecursoRequest $request)
     {
-        $request->validate($this->reglas, $this->mensajes);
-
-        $data = $request->except(['url_imagen', 'url_gcode']);
+        $data = $request->except(['url_imagen', 'url_gcode', 'archivo_stl', 'archivo_glb']);
 
         if ($request->hasFile('url_imagen')) {
             $data['url_imagen'] = $request->file('url_imagen')
@@ -77,7 +68,17 @@ class RecursoController extends Controller
 
         if ($request->hasFile('url_gcode')) {
             $data['url_gcode'] = $request->file('url_gcode')
-                ->store('recursos/gcode', 'public');
+                ->store('recursos/gcode', 'local');
+        }
+
+        if ($request->hasFile('archivo_stl')) {
+            $data['archivo_stl'] = $request->file('archivo_stl')
+                ->store('recursos/3d', 'public');
+        }
+
+        if ($request->hasFile('archivo_glb')) {
+            $data['archivo_glb'] = $request->file('archivo_glb')
+                ->store('recursos/3d', 'public');
         }
 
         Recurso::create($data);
@@ -88,14 +89,14 @@ class RecursoController extends Controller
 
     public function edit(Recurso $recurso)
     {
-        return view('recursos.edit', compact('recurso'));
+        $categorias = Categoria::all();
+
+        return view('recursos.edit', compact('recurso', 'categorias'));
     }
 
-    public function update(Request $request, Recurso $recurso)
+    public function update(UpdateRecursoRequest $request, Recurso $recurso)
     {
-        $request->validate($this->reglas, $this->mensajes);
-
-        $data = $request->except(['url_imagen', 'url_gcode']);
+        $data = $request->except(['url_imagen', 'url_gcode', 'archivo_stl', 'archivo_glb']);
 
         if ($request->hasFile('url_imagen')) {
             if ($recurso->url_imagen) {
@@ -108,11 +109,29 @@ class RecursoController extends Controller
 
         if ($request->hasFile('url_gcode')) {
             if ($recurso->url_gcode) {
-                Storage::disk('public')->delete($recurso->url_gcode);
+                Storage::disk('local')->delete($recurso->url_gcode);
             }
 
             $data['url_gcode'] = $request->file('url_gcode')
-                ->store('recursos/gcode', 'public');
+                ->store('recursos/gcode', 'local');
+        }
+
+        if ($request->hasFile('archivo_stl')) {
+            if ($recurso->archivo_stl) {
+                Storage::disk('public')->delete($recurso->archivo_stl);
+            }
+
+            $data['archivo_stl'] = $request->file('archivo_stl')
+                ->store('recursos/3d', 'public');
+        }
+
+        if ($request->hasFile('archivo_glb')) {
+            if ($recurso->archivo_glb) {
+                Storage::disk('public')->delete($recurso->archivo_glb);
+            }
+
+            $data['archivo_glb'] = $request->file('archivo_glb')
+                ->store('recursos/3d', 'public');
         }
 
         $recurso->update($data);
@@ -129,9 +148,21 @@ class RecursoController extends Controller
             ->with('success', 'Recurso enviado a la papelera.');
     }
 
+    /**
+     * Descarga del archivo G-Code del recurso, exclusiva del Administrador.
+     * El archivo vive en el disco local (privado); no se expone por URL pública.
+     */
+    public function descargarGCode(Recurso $recurso)
+    {
+        abort_if(! $recurso->url_gcode || ! Storage::disk('local')->exists($recurso->url_gcode), 404, 'El archivo G-Code no está disponible.');
+
+        return Storage::disk('local')->download($recurso->url_gcode);
+    }
+
     public function papelera()
     {
         $recursos = Recurso::onlyTrashed()->get();
+
         return view('recursos.papelera', compact('recursos'));
     }
 
@@ -146,14 +177,22 @@ class RecursoController extends Controller
 
     public function forceDestroy($id)
     {
-        $recurso = Recurso::withTrashed()->findOrFail($id);
+        $recurso = Recurso::onlyTrashed()->findOrFail($id);
 
         if ($recurso->url_imagen) {
             Storage::disk('public')->delete($recurso->url_imagen);
         }
 
         if ($recurso->url_gcode) {
-            Storage::disk('public')->delete($recurso->url_gcode);
+            Storage::disk('local')->delete($recurso->url_gcode);
+        }
+
+        if ($recurso->archivo_stl) {
+            Storage::disk('public')->delete($recurso->archivo_stl);
+        }
+
+        if ($recurso->archivo_glb) {
+            Storage::disk('public')->delete($recurso->archivo_glb);
         }
 
         $recurso->forceDelete();

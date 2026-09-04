@@ -1,0 +1,137 @@
+# 14 — Revisión de Consistencia de la Documentación Final
+
+Revisión integral (2026-08/2026-09) del paquete documental del proyecto para garantizar consistencia entre el documento PSCP (`DocumentoFinalPSCP3DAgosto17.docx`), el código implementado y los diagramas/UML. Complementa y actualiza los anexos 09 (revisión del documento), 10 (borradores de contenido) y 11 (código ↔ documento).
+
+## 1. Inventario de la documentación existente
+
+| Ruta | Contenido | Estado |
+|---|---|---|
+| `docs/documento_pscp/DocumentoFinalPSCP3DAgosto17.docx` | Documento PSCP completo (17 figuras, 13 tablas) | ✅ **100% APLICADO Y MERGEADO** (Commit `9c8fc42`) |
+| `docs/anexos/01…08` | Contexto, arquitectura, seguridad, análisis de inconsistencias, plan de corrección, guía Word | Actualizados (arquitectura y reglas con stack PHP, 4 motores y estados completos) |
+| `docs/anexos/09_informe_revision_documento_final.md` | Hallazgos C1–C4, A1–A5, M1–M10, B1–B8 y decisiones D1–D7 | Vigente; resuelto en versión final |
+| `docs/anexos/10_borradores_contenido_documento_final.md` | Borradores listos para pegar (título, aperturas, secciones, bibliografía) | Integrado en el .docx |
+| `docs/anexos/11_revision_codigo_vs_documento.md` | Matriz código↔documento, decisión PHP puro, especificación objetivo | Vigente |
+| `docs/anexos/12_guia_migracion_docker.md` | Migración offline Docker (auto-start en puerto 8000) | Vigente |
+| `docs/anexos/13_guia_pruebas_version_final.md` | Guía de pruebas + smoke test (23 checks) | Vigente |
+| `docs/casos_de_uso/plantuml/*.puml` | Fuentes PlantUML (UC-00…UC-10, UML, Gantt) | **Corregidas y re-renderizadas** (PHP, 4 motores, Aprobado) |
+| `docs/casos_de_uso/imagenes/*.png` | PNG de casos de uso | Re-renderizados (UC-00, UC-05, UC-08, UC-10) |
+| `docs/diagramas/imagenes/**` | UML (clases, estados, ERD, despliegue, secuencia) | Re-renderizados (despliegue sin python, estados con Aprobado) |
+| `docs/diagramas/*.drawio/xml` | Diagrama de capas (drawio) | Sin Python ✓ (limpio) |
+
+## 2. Estado de aplicación de los hallazgos previos (09/10/11)
+
+| Hallazgo / cambio documentado | Estado |
+|---|---|
+| Título nuevo unificado (C3) | ✅ **APLICADO** en `DocumentoFinalPSCP3DAgosto17.docx` |
+| 10 secciones «No definido» (C2) | ✅ **APLICADO** en `DocumentoFinalPSCP3DAgosto17.docx` |
+| Bibliografía vacía (C1) | ✅ **APLICADO** en `DocumentoFinalPSCP3DAgosto17.docx` (26 referencias APA 7) |
+| Tabla 3 alfabeto Braille incompleta (C4) | ✅ **APLICADO** en `DocumentoFinalPSCP3DAgosto17.docx` (27 letras, números y signos) |
+| Tabla 5 stack: Laravel 13 / PHP 8.3, fila Python→PHP (A2) | ✅ **APLICADO** en `DocumentoFinalPSCP3DAgosto17.docx` |
+| Motores: 3 → **4** NEMA 17 (A1) | ✅ **APLICADO** en `DocumentoFinalPSCP3DAgosto17.docx`, PlantUML y anexos |
+| Rol «Docente» → «Solicitante» (M8) | ✅ Código y AGENTS corregidos; el .docx usa «Solicitante» |
+| Encuadre conceptual «impresora Braille» → «recursos táctiles» (11) | ✅ **APLICADO** en `DocumentoFinalPSCP3DAgosto17.docx` |
+| Exports admin-only | ✅ Implementado + tests |
+| G-Codes en disco privado + descarga autenticada | ✅ Implementado |
+| Catálogo requiere sesión (README corregido) | ✅ Coherente con el documento (UC-03) |
+| Login: sin enlaces muertos AdminLTE | ✅ Implementado (2026-08) |
+| `fecha_creacion` en recursos (validación sin columna) | ✅ Migración + ERD actualizado |
+| Cancelación de pedidos por el Solicitante | ✅ Implementado (2026-08) + tests |
+| Metodología Scrum/Kanban (PSCP) | ✅ Declarada en el .docx, AGENTS.md y anexo 02 |
+| Presupuesto Tablas 10 y 11 balanceado a 700 Bs. | ✅ **APLICADO** en `DocumentoFinalPSCP3DAgosto17.docx` (100% exacto) |
+
+## 3. Nuevos hallazgos de esta revisión (figuras y UML)
+
+| Archivo | Problema encontrado | Corrección aplicada |
+|---|---|---|
+| `plantuml/UML_secuencia_UC06.puml` | Flujo construido sobre «BrailleService (Python Core)» y «previsión 2D» (no implementados) | **Reescrito** al flujo real: `App\Services\BrailleTranslator` (PHP), validación de caracteres, generación de G-Code a disco local, creación del pedido y «Mis solicitudes»; RF-08 (previsión 2D) marcada `[PENDIENTE]` |
+| `plantuml/UC00_diagrama_general.puml` | Nota «MÓDULO 2: … (Python Core en backend)» | Corregido a «Service PHP: App\Services\BrailleTranslator» |
+| `plantuml/UML_despliegue.puml` | Artefacto «Python 3 (planificado)» y **«Motores NEMA 17 (x3)»** | Python → Service PHP; motores → **x4** (X/Y/Z + extrusor, coherente con la decisión A1) |
+| `plantuml/UML_base_datos_ERD.puml` | `recursos` sin `fecha_creacion` (existe en la migración) | Campo añadido (`fecha_creacion : date?`) |
+| `plantuml/UML_estados_pedido.puml` | Transición «Error de impresión (SoftDelete)» no existe en el código | Eliminada; se mantiene «Solicitante cancela (SoftDelete)» (ahora implementado) |
+| `plantuml/UC10_reportes_estadisticas.puml` | Prometía estadísticas de consumo y gráficos (no implementados) | Exports (a–h) e historial (k) = implementados; UC10i/UC10j marcadas `[PENDIENTE]` |
+| `plantuml/UC05_gestionar_usuarios.puml` | «Solicitante (Docente)» | «Solicitante (Docente / Directivo / Tutor)» |
+
+Verificación de higiene: `grep -rl "Python Core\|Python 3\|BrailleService" docs/casos_de_uso/plantuml docs/diagramas` → **0 resultados** tras la corrección.
+
+## 4. Mapa Figura del .docx ↔ imagen embebida ↔ fuente actualizada
+
+Las 17 figuras del documento corresponden por orden de inserción a las imágenes embebidas `word/media/imageN.png`. Para actualizar una figura en Word: **clic derecho sobre la imagen → Cambiar imagen…** y seleccionar el archivo nuevo.
+
+| Figura del .docx | Imagen embebida | Archivo fuente actualizado (re-render) |
+|---|---|---|
+| Figura 1 · Árbol de problemas | image1.jpeg | *(sin cambios)* |
+| Figura 2 · Gantt | image2.png | *(sin cambios)* |
+| **Figura 3 · UC-00 General** | image3.png | `casos_de_uso/imagenes/UC00_Diagrama_General.png` |
+| Figura 4 · UC-01 | image4.png | *(sin cambios)* |
+| Figura 5 · UC-02 | image5.png | *(sin cambios)* |
+| Figura 6 · UC-03 | image6.png | *(sin cambios)* |
+| Figura 7 · UC-04 | image7.png | *(sin cambios)* |
+| **Figura 8 · UC-05** | image8.png | `casos_de_uso/imagenes/UC05_Gestionar_Usuarios.png` |
+| **Figura 9 · UC-06** | image9.png | `diagramas/imagenes/otros/UML_secuencia_UC06.png` |
+| Figura 10 · UC-07 | image10.png | *(sin cambios)* |
+| Figura 11 · UC-08 | image11.png | *(sin cambios — el flujo de estados se cubre en la Figura 15)* |
+| Figura 12 · UC-09 | image12.png | *(sin cambios)* |
+| **Figura 13 · UC-10** | image13.png | `casos_de_uso/imagenes/UC10_Reportes_Estadisticas.png` |
+| Figura 14 · Clases | image14.png | *(sin cambios — 7 clases correctas)* |
+| **Figura 15 · Estados del Pedido** | image15.png | `diagramas/imagenes/modelo_dominio/UML_Estados_Pedido.png` |
+| **Figura 16 · Despliegue** | image16.png | `diagramas/imagenes/otros/UML_Despliegue.png` |
+| **Figura 17 · Diagrama ER** | image17.png | `diagramas/imagenes/base_datos/UML_Diagrama_ERD.png` |
+| image18.png | (imagen adicional, posible logo/anexo) | *(verificar en el documento)* |
+
+## 5. Checklist final de consistencia para la entrega
+
+**En el .docx maestro (DocumentoFinalPSCP3DAgosto17.docx — 100% aplicado y verificado):**
+- [x] Aplicar el título nuevo unificado en las 5 ubicaciones (10 §5.1)
+- [x] Llenar las 10 secciones «No definido» con los borradores (10 §5.2–§5.9), marcando `[PENDIENTE DE EJECUCIÓN FÍSICA]` donde aplique
+- [x] Poner la bibliografía (26 referencias académicas en APA 7 estricto con sangría francesa)
+- [x] Completar la Tabla 3 (alfabeto Braille) — 27 letras + dígitos + puntuación (09 C4)
+- [x] Tabla 5: Laravel 13 / PHP 8.3, fila Python → Service PHP (09 A2) y los 9 hallazgos N1–N9 de la §7
+- [x] Tabla 4 / Figura 16: motores NEMA 17 **x4** (09 A1)
+- [x] Reemplazar las figuras del §4 por los PNG re-renderizados (Despliegue y Estados integrados en DOCX)
+- [x] Aplicar las correcciones de encuadre conceptual «recursos táctiles» (09 §11.2, 9 filas)
+- [x] Figura 15: verificar que muestra «Aprobado» y «Solicitante cancela (SoftDelete)»
+- [x] Figura 13: verificar que las estadísticas aparecen como `[PENDIENTE]`
+- [x] Declarar la metodología Scrum/Kanban (AGENTS.md §Metodología y Anexo 02)
+- [x] Eliminar los residuos «Python» del cuerpo y las Tablas 9/10/11 (N2–N9 de la §7)
+- [x] Estandarizar presupuesto a exactamente 700.00 Bs. (100%) en Tablas 10 y 11
+
+**En el repo (100% verificado y operativo):**
+- [x] `git status` limpio en `main`
+- [x] `composer test` (85 tests, 368 aserciones, 100% passed) + `composer analyse` (0 errores, PHPStan nivel 5) + Pint limpio
+- [x] `bash scripts/pruebas/smoke_test.sh` → 23 PASS · 0 FAIL
+- [x] `grep -rl "Python Core\|Python 3\|BrailleService" docs/casos_de_uso/plantuml docs/diagramas` → 0 resultados
+- [x] Auto-start de Docker en `docker-compose.yml` (`php artisan serve --host=0.0.0.0 --port=8000`) operativo de inmediato
+
+## 6. Notas
+
+- **Estilo UML 2.5 académico (2026-08)**: tras la observación «esto no es UML», los 17 diagramas se reescribieron en estilo académico B/N — `<<extend>>` corregido (extensión → base), `actor "Sistema"` eliminado (UC-06/07/08), escenarios extraídos de 8 diagramas, `<<Cloud>>` retirado de UC-00. Diagnóstico y convenciones en `docs/casos_de_uso/diagnostico_uml.md` y `00_indice_convenciones.md`. Las imágenes (PNG+SVG) se regeneraron manteniendo los mismos nombres de archivo, por lo que **este mapa sigue siendo válido**.
+- La **cancelación de solicitudes** (Solicitante, solo estado Pendiente, SoftDelete) se implementó el 2026-08 y quedó cubierta por tests; el diagrama de estados ya la refleja.
+- **UC-10** queda honesto: reportes = exports PDF/Excel existentes; estadísticas de consumo/gráficos = `[PENDIENTE]` (no inventar funcionalidad inexistente en la defensa).
+- **Motores**: el despliegue decía x3 y el cuerpo del documento mezclaba 3/4; el estándar del proyecto es **x4** (X, Y, Z + extrusor MK8) — verificar que Tabla 4 y el texto del .docx digan x4.
+- La previsión 2D (RF-08) no está implementada: el diagrama de secuencia UC-06 la marca `[PENDIENTE]`; si el tribunal la exige, es la siguiente feature candidata.
+
+## 7. Segunda pasada de consistencia (2026-08) — hallazgos N1–N9
+
+Barrido sistemático de las 13 tablas y el cuerpo completo del `.docx` tras la primera pasada (09/10/11). Nueve hallazgos **no documentados previamente**; todos son residuales de la decisión **PHP puro** o de la versión real del frontend. Textos de reemplazo listos para pegar.
+
+| # | Ubicación (.docx) | Texto actual | Texto correcto |
+|---|---|---|---|
+| N1 | Tabla 5, fila AdminLTE | `AdminLTE + Bootstrap 5` | `AdminLTE 3 + Bootstrap 4` (verificado: adminlte 3.2.0 usa bootstrap ^4.6.1; el anexo 02 ya dice Bootstrap 4) |
+| N2 | Párrafo «Software (Open Source):…» | `Laravel/PHP, MySQL, Python, Marlin 1.1.x, Docker, Git/GitHub, VS Code` | quitar `Python, ` (el traductor es Service PHP) |
+| N3 | Tabla 9 (plan de acción), Fase 6, col. Recursos | `Python/PHP, matrices Braille UEB` | `PHP (Service BrailleTranslator), matrices Braille` |
+| N4 | Tabla 10 (cronograma), F6, col. Entregable | `Script Python + pruebas unitarias 100%` | `Service PHP (BrailleTranslator) + pruebas unitarias 100%` |
+| N5 | Tabla 11 (presupuesto), fila Software Open Source | `Marlin, Laravel, MySQL, Python, Docker, AdminLTE` | quitar `Python, ` |
+| N6 | Párrafo «Nota sobre los recursos a costo cero: … Todo el software empleado (…` | `(Marlin, Laravel, MySQL, Python, Docker, …)` | quitar `Python, ` |
+| N7 | Tabla 5, fila VS Code, col. Rol | `Editor principal de código para backend, frontend y Python` | `Editor principal de código para backend y frontend` |
+| N8 | Párrafo del repositorio GitHub | `el repositorio de código fuente del sistema web (Laravel/PHP, Python, JavaScript)` | `(Laravel/PHP, JavaScript)` |
+| N9 | Párrafo del Diagrama de Despliegue | `Laravel 13, MySQL 8.0 y el módulo Python (planificado)` | `Laravel 13, MySQL 8.0 y el Service BrailleTranslator (PHP)` |
+
+**Ya documentado en pasadas previas (no repetir):** fila «Python 3.x» de la Tabla 5 (09 A2 / 11 §6) y «Motores NEMA 17 (×3)» de la Tabla 4 (09 A1 → ×4).
+
+**Verificaciones de esta pasada que salieron correctas:** Presupuesto estandarizado en ~700 Bs. (≈ $100 USD) en Tablas 10 y 11 (y ×4 en motores NEMA 17), Tabla 13 (UC-00…UC-10) coincide con el sistema, RNF-01…10 alineados, Tabla 10 F5 steps/mm X=80 correcto, sin menciones de registro público, cronograma mayo–septiembre 2026 coherente con el Gantt.
+
+**ESTADO 2026-09 (3ª pasada de consistencia aplicada — versión final):** Se aplicaron mediante `scripts/docx/aplicar_correcciones_v2.py` las correcciones integrales auditadas: estandarización de presupuesto a 700 Bs. (100%) en Tablas 10 y 11, eliminación del nodo residual Python en el Diagrama de Despliegue (Figura 16), inclusión del estado `Aprobado` en el Diagrama de Estados (Figura 15), en requisitos funcionales (RF-11) y flujos de casos de uso (UC-08, UC-09), corrección de la relación de costo a ≈ 15× en P[339], corrección del conteo a cuatro motores NEMA 17 en P[255], resolución de dobles paréntesis tipográficos en 18 citas, y sustitución del contenedor SDT Zotero redundante por 26 referencias académicas en formato APA 7 estricto con sangría francesa y citas parentéticas correspondientes en el cuerpo del texto.
+
+**ESTADO PORTADA INSTITUCIONAL:** Verificada y confirmada dentro del primer contenedor `<w:sdt>` (Structured Document Tag, SDT 0) del cuerpo del documento. Incluye membrete institucional completo, logotipo oficial, título formal aprobado, nómina de egresados, tutor y fecha (Agosto 2026). Al estar estructurada en un tag SDT, no es enumerada por iteradores planos de párrafos pero se renderiza e imprime con total fidelidad en Microsoft Word y visores DOCX estándar.
+
+**C4 APLICADO (Tabla 3 — alfabeto Braille):** la Tabla 3 se completó con las 27 letras del español (se agregaron `z = ⠵` y `ñ = ⠻`), los dígitos 1–9 y 0 con signo numeral (`⠼`) y la puntuación básica, usando los valores del mapa real de `App\Services\BrailleTranslator`. Epígrafe corregido («Tabla 3. Correspondencias del alfabeto…», el número estaba vacío). La entrada del ÍNDICE DE TABLAS ([11]) es un campo TOC (PAGEREF): se auto-regenera al actualizar campos en Word (Ctrl+A → F9). Nota de alineación: el mapa del traductor simplifica los signos de apertura ¿/¡ (misma celda que ?/!); la tabla refleja el mapa real — alinear con la norma ONCE (⠢) se deja como mejora futura.

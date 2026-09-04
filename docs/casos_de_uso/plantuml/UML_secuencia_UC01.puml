@@ -1,0 +1,97 @@
+@startuml UML_secuencia_UC01
+skinparam monochrome true
+skinparam dpi 300
+skinparam defaultFontName Arial
+skinparam sequenceMessageAlign center
+skinparam maxMessageSize 180
+skinparam responseMessageBelowArrow true
+skinparam BoxPadding 10
+skinparam ParticipantPadding 10
+
+header
+<b>Integrantes:</b> Aguilar Castellon Cristhian Alessandro, Aramayo Eguino Jose Matias, Rosales Mamani Ariel Edson
+endheader
+
+title Diagrama de Secuencia DS-01 (UC-01): Autenticación y Control de Acceso por Roles\n(Inicio de Sesión, Rate Limiting y Redirección Segura)
+
+actor "Usuario\n(Solicitante / Admin)" as U
+boundary "Vista Login\n(Blade UI)" as V
+control "AuthController\n(Laravel Controller)" as AC
+control "LoginRequest\n(Sanitizer / Validador)" as LR
+control "RateLimiter\n(Seguridad Throttle)" as RL
+control "Auth::attempt\n(Guard / Bcrypt)" as AU
+database "MySQL 8.0\n(users table)" as DB
+
+autonumber 1 "<b>[00]</b>"
+
+U -> V : Ingresa email y contraseña\ny presiona «Iniciar Sesión»
+activate U
+activate V
+
+V -> AC : POST /login\n(email, password, _token)
+activate AC
+
+AC -> LR : validateResolved()\n(Sanitización anti-XSS y reglas de validación)
+activate LR
+alt Error en formato de datos (campos vacíos o inválidos)
+    LR --> AC : ValidationException (422)
+    AC --> V : Redirección con errores de validación
+    V --> U : Muestra alertas en pantalla (formulario)
+else Datos con formato válido
+    LR --> AC : Credenciales validadas (array sanitizado)
+    deactivate LR
+
+    AC -> RL : tooManyAttempts(email + IP, 5 intentos/min)
+    activate RL
+    alt Intentos de inicio de sesión excedidos (Fuerza Bruta)
+        RL --> AC : true (bloqueo activo)
+        AC --> V : Response 429 Too Many Requests\n(«Demasiados intentos. Intente en 60s»)
+        V --> U : Muestra mensaje de bloqueo temporal
+    else Intentos dentro del umbral permitido
+        RL --> AC : false (permite intento)
+        deactivate RL
+
+        AC -> AU : attempt(['email' => email, 'password' => password])
+        activate AU
+        AU -> DB : SELECT * FROM users WHERE email = ? AND deleted_at IS NULL LIMIT 1
+        activate DB
+        DB --> AU : Registro de usuario (hash Bcrypt)
+        deactivate DB
+
+        AU -> AU : password_verify(password, password_hash)
+
+        alt Credenciales incorrectas
+            AU --> AC : false (autenticación fallida)
+            AC -> RL : hit(email + IP)\n(incrementa contador de fallos)
+            activate RL
+            deactivate RL
+            AC --> V : Response 302 → back() con error de credenciales
+            V --> U : Muestra: «Las credenciales no coinciden con nuestros registros»
+        else Credenciales válidas
+            AU --> AC : true (autenticación exitosa)
+            deactivate AU
+
+            AC -> RL : clear(email + IP)\n(reinicia contador de intentos)
+            activate RL
+            deactivate RL
+
+            AC -> AC : session()->regenerate()\n(previene fijación de sesión)
+
+            alt Rol = Administrador
+                AC --> V : SafeRedirect::intended('/pedidos')\n(Panel de Gestión AdminLTE)
+                V --> U : Renderiza Dashboard Administrativo
+            else Rol = Solicitante
+                AC --> V : SafeRedirect::intended('/recursos')\n(Catálogo Inclusivo de Recursos)
+                V --> U : Renderiza Catálogo de Recursos Táctiles
+            end
+        end
+    end
+end
+
+deactivate AC
+deactivate V
+deactivate U
+
+center footer Fuente: Elaboración propia, 2026.
+
+@enduml

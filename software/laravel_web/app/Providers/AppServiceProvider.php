@@ -22,11 +22,17 @@ class AppServiceProvider extends ServiceProvider
         });
 
         RateLimiter::for('login', function (Request $request) {
+            $key = strtolower($request->input('email')).'|'.$request->ip();
+
+            return Limit::perMinute(5)->by($key);
+        });
+
+        RateLimiter::for('registro', function (Request $request) {
             return Limit::perMinute(5)->by($request->ip());
         });
 
-        RateLimiter::for('exports', function (Request $request) {
-            return Limit::perMinute(3)->by($request->user()?->id ?: $request->ip());
+        RateLimiter::for('global', function (Request $request) {
+            return Limit::perMinute(30)->by($request->ip());
         });
     }
 }

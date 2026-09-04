@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Middleware\CheckRole;
-use App\Http\Middleware\PreventBruteForce;
 use App\Http\Middleware\SecurityHeaders;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -18,13 +17,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'role' => CheckRole::class,
         ]);
 
-        $middleware->web(append: [
-            SecurityHeaders::class,
-        ]);
-
-        $middleware->prepend([
-            PreventBruteForce::class,
-        ]);
+        $middleware->trustProxies(at: '*');
+        $middleware->append(SecurityHeaders::class);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

@@ -1,58 +1,86 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Sistema Web + Impresora 3D con Materiales Reciclados — Recursos Táctiles para Personas con Discapacidad Visual
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Plataforma web (Laravel) que gestiona recursos educativos táctiles impresos en 3D con filamento PLA reciclado, traduce texto a Braille Grado 1 y genera el código G-Code para su impresión en una impresora Prusa i3 construida con e-waste.
 
-## About Laravel
+Documentación general del monorepo: [`AGENTS.md`](../../AGENTS.md)
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Requisitos
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- PHP ≥ 8.3
+- Composer 2
+- Node.js ≥ 20 y npm (frontend)
+- MySQL 8.0 (o Docker Compose, puerto **3307**)
+- Extensiones PHP: `pdo_mysql`, `gd`, `zip`, `dom`
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
-
-## Learning Laravel
-
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+## Instalación
 
 ```bash
-composer require laravel/boost --dev
+# 1. Dependencias y entorno
+composer install
+cp .env.example .env
+# editar .env: DB_DATABASE, DB_USERNAME, DB_PASSWORD (puerto 3307 si usas Docker)
 
-php artisan boost:install
+# 2. Clave, migraciones y datos iniciales
+php artisan key:generate
+php artisan migrate --seed
+
+# 3. Frontend (AdminLTE, Vite)
+npm install
+npm run build
+
+# 4. Servidor de desarrollo
+php artisan serve
+# o: composer dev
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+### Con Docker
 
-## Contributing
+```bash
+docker compose up -d --build
+docker exec -it laravel_app php artisan migrate:fresh --seed
+# MySQL disponible en localhost:3307
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### Migrar a otra PC (offline, sin internet)
 
-## Code of Conduct
+```bash
+bash scripts/docker/exportar_proyecto.sh        # origen: empaqueta imágenes + BD + proyecto
+# destino Windows → .\scripts\docker\importar_windows.ps1 -Directorio <ruta>
+# destino Linux   → bash scripts/docker/importar_linux.sh
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Guía completa con troubleshooting: [`docs/anexos/12_guia_migracion_docker.md`](../../docs/anexos/12_guia_migracion_docker.md).
 
-## Security Vulnerabilities
+## Comandos útiles
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+| Tarea | Comando |
+|---|---|
+| Servidor de desarrollo | `composer dev` |
+| Ejecutar tests | `composer test` |
+| Formatear código PHP | `./vendor/bin/pint` |
+| Compilar frontend | `npm run build` |
+| Usuario de prueba (seed) | `php artisan db:seed` — crea `Administrador` y `Solicitante` |
 
-## License
+## Roles
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+- **Administrador**: gestión completa (recursos, instituciones, usuarios, pedidos, papelera, exportaciones PDF/Excel).
+- **Solicitante** (Docentes, Directivos o Tutores de las instituciones): explora el catálogo de recursos táctiles (tras iniciar sesión), solicita impresiones (con texto personalizado opcional → G-Code) y sigue el estado de sus pedidos.
+
+## Módulos principales
+
+- **Traductor Braille → G-Code** (`app/Services/BrailleTranslator.php`): Código Braille Español Grado 1 (27 letras, dígitos, puntuación) + generación de G-Code con dimensiones BANA. Sin estenografía (Grado 2).
+- **Módulo de pedidos** (`app/Http/Controllers/PedidoController.php`): solicitud, cálculo de costos por gramos de PLA, estados (Pendiente → En impresión → Completado / Rechazado) y descarga del `.gcode` generado.
+- **Catálogo de recursos táctiles**: tras iniciar sesión, el Solicitante ve el catálogo (`/recursos`, cards con imagen/gramos/tiempo) y el Administrador la tabla de gestión; filtro por categoría.
+- **Seguridad OWASP**: sanitización de entradas (`app/Support/Sanitizer.php`), headers de seguridad, rate limiting (login y global) y Form Requests.
+
+## Testing
+
+```bash
+composer test   # PHPUnit con SQLite :memory:, cola sincronizada
+```
+
+La suite cubre: autenticación, CRUD con papelera (trash/restore/force-delete), traductor (27 letras + casos límite), flujo de pedidos (costos, estados, rechazo), catálogo, autorización de páginas de gestión y seguridad.
+
+## Salida del G-Code
+
+Los archivos `.gcode` se generan en el **disco local privado** (`storage/app/private/pedidos/gcode/` y `recursos/gcode/`) y se descargan únicamente por el Administrador a través de rutas autenticadas (`pedidos.gcode`, `recursos.gcode`) — nunca se exponen por URL pública. La impresión es **air-gapped**: el G-Code se transfiere manualmente a la impresora vía SD/USB — la máquina CNC no tiene conexión de red.

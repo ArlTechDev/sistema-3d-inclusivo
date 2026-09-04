@@ -1,5 +1,13 @@
 <?php
 
+use JeroenNoten\LaravelAdminLte\Menu\Filters\ActiveFilter;
+use JeroenNoten\LaravelAdminLte\Menu\Filters\ClassesFilter;
+use JeroenNoten\LaravelAdminLte\Menu\Filters\DataFilter;
+use JeroenNoten\LaravelAdminLte\Menu\Filters\GateFilter;
+use JeroenNoten\LaravelAdminLte\Menu\Filters\HrefFilter;
+use JeroenNoten\LaravelAdminLte\Menu\Filters\LangFilter;
+use JeroenNoten\LaravelAdminLte\Menu\Filters\SearchFilter;
+
 return [
 
     /*
@@ -14,9 +22,9 @@ return [
     |
     */
 
-    'title' => 'AdminLTE 3',
+    'title' => 'Sistema Braille Inclusivo',
     'title_prefix' => '',
-    'title_postfix' => '',
+    'title_postfix' => ' | Álvarez Plata',
 
     /*
     |--------------------------------------------------------------------------
@@ -63,12 +71,12 @@ return [
     |
     */
 
-    'logo' => '<b>Admin</b>LTE',
-    'logo_img' => 'vendor/adminlte/dist/img/AdminLTELogo.png',
-    'logo_img_class' => 'brand-image img-circle elevation-3',
+    'logo' => '<b>Táctil3D</b> Inclusivo',
+    'logo_img' => 'images/logo-tactil3d.svg',
+    'logo_img_class' => 'brand-image elevation-3',
     'logo_img_xl' => null,
     'logo_img_xl_class' => 'brand-image-xs',
-    'logo_img_alt' => 'Admin Logo',
+    'logo_img_alt' => 'Logo Táctil3D',
 
     /*
     |--------------------------------------------------------------------------
@@ -257,7 +265,7 @@ return [
     */
 
     'use_route_url' => false,
-    'dashboard_url' => 'home',
+    'dashboard_url' => 'recursos',
     'logout_url' => 'logout',
     'login_url' => 'login',
     'register_url' => 'register',
@@ -301,6 +309,12 @@ return [
     'menu' => [
         ['header' => 'MÓDULOS DEL PROYECTO'],
         [
+            'text' => 'Solicitudes de Impresión',
+            'route' => 'pedidos.index',
+            'icon' => 'fas fa-tasks',
+            'can' => 'administrador',
+        ],
+        [
             'text' => 'Catálogo de Recursos',
             'url' => 'recursos',
             'icon' => 'fas fa-fw fa-cube',
@@ -314,6 +328,13 @@ return [
             'text' => 'Usuarios',
             'route' => 'usuarios.index',
             'icon' => 'fas fa-users',
+            'can' => 'administrador',
+        ],
+        ['header' => 'ADMINISTRACIÓN Y PARÁMETROS'],
+        [
+            'text' => 'Configuración de Costos',
+            'route' => 'configuracion.index',
+            'icon' => 'fas fa-cogs',
             'can' => 'administrador',
         ],
     ],
@@ -331,13 +352,13 @@ return [
     */
 
     'filters' => [
-        JeroenNoten\LaravelAdminLte\Menu\Filters\GateFilter::class,
-        JeroenNoten\LaravelAdminLte\Menu\Filters\HrefFilter::class,
-        JeroenNoten\LaravelAdminLte\Menu\Filters\SearchFilter::class,
-        JeroenNoten\LaravelAdminLte\Menu\Filters\ActiveFilter::class,
-        JeroenNoten\LaravelAdminLte\Menu\Filters\ClassesFilter::class,
-        JeroenNoten\LaravelAdminLte\Menu\Filters\LangFilter::class,
-        JeroenNoten\LaravelAdminLte\Menu\Filters\DataFilter::class,
+        GateFilter::class,
+        HrefFilter::class,
+        SearchFilter::class,
+        ActiveFilter::class,
+        ClassesFilter::class,
+        LangFilter::class,
+        DataFilter::class,
     ],
 
     /*

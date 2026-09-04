@@ -8,15 +8,17 @@ Todos los artefactos del proyecto viven en este repositorio. Si no está en `mai
 ```
 software/
 ├── laravel_web/          # Laravel 13 — Plataforma web (AdminLTE, Blade, MySQL)
-└── python_core/          # Python 3 — Algoritmo de generación de G-Code
+└── python_core/          # ARCHIVADO — algoritmo movido a PHP (App\Services\BrailleTranslator); conservado como respaldo
 hardware/
 ├── cad_planos/           # FreeCAD (.FCStd) — Chasis, piezas mecánicas
 ├── marlin_firmware/      # Marlin 1.1.x — Configuration.h, pines, calibración
 ├── exportaciones_3d/     # Exportaciones STL desde CAD
 └── fotos_avance/         # Fotos de progreso de ensamblaje
 docs/
-├── documento_pscp/       # Documento PSCP (.docx) — aplica protocolo de bloqueo
-└── anexos/               # Anexos técnicos, CONTEXTO_TECNICO.md
+├── documento_pscp/       # Documento PSCP (.docx SSOT + .md espejo indexable) — aplica protocolo de bloqueo
+└── anexos/               # Anexos técnicos 01–14 (contexto, seguridad, revisión doc, borradores, código)
+.reasonix/skills/         # Skills de proyecto (braille-gcode, frontend-design, laravel-conventions, laravel-frontend)
+.agents/skills/           # Espejo universal de skills para agentes de IA (Antigravity, Reasonix, Claude Code, Cursor)
 ```
 
 ## Comandos
@@ -27,17 +29,22 @@ docs/
 | Instalación inicial | `composer setup` |
 | Servidor de desarrollo | `composer dev` |
 | Ejecutar tests | `composer test` |
+| Análisis estático (PHPStan, nivel 5) | `composer analyse` |
 | Formatear código PHP | `./vendor/bin/pint` |
 | Compilar frontend | `npm run build` |
 | Migrar (Docker) | `docker exec -it laravel_app php artisan migrate` |
 | Seed de usuarios | `php artisan db:seed` |
 
-### Python Core (`software/python_core/`)
+### Documentación (`docs/`)
 | Tarea | Comando |
 |---|---|
-| Crear entorno virtual | `python -m venv venv && source venv/bin/activate` |
-| Instalar dependencias | `pip install -r requirements.txt` |
-| Ejecutar algoritmo | `python main.py` (placeholder — actualizar cuando se implemente) |
+| Exportar DOCX a Markdown espejo | `bash scripts/docx/exportar_docx_a_md.sh` |
+
+### Python Core (ARCHIVADO — `software/python_core/`)
+| Tarea | Comando |
+|---|---|
+| Estado | **Deprecado** por decisión de arquitectura **PHP puro** (ver `docs/anexos/11_revision_codigo_vs_documento.md` § 6). El algoritmo vive en `app/Services/BrailleTranslator.php` |
+| Conservación | Mantener como respaldo por si PHP no resulta; no agregar funcionalidad nueva |
 
 ### Hardware
 Sin comandos — los artefactos son archivos CAD, configuración de firmware y fotos.
@@ -50,29 +57,56 @@ docker compose up -d --build
 docker exec -it laravel_app php artisan migrate:fresh --seed
 ```
 MySQL expuesto en puerto **3307** (no el 3306 por defecto).
+El servicio `app` arranca automáticamente el servidor HTTP en **http://localhost:8000** (`command: php artisan serve --host=0.0.0.0 --port=8000`).
+
+## Migración a otra PC (offline)
+```bash
+bash scripts/docker/exportar_proyecto.sh   # origen (Arch/Linux) → scripts/docker/salida/
+# destino Windows: .\scripts\docker\importar_windows.ps1 -Directorio <ruta>
+# destino Linux:   bash scripts/docker/importar_linux.sh
+```
+Guía completa: `docs/anexos/12_guia_migracion_docker.md`. El compose fija `image: laravel_web-app:latest` y `name: laravel_web_db_data` para que la migración no dependa del nombre de la carpeta destino.
 
 ## Roles del Equipo
 
 | Rol | Alcance | Directorio Principal |
 |---|---|---|
-| **Backend/Python** | Base de datos, algoritmo Python G-Code, APIs | `software/python_core/`, `software/laravel_web/database/` |
+| **Backend (PHP/Laravel)** | Base de datos, algoritmo Braille→G-Code en PHP, APIs | `software/laravel_web/app/`, `database/` |
 | **Frontend/Laravel** | Vistas Blade, AdminLTE, controladores, rutas | `software/laravel_web/app/`, `resources/`, `routes/` |
 | **Hardware** | Firmware Marlin, CAD, ensamblaje, calibración | `hardware/` |
 
 ## Notas de Arquitectura
 
+### Metodología de Desarrollo (según PSCP)
+- **Scrum**: sprints de 2 semanas, backlog priorizado por el equipo, reunión diaria breve y retrospectiva al final de cada sprint.
+- **Kanban complementario**: tablero Trello con columnas «Por Hacer», «En Progreso», «Hecho» + «Revisión» y «Bloqueado».
+- **Enfoque mixto (cuantitativo-cualitativo)** y paradigma sociocomunitario productivo: encuestas (12 docentes, 8 estudiantes), entrevistas semiestructuradas (3 especialistas IBC, 4 docentes), observación participante y análisis FODA.
+- **Pruebas**: suite PHPUnit sobre el traductor (100% de casos) + pruebas de integración; calibración metrológica del hardware (regla patrón 100 mm, calibre ±0.05 mm, repetibilidad G28).
+
 ### Laravel Web
-- **Roles**: Columna `users.rol` (`Administrador`, `Docente`). Middleware `role` en `bootstrap/app.php`.
+- **Versión real**: Laravel 13 / PHP ^8.3 (imagen Docker 8.4). Verificar con `php artisan --version` — no copiar versiones del documento sin comprobar.
+- **Roles**: Columna `users.rol` (`Administrador`, `Solicitante`). Middleware `role` en `bootstrap/app.php`.
 - **SoftDeletes + papelera**: Todos los modelos principales usan patrón trash/restore/force-delete.
 - **Subida de archivos**: Disco `public` → `recursos/images`, `recursos/gcode`.
 - **Exportaciones**: DomPDF + Maatwebsite Excel para cada entidad.
 - **Idioma**: UI y mensajes de validación en español.
 - **Rutas**: Rutas personalizadas ANTES de `Route::resource()` en `web.php`.
+- **Layouts por rol**: `resources/views/layouts/app.blade.php` (público, autocontenido, sin AdminLTE) → Solicitante/catálogo/formulario; `resources/views/layouts/admin.blade.php` (wrapper de `adminlte::page`) → vistas de administración. No usar `adminlte::page` directamente en vistas nuevas.
 
-### Python Core (planificado)
-- Traduce texto → Braille Grado 1 → coordenadas G-Code.
-- Archivos `.gcode` de salida se almacenan en Laravel vía subida o ruta compartida.
-- Ejecución air-gapped: G-Code transferido manualmente a CNC vía SD/USB.
+### Convenciones de Arquitectura PHP
+- **Thin Controllers**: Los controladores solo reciben la petición HTTP, delegan a Services/Form Requests, y devuelven respuesta. La lógica de negocio (cálculos, traducciones, interacción con CLI) va en clases de servicio (`app/Services/`). Excepción: CRUDs simples que solo hacen Eloquent CRUD no necesitan un Service wrapper.
+- **Form Requests**: Toda validación usa Form Requests (`app/Http/Requests/`). No usar `$request->validate()` ni `ValidationException::withMessages()` en controladores.
+- **Constantes de estado**: Los estados de pedido se referencian mediante constantes del modelo (`Pedido::ESTADO_PENDIENTE`), no strings mágicos. Las medidas ONCE se centralizan en `BrailleTranslator::configuracionPorDefecto()`.
+- **SRP para Services**: Cada Service class tiene una responsabilidad única. El traductor Braille no llama a PrusaSlicer. Los services CLI (`OpenScadService`, `PrusaSlicerService`) manejan sus propios errores con `try/catch` + `Log::error()`.
+- **Tests obligatorios (TDD)**: Cada nueva funcionalidad o refactorización incluye su test correspondiente. Cobertura 100% en lógica crítica (traducción Braille, cálculo de costos, transiciones de estado).
+
+
+### BrailleTranslator (PHP — decisión de arquitectura)
+- **Decisión: PHP puro** (2026-08): el algoritmo vive en `app/Services/BrailleTranslator.php` como Service class de Laravel. `python_core/` quedó archivado.
+- Traduce texto → Braille Grado 1 (Código Braille Español/ONCE, sin estenografía) → coordenadas G-Code.
+- Métodos: `validarCaracteres()`, `traducir()`, `generarGCode()` con soporte de offset (Opción A de personalización).
+- Archivos `.gcode` de salida se almacenan en Laravel (pedido → `gcode_path`) y se transfieren manualmente a la CNC vía SD/USB (air-gapped).
+- Tests: `tests/Unit/BrailleTranslatorTest.php` (27 letras, dígitos, puntuación, inválidos, offset).
 
 ### Hardware
 - **Cinemática**: Prusa i3 cartesiana (correas GT2 X/Y, varillas roscadas Z).
@@ -97,18 +131,60 @@ Prefijos: `feat`, `fix`, `docs`, `chore`, `refactor`, `test`. Alcances: `web`, `
 Tipos de archivo rastreados: `*.FCStd`, `*.STEP`, `*.stl`, `*.gcode`, `*.docx`, `*.pdf`, `*.png`, `*.jpg`.
 Siempre ejecutar `git lfs pull` después de `git pull`.
 
-### Protocolo de Bloqueo de Archivo de Documento PSCP
-Solo una persona edita archivos `.docx` a la vez. Anunciar en chat grupal antes de editar, hacer commit inmediatamente después, anunciar cuando termine.
+### Protocolo de Bloqueo y Espejo Markdown del Documento PSCP
+- **SSOT Formal**: Solo una persona edita archivos `.docx` a la vez. Anunciar en chat grupal antes de editar, hacer commit inmediatamente después, anunciar cuando termine.
+- **Espejo Canónico Markdown**: El archivo `docs/documento_pscp/DocumentoFinalPSCP3DAgosto17.md` (y su symlink `DocumentoFinal.md`) es un **espejo de solo lectura** para consultas rápidas de contexto por IAs, auditorías y `git diff`. Nunca se edita a mano; tras modificar el `.docx`, se sincroniza ejecutando `bash scripts/docx/exportar_docx_a_md.sh`.
 
 ### EditorConfig
 Indentación de 4 espacios, finales de línea LF (2 espacios para YAML). Forzado vía `.editorconfig`.
 
 ## Testing
-- **Laravel**: PHPUnit con SQLite `:memory:`, cola sincronizada. Ejecutar `composer test` desde `software/laravel_web/`.
-- **Python**: Agregar tests `pytest` en `software/python_core/tests/` cuando se implemente el algoritmo.
+- **Laravel**: PHPUnit con SQLite `:memory:`, cola sincronizada. Ejecutar `composer test` desde `software/laravel_web/` (85 tests, 368 aserciones).
+- **Smoke test HTTP**: `bash scripts/pruebas/smoke_test.sh [-u URL]` con la app corriendo (23 checks de rutas/roles). Guía completa de pruebas manuales: `docs/anexos/13_guia_pruebas_version_final.md`.
+- **BrailleTranslator**: tests unitarios en `tests/Unit/BrailleTranslatorTest.php` (cobertura 100% alfabeto Grado 1).
 - **Hardware**: Validación en 3 fases — cubo de calibración XYZ (20mm) → regla geométrica → hoja de texto Braille.
 
-## Restricciones Clave
+## Flujo de Trabajo
+1. **Explorar** (`/explore`) — investigar el código/documento antes de proponer cambios.
+2. **Planear** (modo plan) — presentar plan en fases y esperar aprobación.
+3. **Implementar** — cambios pequeños, commit semántico por cada paso.
+4. **Revisar** (`/review`, `/security-review`) — antes del cierre de cada fase.
+Documentos de referencia: `docs/anexos/09_informe_revision_documento_final.md` (hallazgos), `10_borradores_contenido_documento_final.md` (textos listos para el .docx), `11_revision_codigo_vs_documento.md` (estado código ↔ documento).
+
+## Seguridad (Medidas Preventivas OWASP)
+
+### Componentes de Seguridad Implementados
+
+| Componente | Archivo | Propósito |
+|---|---|---|
+| SecurityHeaders Middleware | `app/Http/Middleware/SecurityHeaders.php` | Headers `X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy` |
+| Sanitizer (anti-XSS) | `app/Support/Sanitizer.php` | `strip_tags()` + `htmlspecialchars()` en inputs de texto |
+| SafeRedirect | `app/Support/SafeRedirect.php` | Valida que redirecciones `intended()` sean al mismo dominio |
+| RateLimiter login | En `AppServiceProvider::boot()` | 5 intentos/min por email+IP (throttle:login) |
+| RateLimiter global | En `AppServiceProvider::boot()` | 30 req/min por IP (throttle:global) |
+| Form Requests (6) | `app/Http/Requests/*Request.php` | Sanitización en `prepareForValidation()` vía `Sanitizer::cleanArray()` |
+| SecurityTest suite | `tests/Feature/SecurityTest.php` | 5 tests PHPUnit (fuerza bruta, SQLi, XSS, DoS, redirects) |
+
+### Vulnerabilidades Cubiertas
+
+1. **SQL Injection** — Protegido por Eloquent ORM (PDO prepared statements)
+2. **Fuerza Bruta** — `throttle:login` con `RateLimiter::for('login')` (5 intentos/min)
+3. **XSS** — Sanitización en Form Requests + `SecurityHeaders` middleware + escapado Blade
+4. **DoS/DDoS** — `throttle:global` con `RateLimiter::for('global')` (30 req/min)
+5. **Redirecciones no validadas** — `SafeRedirect::intended()` con validación de dominio
+
+### Ejecutar Tests de Seguridad
+```bash
+cd software/laravel_web
+composer test  # Incluye tests/Feature/SecurityTest.php (5 tests)
+```
+
+### Generar Informe PDF
+```bash
+cd docs/anexos
+pandoc 08_informe_seguridad_preventiva.md -o InformeSeguridadPreventiva.pdf --pdf-engine=pdflatex
+```
+
 - Traducción Braille: Solo Grado 1 (literal, sin estenografía).
 - Sin integración de pasarela de pagos.
 - Sin aplicaciones móviles nativas — solo web responsiva.

@@ -1,0 +1,51 @@
+name: Laravel CI
+
+on:
+  push:
+    branches: [ main, feat/*, fix/* ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  tests:
+    name: PHPUnit Tests & Larastan Analysis
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: mbstring, xml, ctype, iconv, intl, pdo, pdo_sqlite, bcmath, gd, zip
+          coverage: none
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: software/laravel_web/vendor
+          key: ${{ runner.os }}-composer-${{ hashFiles('software/laravel_web/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+
+      - name: Prepare environment file
+        working-directory: software/laravel_web
+        run: cp .env.example .env
+
+      - name: Install dependencies
+        working-directory: software/laravel_web
+        run: composer install --prefer-dist --no-interaction --no-progress
+
+      - name: Generate Application Key
+        working-directory: software/laravel_web
+        run: php artisan key:generate
+
+      - name: Run test suite
+        working-directory: software/laravel_web
+        run: composer test
+
+      - name: Run static analysis (PHPStan / Larastan)
+        working-directory: software/laravel_web
+        run: composer analyse

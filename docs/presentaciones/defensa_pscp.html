@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Defensa Proyecto Inclusivo 3D - PSCP</title>
+
+  <!-- Tipografía Premium -->
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* variables y reset */
+    :root {
+      --bg-pitch: linear-gradient(135deg, #070a13 0%, #0d0f26 50%, #030408 100%);
+      --bg-tech: linear-gradient(135deg, #090616 0%, #150f29 50%, #0b0713 100%);
+      --accent-pitch: #38bdf8;
+      --accent-tech: #a855f7;
+
+      --accent-color: var(--accent-pitch);
+      --accent-glow: rgba(56, 189, 248, 0.3);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --card-bg: rgba(22, 28, 45, 0.55);
+      --border-color: rgba(56, 189, 248, 0.15);
+      --grid-opacity: 0.03;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: var(--bg-pitch);
+      color: var(--text-main);
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: background 0.8s ease;
+    }
+
+    /* Grid de fondo de ingeniería para sección técnica */
+    .grid-background {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-size: 40px 40px;
+      background-image:
+        linear-gradient(to right, rgba(168, 85, 247, var(--grid-opacity)) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(168, 85, 247, var(--grid-opacity)) 1px, transparent 1px);
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0;
+      transition: opacity 0.8s ease;
+    }
+
+    /* Contenedor de diapositivas */
+    .deck-container {
+      flex: 1;
+      position: relative;
+      width: 100%;
+      height: 100%;
+      cursor: pointer;
+      z-index: 2;
+    }
+
+    .slide {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      pointer-events: none;
+      transform: scale(0.96);
+      transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem;
+      text-align: center;
+    }
+
+    .slide.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: scale(1);
+    }
+
+    /* Animaciones escalonadas */
+    .slide.active h1,
+    .slide.active h2,
+    .slide.active p,
+    .slide.active .grid,
+    .slide.active .highlight-box,
+    .slide.active .code-block-wrapper,
+    .slide.active .svg-illustration,
+    .slide.active .img-illustration,
+    .slide.active .table-wrapper {
+      animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      opacity: 0;
+    }
+
+    .slide.active h1 { animation-delay: 0.1s; }
+    .slide.active h2 { animation-delay: 0.1s; }
+    .slide.active .svg-illustration,
+    .slide.active .img-illustration { animation-delay: 0.15s; }
+    .slide.active p { animation-delay: 0.2s; }
+    .slide.active .grid { animation-delay: 0.3s; }
+    .slide.active .highlight-box { animation-delay: 0.3s; }
+    .slide.active .code-block-wrapper { animation-delay: 0.3s; }
+    .slide.active .table-wrapper { animation-delay: 0.3s; }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(25px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Estilos de Contenido */
+    h1 {
+      font-size: 2.8rem;
+      font-weight: 800;
+      margin-bottom: 1.2rem;
+      background: linear-gradient(to right, #ffffff 40%, var(--accent-color) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      line-height: 1.15;
+    }
+
+    h2 {
+      font-size: 2.2rem;
+      font-weight: 600;
+      color: var(--accent-color);
+      margin-bottom: 1rem;
+      text-shadow: 0 0 25px var(--accent-glow);
+      transition: color 0.8s ease, text-shadow 0.8s ease;
+    }
+
+    p {
+      font-size: 1.15rem;
+      color: var(--text-muted);
+      max-width: 800px;
+      line-height: 1.55;
+      margin-bottom: 1.2rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.2rem;
+      width: 100%;
+      max-width: 950px;
+      margin-top: 1rem;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 1.5rem;
+      backdrop-filter: blur(12px);
+      text-align: left;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      border-color: var(--accent-color);
+      box-shadow: 0 8px 25px var(--accent-glow);
+    }
+
+    .card-title {
+      font-weight: 600;
+      color: #ffffff;
+      margin-bottom: 0.6rem;
+      font-size: 1.15rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .card-title svg {
+      width: 24px;
+      height: 24px;
+      fill: var(--accent-color);
+      transition: fill 0.8s ease;
+    }
+
+    .highlight-box {
+      background: rgba(56, 189, 248, 0.03);
+      border: 1px solid var(--border-color);
+      border-left: 4px solid var(--accent-color);
+      padding: 1.2rem;
+      border-radius: 4px 16px 16px 4px;
+      max-width: 750px;
+      text-align: left;
+      margin-top: 0.8rem;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.25);
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 1rem;
+      background: rgba(56, 189, 248, 0.15);
+      border: 1px solid var(--accent-color);
+      color: var(--text-main);
+    }
+
+    /* Ilustraciones SVG Integradas */
+    .svg-illustration {
+      margin-bottom: 1rem;
+      width: 140px;
+      height: 140px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .svg-illustration svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Ilustración del Logo de INCOS */
+    .img-illustration {
+      margin-bottom: 1rem;
+      width: 260px;
+      height: auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.03);
+      padding: 0.8rem 1.5rem;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .img-illustration img {
+      width: 100%;
+      height: auto;
+    }
+
+    /* Tablas de Presupuesto */
+    .table-wrapper {
+      width: 100%;
+      max-width: 850px;
+      overflow-x: auto;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      background: var(--card-bg);
+      backdrop-filter: blur(12px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      margin-top: 0.8rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.95rem;
+    }
+
+    th, td {
+      padding: 0.8rem 1.2rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    th {
+      background: rgba(15, 23, 42, 0.8);
+      color: var(--accent-color);
+      font-weight: 600;
+    }
+
+    tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    /* Editor de código simulado */
+    .code-block-wrapper {
+      width: 100%;
+      max-width: 800px;
+      background: #090c15;
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      margin-top: 0.8rem;
+      text-align: left;
+    }
+
+    .code-header {
+      background: #101524;
+      padding: 0.5rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .code-body {
+      padding: 1rem;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.85rem;
+      line-height: 1.45;
+      overflow-x: auto;
+      color: #e2e8f0;
+    }
+
+    .keyword { color: #f43f5e; }
+    .string { color: #34d399; }
+    .comment { color: #64748b; }
+
+    /* Controles de Navegación */
+    .controls-container {
+      background: rgba(8, 11, 20, 0.95);
+      border-top: 1px solid rgba(255,255,255,0.05);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 10;
+    }
+
+    .nav-btn {
+      background: transparent;
+      border: 1px solid var(--accent-color);
+      color: var(--accent-color);
+      padding: 0.6rem 1.4rem;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.3s ease;
+    }
+
+    .nav-btn:hover:not(:disabled) {
+      background: var(--accent-color);
+      color: #0f172a;
+      box-shadow: 0 0 15px var(--accent-glow);
+    }
+
+    .nav-btn:disabled {
+      border-color: rgba(255, 255, 255, 0.05);
+      color: var(--text-muted);
+      cursor: not-allowed;
+    }
+
+    .progress-bar-container {
+      flex: 1;
+      height: 6px;
+      background: rgba(255,255,255,0.03);
+      margin: 0 2rem;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(to right, var(--accent-pitch), var(--accent-tech));
+      width: 0%;
+      transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .slide-number {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      min-width: 80px;
+      text-align: right;
+      font-weight: 600;
+    }
+
+    .section-indicator {
+      position: absolute;
+      top: 1.5rem;
+      left: 2rem;
+      font-size: 0.8rem;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--accent-color);
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: color 0.8s ease;
+    }
+
+    /* Responsividad */
+    @media (max-width: 600px) {
+      h1 { font-size: 1.6rem; }
+      h2 { font-size: 1.3rem; }
+      p { font-size: 0.92rem; }
+      .grid { grid-template-columns: 1fr; }
+      .controls-container { padding: 0.8rem 1rem; }
+      .progress-bar-container { margin: 0 0.8rem; }
+      .svg-illustration { width: 80px; height: 80px; }
+      .img-illustration { width: 180px; }
+      .section-indicator { top: 0.8rem; left: 1rem; font-size: 0.7rem; }
+      th, td { padding: 0.6rem 0.8rem; font-size: 0.8rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Grid de Ingeniería de Fondo -->
+  <div class="grid-background" id="gridBg"></div>
+
+  <!-- Indicador de Sección Superior -->
+  <div class="section-indicator" id="sectionIndicator">
+    <span style="display:inline-block; width: 6px; height: 6px; border-radius: 50%; background-color: var(--accent-color);" id="indicatorDot"></span>
+    <span id="sectionText">Parte 1: Impacto Social</span>
+  </div>
+
+  <!-- Contenedor Diapositivas -->
+  <div class="deck-container" id="deck">
+
+    <!-- ================= PARTE 1: ELEVATOR PITCH ================= -->
+
+    <!-- Slide 1: Portada Oficial Táctil3D -->
+    <div class="slide active">
+      <div class="svg-illustration" style="width: 140px; height: 140px; margin-bottom: 1rem; filter: drop-shadow(0 0 20px rgba(56, 189, 248, 0.25));">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="100%" height="100%">
+          <defs>
+            <linearGradient id="surfaceMatteCover" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#2a384e"/>
+              <stop offset="50%" stop-color="#1b2536"/>
+              <stop offset="100%" stop-color="#0c121e"/>
+            </linearGradient>
+            <linearGradient id="edgeNeonCover" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#38bdf8"/>
+              <stop offset="100%" stop-color="#0284c7"/>
+            </linearGradient>
+            <radialGradient id="sphere3DCover" cx="35%" cy="25%" r="65%" fx="20%" fy="15%">
+              <stop offset="0%" stop-color="#ffffff"/>
+              <stop offset="25%" stop-color="#a7f3d0"/>
+              <stop offset="65%" stop-color="#10b981"/>
+              <stop offset="100%" stop-color="#064e3b"/>
+            </radialGradient>
+            <radialGradient id="holeInteriorCover" cx="50%" cy="30%" r="60%">
+              <stop offset="0%" stop-color="#0ea5e9" stop-opacity="0.8"/>
+              <stop offset="50%" stop-color="#0369a1"/>
+              <stop offset="100%" stop-color="#020d1a"/>
+            </radialGradient>
+            <filter id="castShadowCover" x="-30%" y="-30%" width="160%" height="160%">
+              <feGaussianBlur stdDeviation="1" result="blur"/>
+              <feOffset dx="1" dy="1.5" result="offsetBlur"/>
+              <feFlood flood-color="#000000" flood-opacity="0.75"/>
+              <feComposite in2="offsetBlur" operator="in"/>
+              <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+            <filter id="softFloorShadowCover" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="3.5" result="blur"/>
+              <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+            </filter>
+          </defs>
+          <g transform="translate(0, 4)">
+            <ellipse cx="60" cy="98" rx="42" ry="14" fill="#000000" opacity="0.6" filter="url(#softFloorShadowCover)"/>
+            <path d="M 60 56 L 16 31 L 16 68 L 60 93 Z" fill="#0b1626" stroke="#10b981" stroke-width="1.2" stroke-linejoin="round"/>
+            <path d="M 16 40 L 60 65 M 16 49 L 60 74 M 16 58 L 60 83" stroke="#10b981" stroke-width="0.8" stroke-opacity="0.35"/>
+            <path d="M 60 56 L 104 31 L 104 68 L 60 93 Z" fill="#0e1b2e" stroke="#00f2fe" stroke-width="1.2" stroke-linejoin="round"/>
+            <path d="M 104 40 L 60 65 M 104 49 L 60 74 M 104 58 L 60 83" stroke="#00f2fe" stroke-width="0.8" stroke-opacity="0.35"/>
+            <line x1="60" y1="56" x2="60" y2="93" stroke="#38bdf8" stroke-width="1.5" stroke-opacity="0.85"/>
+            <path d="M 60 6 L 104 31 L 60 56 L 16 31 Z" fill="url(#surfaceMatteCover)" stroke="url(#edgeNeonCover)" stroke-width="1.8" stroke-linejoin="round"/>
+            <!-- Puntos activos en relieve esmeralda y cavidades cian neón -->
+            <g transform="translate(66, 20.5)"><ellipse cx="0" cy="1.2" rx="4.4" ry="2.4" fill="#000" opacity="0.85"/><ellipse cx="0" cy="-0.5" rx="4.6" ry="2.7" fill="url(#sphere3DCover)" filter="url(#castShadowCover)"/></g>
+            <g transform="translate(54, 27.5)"><ellipse cx="0" cy="1.2" rx="4.4" ry="2.4" fill="#000" opacity="0.85"/><ellipse cx="0" cy="-0.5" rx="4.6" ry="2.7" fill="url(#sphere3DCover)" filter="url(#castShadowCover)"/></g>
+            <g transform="translate(42, 34.5)"><ellipse cx="0" cy="-0.3" rx="4.4" ry="2.5" fill="#000" opacity="0.5"/><ellipse cx="0" cy="0" rx="4.2" ry="2.4" fill="none" stroke="#38bdf8" stroke-width="1.2"/><ellipse cx="0" cy="0.4" rx="3.5" ry="1.9" fill="url(#holeInteriorCover)"/><ellipse cx="0" cy="0.7" rx="2.2" ry="1.2" fill="#020814" opacity="0.95"/></g>
+            <g transform="translate(78, 27.5)"><ellipse cx="0" cy="1.2" rx="4.4" ry="2.4" fill="#000" opacity="0.85"/><ellipse cx="0" cy="-0.5" rx="4.6" ry="2.7" fill="url(#sphere3DCover)" filter="url(#castShadowCover)"/></g>
+            <g transform="translate(66, 34.5)"><ellipse cx="0" cy="1.2" rx="4.4" ry="2.4" fill="#000" opacity="0.85"/><ellipse cx="0" cy="-0.5" rx="4.6" ry="2.7" fill="url(#sphere3DCover)" filter="url(#castShadowCover)"/></g>
+            <g transform="translate(54, 41.5)"><ellipse cx="0" cy="-0.3" rx="4.4" ry="2.5" fill="#000" opacity="0.5"/><ellipse cx="0" cy="0" rx="4.2" ry="2.4" fill="none" stroke="#38bdf8" stroke-width="1.2"/><ellipse cx="0" cy="0.4" rx="3.5" ry="1.9" fill="url(#holeInteriorCover)"/><ellipse cx="0" cy="0.7" rx="2.2" ry="1.2" fill="#020814" opacity="0.95"/></g>
+          </g>
+        </svg>
+      </div>
+      <p style="text-transform: uppercase; letter-spacing: 3px; color: var(--accent-pitch); font-weight: 600; margin-bottom: 0.4rem; font-size: 0.9rem;">Proyecto Sociocomunitario Productivo (PSCP)</p>
+      <h1 style="font-size: 3.2rem; margin-bottom: 0.2rem; letter-spacing: 1.5px;">TÁCTIL<span style="color: #38bdf8; text-shadow: 0 0 25px rgba(56, 189, 248, 0.4);">3D</span></h1>
+      <p style="color: #38bdf8; font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem; text-shadow: 0 0 15px rgba(56, 189, 248, 0.3);">Sistema Braille Inclusivo</p>
+      <p style="max-width: 740px; font-size: 1.1rem; line-height: 1.55; margin-bottom: 1.5rem;">Plataforma web y manufactura aditiva con materiales reciclados para la democratización de recursos didácticos táctiles en Bolivia.</p>
+      <div style="padding: 0.6rem 1.2rem; border: 1px dashed var(--accent-pitch); border-radius: 12px; font-size: 0.9rem; background: rgba(56,189,248,0.03); color: #e2e8f0; max-width: 550px; line-height: 1.4;">
+        👉 <strong>Navegación:</strong> Haz clic en el <strong>lado derecho</strong> para avanzar, o en el <strong>izquierdo</strong> para retroceder.
+      </div>
+    </div>
+
+    <!-- Slide 2: El Equipo (Con Logotipo Oficial de INCOS General e Inmunidad Hotlink) -->
+    <div class="slide">
+      <div class="img-illustration">
+        <!-- Se añade referrerpolicy="no-referrer" para evitar el bloqueo del host del instituto por hotlink -->
+        <img src="https://incosnocturno.edu.bo/wp-content/uploads/2025/10/LogoIncosGeneral-1.png" alt="Logo INCOS Nocturno" referrerpolicy="no-referrer">
+      </div>
+      <h2>Equipo de Sistemas Informáticos</h2>
+      <div class="grid" style="max-width: 850px;">
+        <div class="card" style="text-align: center;">
+          <div class="card-title" style="justify-content: center; font-size: 1.05rem;">👨💻 C. Alessandro Aguilar</div>
+          <p style="font-size: 0.85rem; margin-bottom: 0; text-align: center; color: var(--text-muted);">Postulante al Título</p>
+        </div>
+        <div class="card" style="text-align: center;">
+          <div class="card-title" style="justify-content: center; font-size: 1.05rem;">👨💻 Ariel E. Rosales</div>
+          <p style="font-size: 0.85rem; margin-bottom: 0; text-align: center; color: var(--text-muted);">Postulante al Título</p>
+        </div>
+        <div class="card" style="text-align: center;">
+          <div class="card-title" style="justify-content: center; font-size: 1.05rem;">👨💻 J. Matías Aramayo</div>
+          <p style="font-size: 0.85rem; margin-bottom: 0; text-align: center; color: var(--text-muted);">Postulante al Título</p>
+        </div>
+      </div>
+      <p style="margin-top: 1.5rem; font-size: 1rem; color: #fff;">
+        Tutor: <strong>Ing. Javier Marcelo Vásquez Cruz</strong> | Cochabamba, Bolivia
+      </p>
+      <div style="margin-top: 0.5rem;">
+        <a href="https://incosnocturno.edu.bo/" target="_blank" style="color: var(--accent-pitch); text-decoration: none; font-size: 0.95rem; font-weight: 600; text-shadow: 0 0 10px rgba(56, 189, 248, 0.2);">🌐 incosnocturno.edu.bo</a>
+      </div>
+    </div>
+
+    <!-- Slide 3: El Problema Social -->
+    <div class="slide">
+      <div class="svg-illustration">
+        <svg viewBox="0 0 100 100">
+          <rect x="15" y="15" width="70" height="55" rx="5" fill="none" stroke="#f43f5e" stroke-width="3"/>
+          <line x1="15" y1="55" x2="85" y2="55" stroke="#f43f5e" stroke-width="2"/>
+          <line x1="30" y1="70" x2="30" y2="85" stroke="#f43f5e" stroke-width="4"/>
+          <line x1="70" y1="70" x2="70" y2="85" stroke="#f43f5e" stroke-width="4"/>
+          <line x1="20" y1="85" x2="80" y2="85" stroke="#f43f5e" stroke-width="4"/>
+          <path d="M 40 45 L 60 25 M 40 25 L 60 45" stroke="#f43f5e" stroke-width="5" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <h2>La Exclusión Invisible</h2>
+      <p>Los estudiantes con discapacidad visual en el municipio de Cochabamba enfrentan barreras estructurales en el aula.</p>
+      <div class="grid">
+        <div class="card">
+          <div class="card-title">💵 Equipos Inaccesibles</div>
+          <p style="font-size: 0.9rem; margin-bottom: 0; line-height: 1.4;">Las embozadoras (impresoras Braille) comerciales superan los $3,000 USD, presupuesto imposible para centros fiscales.</p>
+        </div>
+        <div class="card">
+          <div class="card-title">⏳ Recursos Efímeros</div>
+          <p style="font-size: 0.9rem; margin-bottom: 0; line-height: 1.4;">El material táctil tradicional (papel punzado o cartón) pierde el relieve en pocas semanas por el desgaste del tacto.</p>
+        </div>
+        <div class="card">
+          <div class="card-title">🧩 Desconexión Local</div>
+          <p style="font-size: 0.9rem; margin-bottom: 0; line-height: 1.4;">Carencia de herramientas web locales que faciliten la traducción de material didáctico sin software propietario.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 4: Economía Circular -->
+    <div class="slide">
+      <div class="svg-illustration">
+        <svg viewBox="0 0 100 100">
+          <path d="M 50 15 A 35 35 0 0 1 85 50 L 75 50 L 85 65 L 95 50 L 85 50" fill="none" stroke="#10b981" stroke-width="3"/>
+          <path d="M 85 50 A 35 35 0 0 1 50 85 L 50 95 L 35 85 L 50 75 L 50 85" fill="none" stroke="#10b981" stroke-width="3"/>
+          <path d="M 50 85 A 35 35 0 0 1 15 50 L 25 50 L 15 35 L 5 50 L 15 50" fill="none" stroke="#10b981" stroke-width="3"/>
+          <rect x="40" y="40" width="20" height="20" rx="3" fill="none" stroke="#10b981" stroke-width="2"/>
+          <circle cx="50" cy="50" r="4" fill="#10b981"/>
+        </svg>
+      </div>
+      <h2>Basura por Inclusión</h2>
+      <p>Transformamos residuos contaminantes en soluciones de aprendizaje tecnológico.</p>
+      <div class="grid">
+        <div class="card">
+          <div class="card-title" style="color: #10b981;">♻️ Reutilización de E-Waste</div>
+          <p style="font-size: 0.9rem; margin-bottom: 0;">Rescatamos motores paso a paso NEMA 17, varillas de acero de impresoras viejas y fuentes de poder ATX de computadoras en desuso.</p>
+        </div>
+        <div class="card">
+          <div class="card-title" style="color: #10b981;">🌎 Sostenibilidad Concreta</div>
+          <p style="font-size: 0.9rem; margin-bottom: 0;">El prototipo desarrollado integra activamente de <strong>2 a 3 kg de componentes electrónicos recuperados</strong>, dándoles una segunda vida útil.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 5: El Ecosistema -->
+    <div class="slide">
+      <div class="svg-illustration">
+        <svg viewBox="0 0 100 100">
+          <rect x="15" y="30" width="25" height="40" rx="2" fill="none" stroke="#38bdf8" stroke-width="2"/>
+          <line x1="15" y1="43" x2="40" y2="43" stroke="#38bdf8" stroke-width="2"/>
+          <line x1="15" y1="56" x2="40" y2="56" stroke="#38bdf8" stroke-width="2"/>
+          <circle cx="21" cy="36" r="2" fill="#38bdf8"/>
+          <circle cx="21" cy="49" r="2" fill="#38bdf8"/>
+          <circle cx="21" cy="62" r="2" fill="#38bdf8"/>
+          <path d="M 45 50 Q 50 45 55 50" fill="none" stroke="#fff" stroke-width="2" stroke-dasharray="3 3"/>
+          <rect x="60" y="35" width="25" height="30" rx="1" fill="none" stroke="#38bdf8" stroke-width="2"/>
+          <line x1="60" y1="60" x2="85" y2="60" stroke="#38bdf8" stroke-width="3"/>
+          <circle cx="72.5" cy="48" r="3" fill="none" stroke="#f8fafc" stroke-width="2"/>
+        </svg>
+      </div>
+      <h2>La Solución Integral</h2>
+      <p>Articulamos dos herramientas complementarias en un flujo de trabajo simplificado.</p>
+      <div class="grid">
+        <div class="card">
+          <div class="card-title">💻 Plataforma Web (Software)</div>
+          <p style="font-size: 0.9rem; margin-bottom: 0;">Un portal seguro y accesible donde el docente escribe en español estándar y el sistema genera la previsualización 2D y el archivo G-Code.</p>
+        </div>
+        <div class="card">
+          <div class="card-title">🔧 Impresora 3D E-Waste (Hardware)</div>
+          <p style="font-size: 0.9rem; margin-bottom: 0;">Dispositivo de extrusión térmica de filamento PLA. No requiere cama caliente activa y reduce los costos a menos de <strong>$200 USD</strong>.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 6: Presupuesto Detallado -->
+    <div class="slide">
+      <h2>Presupuesto del Prototipo</h2>
+      <p>Estructura de costos del hardware basada en el mercado local de Cochabamba.</p>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Ítem Componente</th>
+              <th>Categoría de Gasto</th>
+              <th>Costo Estimado</th>
+              <th>Observación Técnica</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Arduino Mega 2560 + RAMPS 1.4</td>
+              <td>Control Electrónico</td>
+              <td>~180 Bs.</td>
+              <td>Unidad de procesamiento central y escudo de potencia.</td>
+            </tr>
+            <tr>
+              <td>Extrusor MK8 + Rodamientos LM8UU</td>
+              <td>Bloque de Extrusión</td>
+              <td>~250 Bs.</td>
+              <td>Deposición térmica y guiado lineal del filamento PLA.</td>
+            </tr>
+            <tr>
+              <td>Madera MDF/Pino + Tornillería + Barniz</td>
+              <td>Estructura Chasis</td>
+              <td>~100 Bs.</td>
+              <td>Chasis rígido amortiguador de vibración e inmunidad a humedad.</td>
+            </tr>
+            <tr>
+              <td>Sensores de Fin de Carrera (x3) + Cables</td>
+              <td>Fin de Carrera/Sensores</td>
+              <td>~80 Bs.</td>
+              <td>Establecimiento del origen (Home G28) y límites de seguridad.</td>
+            </tr>
+            <tr>
+              <td>Motores NEMA 17 (x4), Ejes, Fuente ATX</td>
+              <td>E-Waste (Reciclado)</td>
+              <td><strong>0 Bs.</strong></td>
+              <td>Rescatados y acondicionados de impresoras y PCs obsoletas.</td>
+            </tr>
+            <tr style="background: rgba(56,189,248,0.08); font-weight: bold; border-top: 2px solid var(--accent-color);">
+              <td>TOTAL INVERSIÓN FÍSICA</td>
+              <td>Hardware Prototipo</td>
+              <td>~700 Bs.</td>
+              <td>Aproximadamente 100 USD totales de gasto físico.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Slide 7: El Impacto Económico -->
+    <div class="slide">
+      <div class="svg-illustration">
+        <svg viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="40" fill="none" stroke="#10b981" stroke-width="3"/>
+          <text x="35" y="58" font-size="24" font-weight="bold" fill="#10b981" font-family="Arial">$</text>
+          <path d="M 30 70 L 70 30 M 55 30 L 70 30 L 70 45" fill="none" stroke="#10b981" stroke-width="4" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <h2>Democratización del Costo</h2>
+      <p>La tecnología libre reduce drásticamente las barreras económicas de producción.</p>
+      <div class="grid">
+        <div class="card">
+          <div class="card-title">📉 Ahorro de Producción</div>
+          <p style="font-size: 0.9rem; margin-bottom: 0;">Un recurso didáctico comercial en relieve (como un mapa o abecedario) cuesta <strong>Bs. 150</strong>. Con nuestro sistema, fabricarlo cuesta <strong>Bs. 5</strong>.</p>
+        </div>
+        <div class="card">
+          <div class="card-title">🛡️ Durabilidad de PLA</div>
+          <p style="font-size: 0.9rem; margin-bottom: 0;">El plástico biodegradable PLA es rígido y no se deforma al tacto, eliminando la necesidad de reponer papel Braille de forma constante.</p>
+        </div>
+        <div class="card">
+          <div class="card-title">🏫 Ahorro Institucional</div>
+          <p style="font-size: 0.9rem; margin-bottom: 0;">Un ahorro proyectado de <strong>Bs. 20,000</strong> en adquisición de equipamiento especializado para cada unidad educativa especial.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= TRANSICIÓN A SECCIÓN TÉCNICA ================= -->
+
+    <!-- Slide 8: Portada Sección Técnica -->
+    <div class="slide">
+      <div class="svg-illustration">
+        <svg viewBox="0 0 100 100">
+          <path d="M 30 70 L 70 30 L 75 35 M 65 25 L 75 35 L 85 25 L 75 15 L 65 25" fill="none" stroke="#a855f7" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="35" cy="65" r="5" fill="#a855f7"/>
+          <line x1="20" y1="80" x2="35" y2="65" stroke="#a855f7" stroke-width="3"/>
+          <circle cx="50" cy="50" r="45" fill="none" stroke="#a855f7" stroke-width="1" stroke-dasharray="5 5"/>
+        </svg>
+      </div>
+      <h1 style="margin-bottom: 1.5rem;">Parte 2: Desarrollo Técnico</h1>
+      <p>Análisis de arquitectura de software, ciberseguridad, cinemática de hardware y validación metrológica.</p>
+    </div>
+
+    <!-- ================= PARTE 2: DEEP DIVE TÉCNICO ================= -->
+
+    <!-- Slide 9: Arquitectura de Software -->
+    <div class="slide">
+      <h2>Arquitectura del Sistema Web</h2>
+      <p>Diseño robusto bajo patrones modernos e infraestructura basada en contenedores independientes.</p>
+      <div class="grid">
+        <div class="card">
+          <div class="card-title">⚙️ Backend Laravel 13</div>
+          <p style="font-size: 0.9rem; margin-bottom: 0; line-height: 1.4;">Patrón MVC sobre PHP 8.3/8.4, aislando la lógica en capas de Servicios y Form Requests para asegurar el principio de responsabilidad única (SRP).</p>
+        </div>
+        <div class="card">
+          <div class="card-title">📦 Despliegue con Docker</div>
+          <p style="font-size: 0.9rem; margin-bottom: 0; line-height: 1.4;">Contenedores independientes para la aplicación Laravel (`laravel_app`) y la base de datos MySQL 8.0 (`laravel_db_data`), en puerto no estándar 3307.</p>
+        </div>
+        <div class="card">
+          <div class="card-title">🗂️ Patrón Trash/Restore</div>
+          <p style="font-size: 0.9rem; margin-bottom: 0; line-height: 1.4;">Implementación de SoftDeletes en todos los modelos críticos de datos, garantizando la recuperación física de registros antes de su eliminación definitiva.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 10: Algoritmo G-Code -->
+    <div class="slide">
+      <h2>Algoritmo de Extrusión Directa</h2>
+      <p>Mapeo de celdas Braille a instrucciones CNC G-Code nativas en PHP puro.</p>
+
+      <div class="code-block-wrapper">
+        <div class="code-header">
+          <span class="dot" style="background-color: #ff5f56;"></span>
+          <span class="dot" style="background-color: #ffbd2e;"></span>
+          <span class="dot" style="background-color: #27c93f;"></span>
+          <span style="font-size: 0.75rem; color: #64748b; margin-left: 1rem; font-family: monospace;">GcodeGenerator.php (L132-137)</span>
+        </div>
+        <div class="code-body">
+          <span class="comment">// 1. Elevar boquilla e ir rápido a coordenadas del punto Braille</span><br>
+          $lineasGcode[] = sprintf(<span class="string">'G0 Z%.2f'</span>, $z + $cfg[<span class="string">'altura_punto'</span>] + $cfg[<span class="string">'holgura_z'</span>]);<br>
+          $lineasGcode[] = sprintf(<span class="string">'G0 X%.2f Y%.2f F%.0f'</span>, $px, $py, $cfg[<span class="string">'velocidad_xy'</span>]);<br>
+          <span class="comment">// 2. Bajar a la capa base y extruir gota de PLA controlada</span><br>
+          $lineasGcode[] = sprintf(<span class="string">'G1 Z%.2f F%.0f'</span>, $z, $cfg[<span class="string">'velocidad_z'</span>]);<br>
+          $lineasGcode[] = <span class="string">'G92 E0'</span>;<br>
+          $lineasGcode[] = sprintf(<span class="string">'G1 E%.3f F%.0f'</span>, $cfg[<span class="string">'volumen_punto'</span>], $cfg[<span class="string">'velocidad_e'</span>]);<br>
+          <span class="comment">// 3. Retraer Z mientras sube para formar el relieve cónico</span><br>
+          $lineasGcode[] = sprintf(<span class="string">'G1 Z%.2f F%.0f'</span>, $z + $cfg[<span class="string">'altura_punto'</span>], $cfg[<span class="string">'velocidad_z'</span>]);
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 11: Seguridad Defensiva (OWASP) -->
+    <div class="slide">
+      <h2>Ciberseguridad y Mitigación</h2>
+      <p>Estrategias preventivas de seguridad web implementadas y validadas mediante pruebas.</p>
+      <div class="grid">
+        <div class="card">
+          <div class="card-title">🛡️ Sanitización XSS</div>
+          <p style="font-size: 0.9rem; margin-bottom: 0;">Clase de soporte `Sanitizer` aplica `strip_tags()` and `htmlspecialchars()` en inputs de Form Requests.</p>
+        </div>
+        <div class="card">
+          <div class="card-title">🚦 Rate Limiters</div>
+          <p style="font-size: 0.9rem; margin-bottom: 0;">`throttle:login` limita a 5 intentos fallidos/min; `throttle:global` protege de DoS a 30 solicitudes/min por IP.</p>
+        </div>
+        <div class="card">
+          <div class="card-title">🔗 Headers e Inyección</div>
+          <p style="font-size: 0.9rem; margin-bottom: 0;">Headers HTTP inyectados por middleware (`X-Frame-Options: SAMEORIGIN`) y neutralización de SQLi por Eloquent (PDO).</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= SLIDE 12: DEMOSTRACIÓN EN VIVO (QR INTERACTIVO) ================= -->
+    <div class="slide">
+      <span class="badge" style="background: rgba(16, 185, 129, 0.15); border-color: #10b981; color: #34d399;">🟢 Entorno Web en Vivo</span>
+      <h2 style="color: #38bdf8; text-shadow: 0 0 25px rgba(56, 189, 248, 0.4);">Demostración en Tiempo Real</h2>
+      <p style="margin-bottom: 0.8rem;">Acceso interactivo a la plataforma Táctil3D para el Tribunal Evaluador.</p>
+
+      <div style="display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 2rem; max-width: 880px; margin-top: 0.6rem;">
+
+        <!-- Tarjeta del Código QR -->
+        <div style="background: #ffffff; padding: 12px; border-radius: 18px; box-shadow: 0 0 35px rgba(56, 189, 248, 0.35); border: 2px solid var(--accent-color); transition: transform 0.3s ease;">
+          <img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=https%3A%2F%2Fscript.google.com%2Fmacros%2Fs%2FAKfycbw_1fp0OHsZQdyCDadmVH9NMWSjIUQ9u8HkZzBBavFvAWPPp7mFRArUV-gv4bhp1kMT%2Fexec"
+               alt="Código QR Táctil3D"
+               style="width: 175px; height: 175px; display: block; border-radius: 8px;">
+        </div>
+
+        <!-- Instrucciones y Credenciales -->
+        <div style="text-align: left; max-width: 440px;">
+          <div class="card" style="padding: 1.3rem;">
+            <div class="card-title" style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 0.8rem;">
+              📱 Instrucciones para el Tribunal:
+            </div>
+            <ol style="color: #cbd5e1; font-size: 0.9rem; line-height: 1.55; padding-left: 1.2rem; margin-bottom: 0.8rem;">
+              <li>Escanee el código QR con la cámara de su teléfono móvil.</li>
+              <li>Explore el <strong>Catálogo Digital</strong> de recursos educativos.</li>
+              <li>Solicite un recurso con <strong>texto personalizado en Braille</strong>.</li>
+            </ol>
+            <div style="font-size: 0.8rem; color: #94a3b8; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 0.6rem; display: flex; justify-content: space-between;">
+              <span>🔒 Cifrado SSL Cloudflare</span>
+              <span style="color: #10b981; font-weight: 600;">✓ Responsive</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Slide 13: Hardware y Calibración -->
+    <div class="slide">
+      <h2>Ingeniería de Hardware</h2>
+      <p>Estructura robusta, electrónica de potencia y firmware Marlin adaptado al e-waste.</p>
+      <div class="grid">
+        <div class="card">
+          <div class="card-title">🔧 Mecánica Prusa i3</div>
+          <p style="font-size: 0.9rem; margin-bottom: 0; line-height: 1.4;">Chasis de madera DM/MDF barnizado de 15 mm. Pórtico de doble motor en eje Z para evitar desalineamiento.</p>
+        </div>
+        <div class="card">
+          <div class="card-title">🔌 Placa RAMPS 1.4</div>
+          <p style="font-size: 0.9rem; margin-bottom: 0; line-height: 1.4;">Arduino Mega 2560 acoplado con escudo RAMPS 1.4, drivers A4988 y conectores rápidos ATX de PC.</p>
+        </div>
+        <div class="card">
+          <div class="card-title">📏 Firmware Marlin (Steps/mm)</div>
+          <p style="font-size: 0.9rem; margin-bottom: 0; line-height: 1.4;">Calibración de pasos por mm para componentes reciclados:<br> <strong>X=80, Y=80, Z=2560 (husillo), E=95 (MK8)</strong>.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 14: Validación Metrológica -->
+    <div class="slide">
+      <h2>Pruebas y Calidad Física</h2>
+      <p>Metodología de validación del prototipo físico para asegurar el estándar táctil.</p>
+      <div class="grid">
+        <div class="card">
+          <div class="card-title">📏 Precisión Dimensional</div>
+          <p style="font-size: 0.9rem; margin-bottom: 0; line-height: 1.4;">Impresión de cubo patrón de 20x20x20 mm y validación geométrica con calibre digital para asegurar tolerancias de <strong>±0.05 mm</strong>.</p>
+        </div>
+        <div class="card">
+          <div class="card-title">🔬 Estándares de Relieve</div>
+          <p style="font-size: 0.9rem; margin-bottom: 0; line-height: 1.4;">Calibración de celdas con dot pitch exacto de 2.5 mm y altura nominal de 0.8 mm para una discriminación táctil adecuada.</p>
+        </div>
+        <div class="card">
+          <div class="card-title">👥 Pilotaje Planificado</div>
+          <p style="font-size: 0.9rem; margin-bottom: 0; line-height: 1.4;">Metodología estructurada para la validación comunitaria futura en centros de educación especial mediante pautas de observación.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 15: Cierre -->
+    <div class="slide">
+      <div class="svg-illustration">
+        <svg viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="40" fill="none" stroke="#a855f7" stroke-width="3"/>
+          <path d="M 35 50 L 45 60 L 65 40" fill="none" stroke="#a855f7" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <h1 style="background: linear-gradient(to right, #ffffff, var(--accent-color)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">¿Preguntas?</h1>
+      <p style="color: var(--accent-color); font-weight: 600; font-size: 1.4rem;">¡Muchas gracias por su atención!</p>
+      <p style="max-width: 650px;">El sistema se entrega bajo un modelo de provisión de servicio de material didáctico, manteniendo la propiedad y soporte técnico en manos de los desarrolladores.</p>
+    </div>
+
+  </div>
+
+  <!-- Barra de Navegación -->
+  <div class="controls-container">
+    <button class="nav-btn" id="prevBtn" onclick="event.stopPropagation(); navigate(-1)" disabled>Anterior</button>
+    <div class="progress-bar-container">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+    <button class="nav-btn" id="nextBtn" onclick="event.stopPropagation(); navigate(1)">Siguiente</button>
+    <span class="slide-number" id="slideNum">1 / 15</span>
+  </div>
+
+  <!-- Lógica de Navegación de la Presentación -->
+  <script>
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.slide');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const progressBar = document.getElementById('progressBar');
+    const slideNum = document.getElementById('slideNum');
+    const deck = document.getElementById('deck');
+    const gridBg = document.getElementById('gridBg');
+    const sectionIndicator = document.getElementById('sectionIndicator');
+    const sectionText = document.getElementById('sectionText');
+    const indicatorDot = document.getElementById('indicatorDot');
+
+    // Configuración de las diapositivas
+    const totalSlides = slides.length;
+    const indexTransicionTecnica = 7; // Slide 8 (indice 7) es la transición a lo técnico
+
+    function updateSlide() {
+      // Determinar en qué sección estamos
+      const esSeccionTecnica = currentSlide >= indexTransicionTecnica;
+
+      // Actualizar el tema estético
+      if (esSeccionTecnica) {
+        document.body.style.background = "var(--bg-tech)";
+        document.documentElement.style.setProperty('--accent-color', 'var(--accent-tech)');
+        document.documentElement.style.setProperty('--accent-glow', 'rgba(168, 85, 247, 0.3)');
+        document.documentElement.style.setProperty('--border-color', 'rgba(168, 85, 247, 0.15)');
+        gridBg.style.opacity = 1;
+        sectionText.textContent = "Parte 2: Desarrollo Técnico";
+      } else {
+        document.body.style.background = "var(--bg-pitch)";
+        document.documentElement.style.setProperty('--accent-color', 'var(--accent-pitch)');
+        document.documentElement.style.setProperty('--accent-glow', 'rgba(56, 189, 248, 0.3)');
+        document.documentElement.style.setProperty('--border-color', 'rgba(56, 189, 248, 0.15)');
+        gridBg.style.opacity = 0;
+        sectionText.textContent = "Parte 1: Impacto Social";
+      }
+
+      slides.forEach((slide, index) => {
+        slide.classList.remove('active', 'prev');
+        if (index === currentSlide) {
+          slide.classList.add('active');
+        } else if (index < currentSlide) {
+          slide.classList.add('prev');
+        }
+      });
+
+      // Actualizar botones
+      prevBtn.disabled = currentSlide === 0;
+      nextBtn.disabled = currentSlide === totalSlides - 1;
+
+      // Actualizar progreso y contador
+      const progressPercent = (currentSlide / (totalSlides - 1)) * 100;
+      progressBar.style.width = `${progressPercent}%`;
+      slideNum.textContent = `${currentSlide + 1} / ${totalSlides}`;
+    }
+
+    function navigate(direction) {
+      const target = currentSlide + direction;
+      if (target >= 0 && target < totalSlides) {
+        currentSlide = target;
+        updateSlide();
+      }
+    }
+
+    // Navegación haciendo clic en la pantalla (mitad derecha avanza, mitad izquierda retrocede)
+    deck.addEventListener('click', function(e) {
+      const width = window.innerWidth;
+      const clickX = e.clientX;
+
+      if (clickX > width / 2) {
+        navigate(1);
+      } else {
+        navigate(-1);
+      }
+    });
+
+    // Gestos táctiles (Swipe)
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    deck.addEventListener('touchstart', function(e) {
+      touchStartX = e.changedTouches[0].screenX;
+    }, false);
+
+    deck.addEventListener('touchend', function(e) {
+      touchEndX = e.changedTouches[0].screenX;
+      handleSwipe();
+    }, false);
+
+    function handleSwipe() {
+      const threshold = 50;
+      if (touchStartX - touchEndX > threshold) {
+        navigate(1);
+      } else if (touchEndX - touchStartX > threshold) {
+        navigate(-1);
+      }
+    }
+
+    // Teclas de flechas (teclado)
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'ArrowRight' || e.key === 'Space') {
+        navigate(1);
+      } else if (e.key === 'ArrowLeft') {
+        navigate(-1);
+      }
+    });
+
+    // ENVIAR MÉTRICA DEL USER AGENT AL SERVIDOR ASÍNCRONAMENTE AL CARGAR LA PÁGINA
+    window.onload = function() {
+      if (typeof google !== 'undefined' && google.script && google.script.run) {
+        google.script.run
+          .withSuccessHandler(function(response) {
+            console.log("Métrica registrada:", response);
+          })
+          .withFailureHandler(function(error) {
+            console.error("Fallo al registrar métrica:", error);
+          })
+          .registrarVisita(navigator.userAgent);
+      } else {
+        console.log("Ejecutando en entorno local o fuera de Apps Script.");
+      }
+
+      // Inicializar colores
+      updateSlide();
+    };
+  </script>
+</body>
+</html>

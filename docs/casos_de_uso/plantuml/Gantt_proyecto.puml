@@ -1,5 +1,6 @@
 @startgantt
 title Diagrama de Gantt — Proyecto PSCP\nImpresion 3D Braille Inclusiva\nMayo a Septiembre 2026
+skinparam monochrome true
 
 Project starts 2026-05-01
 printscale weekly zoom 2
