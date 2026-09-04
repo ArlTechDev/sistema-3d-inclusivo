@@ -256,12 +256,12 @@
     }
 </style>
 
-<div class="checkout-wrapper">
+<div class="checkout-wrapper" role="region" aria-label="Resumen de solicitud y confirmación">
     <!-- Indicador de pasos -->
     <div class="checkout-steps">
         <span class="step-badge">1. Formulario</span>
         <span class="step-arrow">➔</span>
-        <span class="step-badge active">2. Confirmación & Pago</span>
+        <span class="step-badge active" aria-current="step">2. Confirmación & Pago</span>
         <span class="step-arrow">➔</span>
         <span class="step-badge">3. Impresión 3D</span>
     </div>
