@@ -140,22 +140,22 @@
 <!-- Panel de Métricas de Impacto -->
 <div class="stats-grid">
     <div class="stat-card">
-        <div class="stat-icon">♻️</div>
+        <div class="stat-icon" aria-hidden="true">♻️</div>
         <div class="stat-value">15 kg</div>
         <div class="stat-label">Chatarra Electrónica Reciclada</div>
     </div>
     <div class="stat-card">
-        <div class="stat-icon">🖨️</div>
+        <div class="stat-icon" aria-hidden="true">🖨️</div>
         <div class="stat-value">120+</div>
         <div class="stat-label">Piezas Táctiles Producidas</div>
     </div>
     <div class="stat-card">
-        <div class="stat-icon">👨‍🦯</div>
+        <div class="stat-icon" aria-hidden="true">👨‍🦯</div>
         <div class="stat-value">5</div>
         <div class="stat-label">Instituciones Beneficiadas</div>
     </div>
     <div class="stat-card">
-        <div class="stat-icon">🏷️</div>
+        <div class="stat-icon" aria-hidden="true">🏷️</div>
         <div class="stat-value">0.00 Bs</div>
         <div class="stat-label">Costo para Solicitantes</div>
     </div>
@@ -186,21 +186,21 @@
 
 <div class="team-grid">
     <div class="team-card">
-        <div class="team-avatar">AR</div>
+        <div class="team-avatar" aria-hidden="true">AR</div>
         <h3>Rosales Mamani Ariel Edson</h3>
         <div class="team-degree">Postulante al Título</div>
         <p class="team-role">Software Backend, Arquitectura de Base de Datos y Algoritmo de Traducción Braille a G-Code en PHP.</p>
     </div>
 
     <div class="team-card">
-        <div class="team-avatar">CA</div>
+        <div class="team-avatar" aria-hidden="true">CA</div>
         <h3>Aguilar Castellon Cristhian Alessandro</h3>
         <div class="team-degree">Postulante al Título</div>
         <p class="team-role">Hardware, Electromecánica, Calibración de Firmware Marlin (RAMPS/Mega) y Ensamblaje CNC 3D.</p>
     </div>
 
     <div class="team-card">
-        <div class="team-avatar">JM</div>
+        <div class="team-avatar" aria-hidden="true">JM</div>
         <h3>Aramayo Eguino Jose Matias</h3>
         <div class="team-degree">Postulante al Título</div>
         <p class="team-role">Software Frontend, Diseño UI/UX, Accesibilidad Web (WCAG AAA) y Validación con Usuarios.</p>
@@ -210,7 +210,7 @@
 <div class="cta-team-contact">
     <h3 style="margin: 0 0 8px 0; font-family: var(--font-display); color: var(--tinta);">¿Deseas contactar directamente con el equipo?</h3>
     <p style="color: var(--tinta-suave); margin: 0 0 16px 0; font-size: 0.95rem;">Estamos disponibles para coordinar solicitudes por lote, demostraciones o convenios de donación de chatarra.</p>
-    <a href="https://wa.me/59160774117?text=Hola,%20me%20comunico%20para%20coordinar%20con%20el%20Equipo%20de%20Desarrollo%20del%20Sistema%20Braille%20Inclusivo." target="_blank" class="boton" style="background: #25D366; text-decoration: none;">
+    <a rel="noopener noreferrer" aria-label="Coordinar con equipo de desarrollo por WhatsApp" href="https://wa.me/59160774117?text=Hola,%20me%20comunico%20para%20coordinar%20con%20el%20Equipo%20de%20Desarrollo%20del%20Sistema%20Braille%20Inclusivo." target="_blank" class="boton" style="background: #25D366; text-decoration: none;">
         <span>💬</span> WhatsApp Directo (+591 60774117)
     </a>
 </div>
