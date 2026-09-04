@@ -312,7 +312,7 @@
                     </div>
 
                     <!-- Contenedor del Preview Visual de la Placa Braille (Canvas 2D) -->
-                    <div id="contenedor-canvas-braille" style="margin-top: 14px; display: none;">
+                    <div id="contenedor-canvas-braille" aria-live="polite" style="margin-top: 14px; display: none;">
                         <label style="display:block; font-size:0.85rem; font-weight:600; color:var(--tinta-suave); margin-bottom:6px;">
                             👁️ Previsualización del Relieve Braille en la Placa:
                         </label>
@@ -323,7 +323,7 @@
                 </div>
 
                 <div class="acciones">
-                    <button type="submit" class="boton">Registrar Solicitud</button>
+                    <button type="submit" class="boton" aria-label="Registrar solicitud de material táctil">Registrar Solicitud</button>
                     <a href="{{ route('recursos.index') }}" class="boton boton-sutil">Cancelar</a>
                 </div>
             </form>
