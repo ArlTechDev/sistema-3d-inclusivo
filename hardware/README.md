@@ -1,6 +1,7 @@
 # Hardware — Sistema Braille Inclusivo
 
-> **Bitácora original:** https://github.com/ArlTechDev/sistema-3d-inclusivo — `hardware/bitacora/` (recopilación histórica ene-jun 2026, previa al desarrollo web)
+> **Repositorio original (histórico):** https://github.com/ag-cris21/Impresora-3D-casera — `hardware/bitacora/` (recopilación histórica ene-jun 2026, previa al desarrollo web)
+> **Videos de referencia (YouTube):** https://www.youtube.com/playlist?list=PLODq3_P6bfsg
 
 ## Cinemática
 - Prusa i3 cartesiana (correas GT2 X/Y, varillas roscadas Z)
