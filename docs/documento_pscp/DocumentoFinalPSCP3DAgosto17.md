@@ -11,7 +11,7 @@
   Toda edición debe realizarse sobre el archivo .docx y sincronizarse con:
     bash scripts/docx/exportar_docx_a_md.sh
 
-  Última sincronización: 2026-09-03 23:16:48 UTC
+  Última sincronización: 2026-09-04 20:11:13 UTC
 ════════════════════════════════════════════════════════════════════════════════
 -->
 
@@ -279,7 +279,7 @@ El diagnóstico representa un análisis sistemático y crítico de la realidad s
 
 Para obtener un diagnóstico preciso, participativo y verificable de la realidad educativa de las personas con discapacidad visual en Cochabamba, se aplicaron las siguientes herramientas metodológicas de investigación, seleccionadas por su pertinencia con el enfoque sociocomunitario productivo del proyecto:
 
-**Investigación documental:** Se revisaron los costos actuales de embozadoras y equipos comerciales de producción táctil (que superan los \$3,000 USD), los estándares internacionales del sistema Braille ((Braille Authority of North America, 2013), UEB), la Ley N° 223 de inclusión educativa boliviana, el Decreto Supremo N° 1893 y proyectos similares documentados en la comunidad RepRap y en repositorios académicos de universidades latinoamericanas.
+**Investigación documental:** Se revisaron los costos actuales de embozadoras y equipos comerciales de producción táctil (que superan los \$3,000 USD), los estándares internacionales del sistema Braille (Braille Authority of North America \[BANA\], 2013; UEB), la Ley N° 223 de inclusión educativa boliviana, el Decreto Supremo N° 1893 y proyectos similares documentados en la comunidad RepRap y en repositorios académicos de universidades latinoamericanas.
 
 **Observación participante:** se realizaron visitas diagnósticas directas a centros de educación especial del municipio de Cochabamba, con el objetivo de identificar la disponibilidad de material táctil Braille, el estado del material existente y las condiciones del entorno de aprendizaje de los estudiantes con discapacidad visual.
 
@@ -454,9 +454,9 @@ La celda Braille está compuesta por seis puntos en relieve dispuestos en dos co
 
 **Dimensiones físicas y codificación.**
 
-Las dimensiones estándar de una celda Braille, establecidas por la Braille Authority of North America (Braille Authority of North America, 2013), son aproximadamente 6 mm de alto por 3 mm de ancho. Cada punto tiene un diámetro de 1.44 mm en la base y una altura de relieve mínima de 0.48 mm para ser percibido correctamente por el tacto. El espaciado horizontal entre el centro de dos puntos adyacentes en la misma fila (dot pitch horizontal) es de 2.34 mm, y el espaciado vertical (entre filas de puntos) es de 2.34 mm. Entre celdas adyacentes, el espacio en blanco horizontal es de 0.84 mm, y entre líneas de texto, el espacio vertical entre la parte inferior de los puntos superiores de una celda y la parte superior de los puntos inferiores de la siguiente línea es de 5.08 mm (Braille Authority of North America, 2013). Estas dimensiones son críticas para garantizar que el lector Braille pueda discriminar con precisión cada punto mediante el dedo índice, que tiene una resolución táctil de aproximadamente 1–2 mm.
+Las dimensiones estándar de una celda Braille, establecidas por la Braille Authority of North America (BANA, 2013), son aproximadamente 6 mm de alto por 3 mm de ancho. Cada punto tiene un diámetro de 1.44 mm en la base y una altura de relieve mínima de 0.48 mm para ser percibido correctamente por el tacto. El espaciado horizontal entre el centro de dos puntos adyacentes en la misma fila (dot pitch horizontal) es de 2.34 mm, y el espaciado vertical (entre filas de puntos) es de 2.34 mm. Entre celdas adyacentes, el espacio en blanco horizontal es de 0.84 mm, y entre líneas de texto, el espacio vertical entre la parte inferior de los puntos superiores de una celda y la parte superior de los puntos inferiores de la siguiente línea es de 5.08 mm (BANA, 2013). Estas dimensiones son críticas para garantizar que el lector Braille pueda discriminar con precisión cada punto mediante el dedo índice, que tiene una resolución táctil de aproximadamente 1–2 mm.
 
-En el presente proyecto, la impresora 3D deposita relieves de filamento PLA con boquilla de 0.8 mm, lo que permite aproximarse a las dimensiones (Braille Authority of North America, 2013)manteniendo la legibilidad táctil. Los puntos se generan como pequeñas columnas cilíndricas de 1.5 mm de diámetro y 0.6 mm de altura, valores validados en proyectos de la comunidad RepRap como EmbossedBraille y similares.
+En el presente proyecto, la impresora 3D deposita relieves de filamento PLA con boquilla de 0.8 mm, lo que permite aproximarse a las dimensiones estándar de la BANA (2013), manteniendo la legibilidad táctil. Los puntos se generan como pequeñas columnas cilíndricas de 1.5 mm de diámetro y 0.6 mm de altura, valores validados en proyectos de la comunidad RepRap como EmbossedBraille y similares.
 
 **Grados del sistema Braille.**
 
@@ -483,17 +483,17 @@ El Braille Grado 2 o Braille Contractado introduce contracciones y abreviaciones
 
 **Estándares internacionales y normativa.**
 
-La Unified English Braille (UEB) es el código Braille adoptado oficialmente en 2016 por la Braille Authority of North America (Braille Authority of North America, 2013) y utilizado en más de diez países de habla inglesa. Para el español, el sistema de referencia es el Código Braille Español publicado por la Organización Nacional de Ciegos Españoles (ONCE), que establece las correspondencias específicas para los caracteres del idioma español, incluyendo las vocales acentuadas (á, é, í, ó, ú), la ñ, la ü y los signos de interrogación y exclamación de apertura característicos del español (¿, ¡). El algoritmo de traducción del presente proyecto se basa en la tabla de correspondencias del Código Braille Español, que coincide en los caracteres básicos con la UEB y es el referente estándar en los centros educativos bolivianos que trabajan con material Braille.
+La Unified English Braille (UEB) es el código Braille adoptado oficialmente en 2016 por la Braille Authority of North America (BANA, 2013) y utilizado en más de diez países de habla inglesa. Para el español, el sistema de referencia es el Código Braille Español publicado por la Organización Nacional de Ciegos Españoles (ONCE), que establece las correspondencias específicas para los caracteres del idioma español, incluyendo las vocales acentuadas (á, é, í, ó, ú), la ñ, la ü y los signos de interrogación y exclamación de apertura característicos del español (¿, ¡). El algoritmo de traducción del presente proyecto se basa en la tabla de correspondencias del Código Braille Español, que coincide en los caracteres básicos con la UEB y es el referente estándar en los centros educativos bolivianos que trabajan con material Braille.
 
 **Definición y clasificación de la discapacidad visual.**
 
-La Organización Mundial de la Salud (Organización Mundial de la Salud, 2023) define la discapacidad visual como la limitación de la función visual, y la clasifica según el nivel de agudeza visual corregida en cuatro categorías: visión normal (agudeza ≥ 0.3), visión moderadamente deteriorada (agudeza entre 0.1 y 0.3), visión gravemente deteriorada (agudeza \< 0.1 pero \> 0.05) y ceguera (agudeza \< 0.05 o campo visual \< 10°). Esta última categoría, conocida como ceguera legal, es la condición de la mayoría de los beneficiarios directos del presente proyecto, quienes dependen exclusivamente de recursos táctiles y auditivos para acceder a la información escrita (Organización Mundial de la Salud, 2023)
+La Organización Mundial de la Salud (OMS, 2023) define la discapacidad visual como la limitación de la función visual, y la clasifica según el nivel de agudeza visual corregida en cuatro categorías: visión normal (agudeza ≥ 0.3), visión moderadamente deteriorada (agudeza entre 0.1 y 0.3), visión gravemente deteriorada (agudeza \< 0.1 pero \> 0.05) y ceguera (agudeza \< 0.05 o campo visual \< 10°). Esta última categoría, conocida como ceguera legal, es la condición de la mayoría de los beneficiarios directos del presente proyecto, quienes dependen exclusivamente de recursos táctiles y auditivos para acceder a la información escrita (OMS, 2023).
 
 En su informe de 2023, la Organización Mundial de la Salud (2023) estima que en el mundo hay aproximadamente 2,200 millones de personas con discapacidad visual, de las cuales al menos 1,000 millones podrían haberse evitado o no han sido tratadas. En América Latina y el Caribe, la prevalencia de la discapacidad visual representa el 3.4% de la población total. En Bolivia, el Censo Nacional de Población y Vivienda del Instituto Nacional de Estadística (Instituto Nacional de Estadística, 2012) registró 87,320 personas con discapacidad visual, concentradas principalmente en los departamentos de La Paz, Cochabamba y Santa Cruz. Este último dato, aunque con más de una década de antigüedad, constituye la única fuente estadística oficial disponible a nivel nacional y es el referente cuantitativo empleado en el diagnóstico del presente proyecto.
 
 **Marco normativo boliviano para la inclusión educativa.**
 
-Bolivia cuenta con un marco normativo sólido que reconoce los derechos de las personas con discapacidad y establece obligaciones concretas para el Estado en materia de educación inclusiva: la Ley de Educación N° 070 (2010); la Constitución Política del Estado Plurinacional (Constitución Política del Estado Plurinacional de Bolivia, 2009), en sus artículos 70 y 71, reconoce el derecho a una educación intracultural, intercultural y plurilingüe; la Ley N° 223 – Ley General para Personas con Discapacidad (Ley N° 223 – Ley General para Personas con Discapacidad, 2012) establece en su artículo 28 el derecho a una educación inclusiva y la obligación del Estado de proveer materiales adaptados; el Decreto Supremo N° 1893 (Decreto Supremo N° 1893 – Reglamento de la Ley N° 223, 2014) reglamenta la Ley N° 223 y define la responsabilidad de los municipios en la provisión de herramientas tecnológicas adaptadas; y la Agenda 2030 – ODS 4 (Naciones Unidas, 2015) compromete a Bolivia con la meta de una educación inclusiva, equitativa y de calidad para todos. Este marco normativo otorga sustento jurídico al presente proyecto y justifica la inversión de recursos tecnológicos para mejorar las condiciones de acceso a material educativo táctil en las instituciones de educación especial del municipio de Cochabamba.
+Bolivia cuenta con un marco normativo sólido que reconoce los derechos de las personas con discapacidad y establece obligaciones concretas para el Estado en materia de educación inclusiva: la Ley de Educación N° 070 (2010); la Constitución Política del Estado Plurinacional (CPE, 2009), en sus artículos 70 y 71, reconoce el derecho a una educación intracultural, intercultural y plurilingüe; la Ley N° 223 – Ley General para Personas con Discapacidad (2012) establece en su artículo 28 el derecho a una educación inclusiva y la obligación del Estado de proveer materiales adaptados; el Decreto Supremo N° 1893 (2014) reglamenta la Ley N° 223 y define la responsabilidad de los municipios en la provisión de herramientas tecnológicas adaptadas; y la Agenda 2030 – ODS 4 (Naciones Unidas, 2015) compromete a Bolivia con la meta de una educación inclusiva, equitativa y de calidad para todos. Este marco normativo otorga sustento jurídico al presente proyecto y justifica la inversión de recursos tecnológicos para mejorar las condiciones de acceso a material educativo táctil en las instituciones de educación especial del municipio de Cochabamba.
 
 **Materiales táctiles y recursos pedagógicos accesibles.**
 
@@ -570,7 +570,7 @@ Fuente: Elaboración propia.
 
 **Arquitectura MVC y framework Laravel.**
 
-El patrón de arquitectura Modelo-Vista-Controlador (MVC) es el estándar dominante en el desarrollo de aplicaciones web modernas. Separa las responsabilidades de la aplicación en tres capas independientes: el Modelo (lógica de negocio y acceso a datos), la Vista (presentación e interfaz de usuario) y el Controlador (coordinación entre Modelo y Vista en respuesta a las solicitudes del usuario). Esta separación facilita el mantenimiento del código, la detección de errores y la escalabilidad de la aplicación. Laravel es el framework PHP de código abierto más utilizado en el mundo (según JetBrains Developer Survey 2023), desarrollado por Taylor Otwell y lanzado en 2011. Implementa el patrón MVC de forma elegante y proporciona componentes integrados para gestión de rutas, autenticación, validación de formularios, migraciones de base de datos, envío de correos electrónicos y generación de PDFs. Su ORM (Object-Relational Mapping) Eloquent permite interactuar con la base de datos MySQL mediante objetos PHP sin necesidad de escribir consultas SQL manualmente, acelerando significativamente el desarrollo y reduciendo los riesgos de vulnerabilidades de inyección SQL (OWASP Foundation, 2021; Pressman & Maxim, 2020).
+El patrón de arquitectura Modelo-Vista-Controlador (MVC) es el estándar dominante en el desarrollo de aplicaciones web modernas. Separa las responsabilidades de la aplicación en tres capas independientes: el Modelo (lógica de negocio y acceso a datos), la Vista (presentación e interfaz de usuario) y el Controlador (coordinación entre Modelo y Vista en respuesta a las solicitudes del usuario). Esta separación facilita el mantenimiento del código, la detección de errores y la escalabilidad de la aplicación. Laravel es el framework PHP de código abierto más utilizado en el mundo (según JetBrains Developer Survey 2023), desarrollado por Taylor Otwell y lanzado en 2011. Implementa el patrón MVC de forma elegante y proporciona componentes integrados para gestión de rutas, autenticación, validación de formularios, migraciones de base de datos, envío de correos electrónicos y generación de PDFs. Su ORM (Object-Relational Mapping) Eloquent permite interactuar con la base de datos MySQL mediante objetos PHP sin necesidad de escribir consultas SQL manualmente, acelerando significativamente el desarrollo y reduciendo los riesgos de vulnerabilidades de inyección SQL (OWASP Foundation, 2021; Pressman y Maxim, 2020).
 
 **Accesibilidad web y estándares WCAG 2.1.**
 
@@ -578,7 +578,7 @@ Las Pautas de Accesibilidad para el Contenido Web (WCAG, Web Content Accessibili
 
 **Metodologías de desarrollo de software.**
 
-Las metodologías ágiles de desarrollo de software surgieron en 2001 con la publicación del Manifiesto Ágil, que priorizaba la entrega frecuente de software funcional, la colaboración con el cliente y la respuesta rápida al cambio sobre la planificación rígida y la documentación exhaustiva. En el contexto del presente proyecto, la metodología Scrum se empleó para estructurar el desarrollo en sprints (iteraciones) de dos semanas, con un backlog de funcionalidades priorizado por el equipo, reuniones diarias breves de seguimiento y una retrospectiva al final de cada sprint (Schwaber & Sutherland, 2020). La metodología Kanban se aplicó de forma complementaria mediante un tablero visual en Trello con tres columnas principales: «Por Hacer», «En Progreso» y «Hecho», al que se añadieron columnas específicas para «Revisión» y «Bloqueado». Esta visibilidad del flujo de trabajo permitió identificar rápidamente cuellos de botella, redistribuir tareas entre los miembros del equipo y mantener un registro actualizado del avance del proyecto en tiempo real.
+Las metodologías ágiles de desarrollo de software surgieron en 2001 con la publicación del Manifiesto Ágil, que priorizaba la entrega frecuente de software funcional, la colaboración con el cliente y la respuesta rápida al cambio sobre la planificación rígida y la documentación exhaustiva. En el contexto del presente proyecto, la metodología Scrum se empleó para estructurar el desarrollo en sprints (iteraciones) de dos semanas, con un backlog de funcionalidades priorizado por el equipo, reuniones diarias breves de seguimiento y una retrospectiva al final de cada sprint (Schwaber y Sutherland, 2020). La metodología Kanban se aplicó de forma complementaria mediante un tablero visual en Trello con tres columnas principales: «Por Hacer», «En Progreso» y «Hecho», al que se añadieron columnas específicas para «Revisión» y «Bloqueado». Esta visibilidad del flujo de trabajo permitió identificar rápidamente cuellos de botella, redistribuir tareas entre los miembros del equipo y mantener un registro actualizado del avance del proyecto en tiempo real.
 
 **Control de versiones y pruebas.**
 
@@ -596,7 +596,7 @@ Los métodos teóricos empleados en el proyecto son los siguientes:
 
 - <span id="_Toc237875112" class="anchor"></span>***Método analítico-sintético:*** se aplicó para descomponer el problema central del proyecto (acceso limitado a material Braille) en sus causas estructurales y consecuencias observables (árbol de problemas), y para sintetizar las soluciones técnicas viables a partir del análisis del estado del arte en impresión 3D, firmware Marlin y plataformas web de traducción.
 
-- <span id="_Toc237875113" class="anchor"></span>***Método deductivo:*** se aplicó para derivar, a partir del marco normativo vigente (Ley N° 223, D.S. 1893, CPE, ODS 4) y de los estándares técnicos internacionales (UEB, (Braille Authority of North America, 2013), WCAG 2.1), los requisitos funcionales y no funcionales del sistema, así como los criterios de aceptación que debe satisfacer la solución propuesta.
+- <span id="_Toc237875113" class="anchor"></span>***Método deductivo:*** se aplicó para derivar, a partir del marco normativo vigente (Ley N° 223, D.S. 1893, CPE, ODS 4) y de los estándares técnicos internacionales (UEB, BANA, 2013; WCAG 2.1), los requisitos funcionales y no funcionales del sistema, así como los criterios de aceptación que debe satisfacer la solución propuesta.
 
 - <span id="_Toc237875114" class="anchor"></span>***Método inductivo:*** se aplicó para generalizar, a partir de la observación participante y las encuestas aplicadas en las instituciones piloto, patrones de necesidad y aceptación que fundamentan la priorización de los módulos del sistema y la definición de los criterios de validación sociocomunitaria.
 
@@ -1311,57 +1311,57 @@ Durante la ejecución se presentaron las siguientes dificultades, resueltas seg�
 
 # FUENTES DE INFORMACIÓN Y BIBLIOGRAFÍA
 
-Arduino AG. (2023). Arduino Mega 2560 Rev3 — Documentación técnica. https://docs.arduino.cc/
+Arduino AG. (2023). *Arduino Mega 2560 Rev3 — Documentación técnica.* https://docs.arduino.cc/
 
-Braille Authority of North America. (2013). Size and Spacing of Braille Characters. https://www.brailleauthority.org/
+Braille Authority of North America. (2013). *Size and Spacing of Braille Characters.* https://www.brailleauthority.org/
 
-Constitución Política del Estado Plurinacional de Bolivia. (2009). Gaceta Oficial del Estado Plurinacional de Bolivia.
+*Constitución Política del Estado Plurinacional de Bolivia.* (2009). Gaceta Oficial del Estado Plurinacional de Bolivia.
 
-Decreto Supremo N° 1893. (2014). Reglamento de la Ley N° 223 — Ley General para Personas con Discapacidad. Gaceta Oficial del Estado Plurinacional de Bolivia.
+*Decreto Supremo N° 1893. Reglamento de la Ley N° 223 — Ley General para Personas con Discapacidad.* (2014). Gaceta Oficial del Estado Plurinacional de Bolivia.
 
-Ellen MacArthur Foundation. (2013). Hacia una economía circular: razones económicas para una transición acelerada. https://www.ellenmacarthurfoundation.org/
+Ellen MacArthur Foundation. (2013). *Hacia una economía circular: razones económicas para una transición acelerada.* https://www.ellenmacarthurfoundation.org/
 
-Evans, B. (2021). Practical 3D Printers: The Science and Art of 3D Printing. Apress.
+Evans, B. (2021). *Practical 3D Printers: The Science and Art of 3D Printing.* Apress.
 
-Gibson, I., Rosen, D., Stucker, B., & Khorasani, M. (2015). Additive Manufacturing Technologies: 3D Printing, Rapid Prototyping, and Direct Digital Manufacturing (2.ª ed.). Springer.
+Gibson, I., Rosen, D., Stucker, B., y Khorasani, M. (2015). *Additive Manufacturing Technologies: 3D Printing, Rapid Prototyping, and Direct Digital Manufacturing* (2.ª ed.). Springer.
 
-Hernández-Sampieri, R., Fernández-Collado, C., & Baptista-Lucio, P. (2014). Metodología de la investigación (6.ª ed.). McGraw-Hill.
+Hernández-Sampieri, R., Fernández-Collado, C., y Baptista-Lucio, P. (2014). *Metodología de la investigación* (6.ª ed.). McGraw-Hill.
 
-Instituto Nacional de Estadística. (2012). Censo Nacional de Población y Vivienda 2012. https://www.ine.gob.bo/
+Instituto Nacional de Estadística. (2012). *Censo Nacional de Población y Vivienda 2012.* https://www.ine.gob.bo/
 
-ISO/ASTM 52900. (2021). Additive manufacturing — General principles — Fundamentals and vocabulary. International Organization for Standardization.
+ISO/ASTM 52900. (2021). *Additive manufacturing — General principles — Fundamentals and vocabulary.* International Organization for Standardization.
 
-JetBrains. (2023). Developer Ecosystem Survey 2023. https://www.jetbrains.com/lp/devecosystem-2023/
+JetBrains. (2023). *Developer Ecosystem Survey 2023.* https://www.jetbrains.com/lp/devecosystem-2023/
 
-Ley N° 070 — Ley de Educación «Avelino Siñani – Elizardo Pérez». (2010). Asamblea Legislativa Plurinacional de Bolivia.
+*Ley N° 070 — Ley de Educación «Avelino Siñani – Elizardo Pérez».* (2010). Asamblea Legislativa Plurinacional de Bolivia.
 
-Ley N° 223 — Ley General para Personas con Discapacidad. (2012). Asamblea Legislativa Plurinacional de Bolivia.
+*Ley N° 223 — Ley General para Personas con Discapacidad.* (2012). Asamblea Legislativa Plurinacional de Bolivia.
 
-Marlin Contributors. (2023). Marlin Firmware Documentation (v1.1.x). https://marlinfw.org/
+Marlin Contributors. (2023). *Marlin Firmware Documentation (v1.1.x).* https://marlinfw.org/
 
-Mellor, C. M. (2006). Louis Braille: A Touch of Genius. National Braille Press.
+Mellor, C. M. (2006). *Louis Braille: A Touch of Genius.* National Braille Press.
 
-Ministerio de Educación de Bolivia. (2018). Guía de educación inclusiva para personas con discapacidad. La Paz: Ministerio de Educación.
+Ministerio de Educación de Bolivia. (2018). *Guía de educación inclusiva para personas con discapacidad.* La Paz: Ministerio de Educación.
 
-Naciones Unidas. (2015). Transformar nuestro mundo: la Agenda 2030 para el Desarrollo Sostenible (ODS 4). https://www.un.org/sustainabledevelopment/es/
+Naciones Unidas. (2015). *Transformar nuestro mundo: la Agenda 2030 para el Desarrollo Sostenible (ODS 4).* https://www.un.org/sustainabledevelopment/es/
 
-Organización Mundial de la Salud. (2023). Informe mundial sobre la visión. Ginebra: OMS. https://www.who.int/es/
+Organización Mundial de la Salud. (2023). *Informe mundial sobre la visión.* Ginebra: OMS. https://www.who.int/es/
 
-Organización Nacional de Ciegos Españoles (ONCE). (s. f.). Código Braille Español. https://www.once.es/
+Organización Nacional de Ciegos Españoles (ONCE). (s. f.). *Código Braille Español.* https://www.once.es/
 
-OWASP Foundation. (2021). OWASP Top Ten — 2021. https://owasp.org/www-project-top-ten/
+OWASP Foundation. (2021). *OWASP Top Ten — 2021.* https://owasp.org/www-project-top-ten/
 
-Ponce Talancón, H. (2006). La matriz FODA: una alternativa para realizar diagnósticos y determinar estrategias de intervención en las organizaciones. Contribuciones a la Economía.
+Ponce Talancón, H. (2006). La matriz FODA: una alternativa para realizar diagnósticos y determinar estrategias de intervención en las organizaciones. *Contribuciones a la Economía.* http://www.eumed.net/ce/
 
-Pressman, R. S., & Maxim, B. R. (2020). Ingeniería del software: un enfoque práctico (9.ª ed.). McGraw-Hill.
+Pressman, R. S., y Maxim, B. R. (2020). *Ingeniería del software: un enfoque práctico* (9.ª ed.). McGraw-Hill.
 
-RepRap Community. (2005). RepRap — Replicating Rapid Prototyper. https://reprap.org/
+RepRap Community. (2005). *RepRap — Replicating Rapid Prototyper.* https://reprap.org/
 
-Resolución Ministerial N° 0487/2023. (2023). Reglamento de Modalidades de Graduación del Subsistema de Educación Superior de Formación Profesional. Ministerio de Educación de Bolivia.
+*Resolución Ministerial N° 0487/2023. Reglamento de Modalidades de Graduación del Subsistema de Educación Superior de Formación Profesional.* (2023). Ministerio de Educación de Bolivia.
 
-Schwaber, K., & Sutherland, J. (2020). La Guía de Scrum: la guía definitiva de Scrum. https://scrumguides.org/
+Schwaber, K., y Sutherland, J. (2020). *La Guía de Scrum: la guía definitiva de Scrum.* https://scrumguides.org/
 
-W3C. (2018). Web Content Accessibility Guidelines (WCAG) 2.1. https://www.w3.org/TR/WCAG21/
+W3C. (2018). *Web Content Accessibility Guidelines (WCAG) 2.1.* https://www.w3.org/TR/WCAG21/
 
 # ANEXOS
 
