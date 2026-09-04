@@ -32,7 +32,7 @@ Desarrollar un sistema web e impresora 3D con materiales reciclados para la crea
 |---|---|---|
 | Rosales Mamani Ariel Edson | Software Backend y Algoritmos | Laravel, PHP (App\Services\BrailleTranslator), traducción Braille, G-Code |
 | Aguilar Castellon Cristhian Alessandro | Hardware y Electromecánica | Arduino, RAMPS, Marlin, ensamblaje |
-| Aramayo Eguino Jose Matias | Software Frontend, UI/UX y Validación | AdminLTE, Blade accesible, pruebas de usabilidad |
+| Aramayo Eguino Jose Matias | Software Frontend, UI/UX y Validación | AdminLTE, Blade accesible (WCAG 2.1 AAA), componentes y pruebas de usabilidad SUS |
 
 ---
 
