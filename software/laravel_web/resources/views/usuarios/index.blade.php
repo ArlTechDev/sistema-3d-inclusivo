@@ -13,7 +13,7 @@
 
 @section('content')
 @if(session('success'))
-    <div class="alert alert-success">{{ session('success') }}</div>
+    <div class="alert alert-success" role="alert">{{ session('success') }}</div>
 @endif
 
 <div class="card">
@@ -33,7 +33,7 @@
     </div>
 
     <div class="card-body">
-        <table class="table table-bordered table-striped table-hover">
+        <table aria-label="Lista de usuarios del sistema" class="table table-bordered table-striped table-hover">
             <thead>
                 <tr>
                     <th>ID</th>

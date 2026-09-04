@@ -271,9 +271,11 @@
                     value="{{ old('email') }}"
                     required
                     autofocus
+                    aria-required="true"
+                    @error('email') aria-invalid="true" aria-describedby="email-error" @enderror
                 >
                 @error('email')
-                    <span class="form-error">{{ $message }}</span>
+                    <span id="email-error" class="form-error" role="alert">{{ $message }}</span>
                 @enderror
             </div>
 
@@ -286,13 +288,15 @@
                     class="form-control-custom"
                     placeholder="••••••••"
                     required
+                    aria-required="true"
+                    @error('password') aria-invalid="true" aria-describedby="password-error" @enderror
                 >
                 @error('password')
-                    <span class="form-error">{{ $message }}</span>
+                    <span id="password-error" class="form-error" role="alert">{{ $message }}</span>
                 @enderror
             </div>
 
-            <button type="submit" class="btn-auth-submit">
+            <button type="submit" class="btn-auth-submit" aria-label="Ingresar a la plataforma">
                 Ingresar a la Plataforma →
             </button>
 

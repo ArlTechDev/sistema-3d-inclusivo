@@ -11,12 +11,12 @@
 
 @section('content')
     @if(session('success'))
-        <div class="alert alert-success">{{ session('success') }}</div>
+        <div class="alert alert-success" role="alert">{{ session('success') }}</div>
     @endif
 
     <div class="card">
         <div class="card-body p-0">
-            <table class="table table-striped mb-0">
+            <table aria-label="Recursos en papelera" class="table table-striped mb-0">
                 <thead>
                     <tr>
                         <th>ID</th>
@@ -40,7 +40,7 @@
                             <td>
                                 <form action="{{ route('recursos.restore', $recurso->id) }}" method="POST" class="d-inline-block">
                                     @csrf
-                                    <button type="submit" class="btn btn-sm btn-success">Restaurar</button>
+                                    <button type="submit" class="btn btn-sm btn-success" aria-label="Restaurar recurso {{ $recurso->titulo }}">Restaurar</button>
                                 </form>
                                 <form action="{{ route('recursos.forceDestroy', $recurso->id) }}" method="POST" class="d-inline-block">
                                     @csrf

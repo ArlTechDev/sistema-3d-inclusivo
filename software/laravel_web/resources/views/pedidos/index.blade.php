@@ -115,8 +115,8 @@
         <!-- Barra de Filtros -->
         <form method="GET" action="{{ route('pedidos.index') }}" class="row g-2 mb-4 bg-light p-3 rounded border">
             <div class="col-md-3">
-                <label class="text-xs text-muted text-uppercase mb-1">Estado</label>
-                <select name="estado" class="form-control form-control-sm">
+                <label for="filtro-estado" class="text-xs text-muted text-uppercase mb-1">Estado</label>
+                <select id="filtro-estado" name="estado" class="form-control form-control-sm">
                     <option value="">— Todos los estados —</option>
                     @foreach([
                         \App\Models\Pedido::ESTADO_PENDIENTE,
@@ -130,8 +130,8 @@
                 </select>
             </div>
             <div class="col-md-3">
-                <label class="text-xs text-muted text-uppercase mb-1">Institución</label>
-                <select name="institucion_id" class="form-control form-control-sm">
+                <label for="filtro-institucion" class="text-xs text-muted text-uppercase mb-1">Institución</label>
+                <select id="filtro-institucion" name="institucion_id" class="form-control form-control-sm">
                     <option value="">— Todas las instituciones —</option>
                     @foreach($instituciones as $institucion)
                         <option value="{{ $institucion->id }}" @selected(request('institucion_id') == $institucion->id)>
@@ -141,8 +141,8 @@
                 </select>
             </div>
             <div class="col-md-3">
-                <label class="text-xs text-muted text-uppercase mb-1">Fecha</label>
-                <input type="date" name="fecha" value="{{ request('fecha') }}" class="form-control form-control-sm">
+                <label for="filtro-fecha" class="text-xs text-muted text-uppercase mb-1">Fecha</label>
+                <input id="filtro-fecha" type="date" name="fecha" value="{{ request('fecha') }}" class="form-control form-control-sm">
             </div>
             <div class="col-md-3 d-flex align-items-end">
                 <button class="btn btn-primary btn-sm mr-2"><i class="fas fa-filter"></i> Filtrar</button>
@@ -228,7 +228,7 @@
                                         <form method="POST" action="{{ route('pedidos.update', $pedido) }}" class="d-inline mr-1">
                                             @csrf
                                             @method('PATCH')
-                                            <select name="estado" class="form-control form-control-sm d-inline-block w-auto"
+                                            <select aria-label="Cambiar estado del pedido #{{ $pedido->id }}" name="estado" class="form-control form-control-sm d-inline-block w-auto"
                                                     onchange="this.form.submit()">
                                                 <option value="">Avanzar estado…</option>
                                                 @foreach(\App\Models\Pedido::TRANSICIONES[$pedido->estado] ?? [] as $estado)

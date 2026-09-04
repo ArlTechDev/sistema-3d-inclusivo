@@ -13,7 +13,7 @@
 
 @section('content')
 @if(session('success'))
-    <div class="alert alert-success">{{ session('success') }}</div>
+    <div class="alert alert-success" role="alert">{{ session('success') }}</div>
 @endif
 
 <div class="card">
@@ -33,7 +33,7 @@
     </div>
 
     <div class="card-body">
-        <table class="table table-bordered table-striped table-hover">
+        <table aria-label="Gestión de recursos didácticos tridimensionales" class="table table-bordered table-striped table-hover">
             <thead>
                 <tr>
                     <th>ID</th>
@@ -69,7 +69,7 @@
                             </a>
 
                             @if(auth()->user()->rol === 'Administrador')
-                                <a href="{{ route('recursos.edit', $recurso->id) }}" class="btn btn-sm btn-info">
+                                <a href="{{ route('recursos.edit', $recurso->id) }}" class="btn btn-sm btn-info" aria-label="Editar recurso {{ $recurso->titulo }}">
                                     <i class="fas fa-edit"></i> Editar
                                 </a>
 

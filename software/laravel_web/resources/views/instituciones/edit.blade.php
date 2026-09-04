@@ -20,7 +20,7 @@
 
                 <div class="mb-3">
                     <label for="nombre" class="form-label">Nombre</label>
-                    <input type="text" id="nombre" name="nombre" class="form-control @error('nombre') is-invalid @enderror"
+                    <input type="text" id="nombre" name="nombre" aria-required="true" class="form-control @error('nombre') is-invalid @enderror"
                         value="{{ old('nombre', $institucion->nombre) }}">
                     @error('nombre')
                         <div class="invalid-feedback">{{ $message }}</div>

@@ -116,7 +116,7 @@
     <p style="color: var(--tinta-suave); max-width: 600px; margin: 0 auto;">Encuentra respuestas rápidas o coordina pedidos especiales directamente con el equipo desarrollador del proyecto.</p>
 </div>
 
-<div class="faq-container">
+<div class="faq-container" role="region" aria-label="Preguntas frecuentes sobre el material Braille 3D">
     <h2 style="font-family: var(--font-display); color: var(--tinta); margin-bottom: 1.5rem; font-size: 1.6rem;">Preguntas Frecuentes (FAQ)</h2>
 
     <div class="faq-item">

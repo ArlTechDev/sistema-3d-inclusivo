@@ -382,11 +382,11 @@
     @endif
 
     <!-- Modal Visor 3D Amplio -->
-    <div id="modal3d" class="modal-overlay" onclick="cerrarModal3DFuera(event)">
+    <div id="modal3d" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal3d-titulo" onclick="cerrarModal3DFuera(event)">
         <div class="modal-card">
             <div class="modal-header">
                 <h3 id="modal3d-titulo">Explorador Tridimensional</h3>
-                <button type="button" class="modal-close" onclick="cerrarModal3D()">&times;</button>
+                <button type="button" class="modal-close" onclick="cerrarModal3D()" aria-label="Cerrar visor tridimensional">&times;</button>
             </div>
             <div class="modal-body">
                 <div class="modal-viewer-container">

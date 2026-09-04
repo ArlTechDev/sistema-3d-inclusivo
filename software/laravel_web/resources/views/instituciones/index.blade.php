@@ -13,7 +13,7 @@
 
 @section('content')
 @if(session('success'))
-    <div class="alert alert-success">{{ session('success') }}</div>
+    <div class="alert alert-success" role="alert">{{ session('success') }}</div>
 @endif
 
 <div class="card">
@@ -33,17 +33,17 @@
     </div>
 
     <div class="card-body">
-        <table class="table table-bordered table-striped table-hover">
+        <table aria-label="Listado de instituciones beneficiarias" class="table table-bordered table-striped table-hover">
             <thead>
                 <tr>
-                    <th>ID</th>
-                    <th>Nombre</th>
-                    <th>Dirección</th>
-                    <th>Teléfono</th>
-                    <th>Director</th>
-                    <th>Logo</th>
-                    <th>Documento PDF</th>
-                    <th style="width: 150px;">Acciones</th>
+                    <th scope="col">#</th>
+                    <th scope="col">Nombre</th>
+                    <th scope="col">Dirección</th>
+                    <th scope="col">Teléfono</th>
+                    <th scope="col">Director</th>
+                    <th scope="col">Logo</th>
+                    <th scope="col">Documento PDF</th>
+                    <th scope="col" style="width: 150px;">Acciones</th>
                 </tr>
             </thead>
             <tbody>
@@ -72,14 +72,14 @@
                         </td>
                         <td>
                             @if(auth()->user()->rol === 'Administrador')
-                                <a href="{{ route('instituciones.edit', $institucion->id) }}" class="btn btn-sm btn-info">
+                                <a href="{{ route('instituciones.edit', $institucion->id) }}" class="btn btn-sm btn-info" aria-label="Editar institución {{ $institucion->nombre }}">
                                     <i class="fas fa-edit"></i> Editar
                                 </a>
 
                                 <form action="{{ route('instituciones.destroy', $institucion->id) }}" method="POST" style="display:inline">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('¿Enviar a la papelera?')">
+                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('¿Enviar a la papelera?')" aria-label="Enviar institución {{ $institucion->nombre }} a papelera">
                                         <i class="fas fa-trash"></i> Eliminar
                                     </button>
                                 </form>

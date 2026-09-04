@@ -36,10 +36,12 @@
                        name="nombre"
                        class="form-control @error('nombre') is-invalid @enderror"
                        value="{{ old('nombre') }}"
-                       placeholder="Ej. Instituto Tecnológico Bolivia">
+                       placeholder="Ej. Instituto Tecnológico Bolivia"
+                       aria-required="true"
+                       @error('nombre') aria-invalid="true" aria-describedby="nombre-error" @enderror>
 
                 @error('nombre')
-                    <span class="text-danger">
+                    <span id="nombre-error" class="text-danger" role="alert">
                         {{ $message }}
                     </span>
                 @enderror
@@ -57,7 +59,7 @@
                        placeholder="Ej. Av. Heroínas #123">
 
                 @error('direccion')
-                    <span class="text-danger">
+                    <span id="nombre-error" class="text-danger" role="alert">
                         {{ $message }}
                     </span>
                 @enderror
@@ -75,7 +77,7 @@
                        placeholder="Ej. 70707070">
 
                 @error('telefono')
-                    <span class="text-danger">
+                    <span id="nombre-error" class="text-danger" role="alert">
                         {{ $message }}
                     </span>
                 @enderror
@@ -93,7 +95,7 @@
                        placeholder="Ej. Juan Pérez">
 
                 @error('director')
-                    <span class="text-danger">
+                    <span id="nombre-error" class="text-danger" role="alert">
                         {{ $message }}
                     </span>
                 @enderror

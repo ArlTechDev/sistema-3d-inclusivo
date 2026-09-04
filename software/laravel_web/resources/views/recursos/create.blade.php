@@ -27,7 +27,7 @@
                 <div class="col-md-8 form-group">
                     <label for="titulo">Título del Recurso <span class="text-danger">*</span></label>
                     <input type="text" name="titulo" class="form-control @error('titulo') is-invalid @enderror" 
-                           id="titulo" value="{{ old('titulo') }}" placeholder="Ej. Ficha Táctil Alfabeto Braille" required>
+                           id="titulo" value="{{ old('titulo') }}" placeholder="Ej. Ficha Táctil Alfabeto Braille" required aria-required="true">
                     @error('titulo') <span class="invalid-feedback">{{ $message }}</span> @enderror
                 </div>
                 <div class="col-md-4 form-group">
