@@ -24,6 +24,10 @@ Gracias a la comunidad **Marlin Firmware** — sin su base open-source, esta imp
 
 ## 2. Pronterface — Host de Impresión
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/kliment/Printrun/master/printrun/assets/icons/pronterface/pronterface_256x256.png" alt="Pronterface Logo" width="180">
+</p>
+
 > **Oficial:** https://www.pronterface.com/ — **Mirror Windows:** https://pronterface.en.uptodown.com/windows
 
 Host USB para enviar G-Code y controlar la impresora.
