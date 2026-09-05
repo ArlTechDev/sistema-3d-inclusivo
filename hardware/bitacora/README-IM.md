@@ -22,7 +22,8 @@ Recopilación histórica **ene–ago 2026** — migrada a single-repo el 2026-08
 | 10 | `10-mes-junio.md` | 30 jun | Ender 3 elegido |
 | 11 | `11-dia-1-7.md` | 01 jul | Estructura + cama movible |
 | 12 | `12-dia-4-a-10.md` | 04–10 jul | Ensamblaje, corte Y, resultado final |
-| 13 | `13-dia-16.md` | 16 ago | Reemplazo cama Y, primera impresión funcional |
+| 13 | `13-dia-16.md` | 16 ago | Reemplazo cama Y, primera impresión funcional | `../fotos_avance/2026-08-16_00-00-00.jpg` |
+| 14 | `fotos_avance/2026-07-18_09-48-27.jpg` | 18 jul 2026 | Impresora terminada y funcional (foto final) | `../fotos_avance/2026-07-18_09-48-27.jpg` |
 
 ## Videos de referencia
 
@@ -726,5 +727,5 @@ La madera del eje Y se deformó por calor; se reemplazó por otro tipo y se cons
 
 - `hardware/README.md` — índice Prusa i3, RAMPS 1.4, PLA
 - `hardware/marlin_firmware/README.md` — Marlin + Pronterface (logos)
-- `hardware/fotos_avance/` — 23 JPG (21 + 2 de 16/19 ago)
+- `hardware/fotos_avance/` — 24 JPG (21 + 3 de 16/19 ago y 18 jul terminada)
 - `hardware/bitacora/` — 13 días + este README-IM (reporte general)
